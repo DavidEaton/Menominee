@@ -1,19 +1,23 @@
-﻿using Menominee.Shared.Models.Payables.Invoices;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Payables.Invoices;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Payables.Invoices;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Payables.Pages
 {
     public partial class VendorInvoiceEditPage : ComponentBase
     {
+        private const string GeneralFailureMessage = "An error occurred while saving the item";
+
         [Inject]
         private NavigationManager NavigationManager { get; set; }
 
         [Inject]
         private IVendorInvoiceDataService VendorInvoiceDataService { get; set; }
+
+        [Inject]
+        private ILogger Logger { get; set; }
 
         [Parameter]
         public long Id { get; set; }
@@ -35,42 +39,81 @@ namespace Menominee.Client.Components.Payables.Pages
             }
             else
             {
-                var invoice = await VendorInvoiceDataService.GetInvoice(Id);
-                if (invoice is not null)
+                var result = await VendorInvoiceDataService.GetAsync(Id);
+                if (result.IsSuccess)
                 {
-                    Invoice = VendorInvoiceHelper.ConvertReadToWriteDto(invoice);
+                    Invoice = VendorInvoiceHelper.ConvertReadToWriteDto(result.Value);
                     FormMode = (Invoice.Status == VendorInvoiceStatus.Open) ? FormMode.Edit : FormMode.View;
                 }
                 else
                 {
                     // TODO: What to do?
+                    // Alert user that the Invoice could not be found
                     FormMode = FormMode.View;
                 }
             }
         }
-
-        private async Task<bool> Save()
+        private async Task<Result<string>> Save()
         {
             if (Valid())
             {
-                if (Id == 0)
+                const string addItemSuccessMessage = "Item added successfully";
+                const string addItemFailureMessage = "Failed to add new item";
+                const string updateItemSuccessMessage = "Item updated successfully";
+                const string updateItemFailureMessage = "Failed to update item";
+
+                try
                 {
-                    var invoice = await VendorInvoiceDataService.AddInvoice(Invoice);
-                    Id = invoice.Id;
+                    Result<string> operationResult;
+
+                    if (Id == 0)
+                    {
+                        var addItemResult = await VendorInvoiceDataService.AddAsync(Invoice);
+                        operationResult = addItemResult.IsSuccess
+                            ? Result.Success(addItemSuccessMessage)
+                            : Result.Failure<string>(addItemFailureMessage);
+
+                        if (addItemResult.IsSuccess)
+                            Id = Invoice.Id;
+                    }
+                    else
+                    {
+                        var updateItemResult = await VendorInvoiceDataService.UpdateAsync(Invoice);
+                        operationResult = updateItemResult.IsSuccess
+                            ? Result.Success(updateItemSuccessMessage)
+                            : Result.Failure<string>(updateItemFailureMessage);
+                    }
+
+                    if (operationResult.IsSuccess)
+                    {
+                        // Un-comment this line if you want to show a toast for success
+                        // toastService.ShowSuccess(operationResult.Value, "Success");
+                    }
+
+                    return operationResult;
                 }
-                else
+                catch (Exception ex)
                 {
-                    await VendorInvoiceDataService.UpdateInvoice(Invoice, Id);
+                    Logger.LogError(ex, GeneralFailureMessage);
+                    return Result.Failure<string>(GeneralFailureMessage);
+                }
+                finally
+                {
+                    EndEdit();
                 }
             }
 
-            return Valid();
+            return Result.Failure<string>(GeneralFailureMessage);
         }
 
         private async Task SaveAndExit()
         {
-            if (await Save())
+            var result = await Save();
+
+            if (result.IsSuccess)
                 EndEdit();
+            else
+                Logger.LogError(result.Error, GeneralFailureMessage);
         }
 
         private bool Valid()

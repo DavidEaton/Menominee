@@ -23,39 +23,34 @@ namespace Menominee.Api.Inventory
         public void Add(InventoryItem item)
         {
             if (item is not null)
-            {
-                context.InventoryItems.Attach(item);
-            }
+                context.Attach(item);
         }
 
 
         public void Delete(InventoryItem item)
         {
             if (item is not null)
-            {
                 context.Remove(item);
-                context.SaveChanges();
-            }
         }
 
-        public async Task<InventoryItemToRead> GetItem(long id) =>
+        public async Task<InventoryItemToRead> GetAsync(long id) =>
             await GetInventoryItemToRead(item => item.Id == id);
 
-        public async Task<InventoryItemToRead> GetItem(long manufacturerId, string itemNumber) =>
+        public async Task<InventoryItemToRead> GetAsync(long manufacturerId, string itemNumber) =>
             await GetInventoryItemToRead(item => item.Manufacturer.Id == manufacturerId && item.ItemNumber == itemNumber);
 
-        public async Task<InventoryItem> GetItemEntity(long id) =>
+        public async Task<InventoryItem> GetEntityAsync(long id) =>
             await GetInventoryItemEntity(item => item.Id == id);
 
-        public async Task<IReadOnlyList<InventoryItemToRead>> GetItems() =>
+        public async Task<IReadOnlyList<InventoryItemToRead>> GetAllAsync() =>
             await GetInventoryItemsToRead();
 
-        public async Task<IReadOnlyList<InventoryItem>> GetInventoryItemEntities(List<long> ids) =>
-            await Task.WhenAll(ids.Select(id => GetItemEntity(id)));
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInList() =>
+        public async Task<IReadOnlyList<InventoryItem>> GetEntitiesAsync(List<long> ids) =>
+            await Task.WhenAll(ids.Select(id => GetEntityAsync(id)));
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetListAsync() =>
             await GetInventoryItemsToReadInList();
 
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInList(long manufacturerId) =>
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetListAsync(long manufacturerId) =>
             await GetInventoryItemsToReadInList(manufacturerId: manufacturerId);
 
         private IQueryable<InventoryItem> GetInventoryItemsQuery(bool asNoTracking = true)
@@ -145,34 +140,30 @@ namespace Menominee.Api.Inventory
             return itemsFromContext.Select(item => InventoryItemHelper.ConvertToReadInListDto(item)).ToList();
         }
 
-
-        public async Task<bool> Exists(long id) =>
-            await context.InventoryItems.AnyAsync(item => item.Id == id);
-
-        public async Task SaveChanges() =>
+        public async Task SaveChangesAsync() =>
             await context.SaveChangesAsync();
 
-        public async Task<InventoryItemWarranty> GetInventoryItemWarrantyEntity(long id) =>
+        public async Task<InventoryItemWarranty> GetWarrantyEntityAsync(long id) =>
             await context.InventoryItemWarranties
                 .FirstOrDefaultAsync(warranty => warranty.Id == id);
 
-        public async Task<InventoryItemPart> GetInventoryItemPartEntity(long id) =>
+        public async Task<InventoryItemPart> GetPartEntityAsync(long id) =>
             await context.InventoryItemParts
                 .FirstOrDefaultAsync(part => part.Id == id);
 
-        public async Task<InventoryItemInspection> GetInventoryItemInspectionEntity(long id) =>
+        public async Task<InventoryItemInspection> GetInspectionEntityAsync(long id) =>
             await context.InventoryItemInspections
                 .FirstOrDefaultAsync(inspection => inspection.Id == id);
 
-        public async Task<InventoryItemLabor> GetInventoryItemLaborEntity(long id) =>
+        public async Task<InventoryItemLabor> GetLaborEntityAsync(long id) =>
             await context.InventoryItemLabor
                 .FirstOrDefaultAsync(labor => labor.Id == id);
 
-        public async Task<InventoryItemTire> GetInventoryItemTireEntity(long id) =>
+        public async Task<InventoryItemTire> GetTireEntityAsync(long id) =>
             await context.InventoryItemTires
                 .FirstOrDefaultAsync(tire => tire.Id == id);
 
-        public async Task<InventoryItemPackage> GetInventoryItemPackageEntity(long id) =>
+        public async Task<InventoryItemPackage> GetPackageEntityAsync(long id) =>
             await context.InventoryItemPackages
                 .FirstOrDefaultAsync(package => package.Id == id);
     }

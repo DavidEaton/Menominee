@@ -8,6 +8,8 @@ namespace Menominee.Domain.Entities.Inventory
 {
     public class ProductCode : Entity
     {
+        // ProductCode belongs to ONE Manufacturer
+        // ProductCode belongs to ONE SaleCode, or no SaleCode if not in use
         public static readonly string NonuniqueMessage = $"Manufacturer/Code combination is already in use and must be unique. The same Code may be used by more than one Manufacturer.";
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly int MinimumLength = 1;

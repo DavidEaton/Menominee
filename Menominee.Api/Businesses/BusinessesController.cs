@@ -1,13 +1,11 @@
 ﻿using Menominee.Api.Common;
 using Menominee.Api.Persons;
-using Menominee.Common.ValueObjects;
-using Menominee.Domain.Entities;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Businesses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Menominee.Api.Businesses
@@ -17,17 +15,17 @@ namespace Menominee.Api.Businesses
         private readonly IBusinessRepository repository;
         private readonly IPersonRepository personsRepository;
         private readonly PersonsController personsController;
-        // This is the only production code file that I prefer to keep comments in.
+        // This is the only production code file that I prefer to keep comments in. - DE
 
         // TODO: Dependency Injection: Avoid injecting one controller into another
         // (PersonsController into BusinessesController). This tightly couples the
         // controllers and may lead to issues down the line. Use domain services or
         // application services for shared functionality instead.
         public BusinessesController(
-            IBusinessRepository repository
-            , PersonsController personsController
-            , IPersonRepository personsRepository
-            , ILogger<BusinessesController> logger) : base(logger)
+            IBusinessRepository repository,
+             PersonsController personsController,
+             IPersonRepository personsRepository,
+             ILogger<BusinessesController> logger) : base(logger)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));
@@ -40,7 +38,7 @@ namespace Menominee.Api.Businesses
         [HttpGet("list")]
         public async Task<ActionResult<IReadOnlyList<BusinessToReadInList>>> GetListAsync()
         {
-            var businesses = await repository.GetBusinessesListAsync();
+            var businesses = await repository.GetListAsync();
 
             if (businesses is null)
                 return NotFound();
@@ -49,29 +47,27 @@ namespace Menominee.Api.Businesses
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<BusinessToRead>>> GetAsync()
+        public async Task<ActionResult<IReadOnlyList<BusinessToRead>>> GetAllAsync()
         {
-            var businesses = await repository.GetBusinessesAsync();
+            var result = await repository.GetAllAsync();
 
-            if (businesses is null)
-                return NotFound();
-
-            return Ok(businesses);
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         [HttpGet("{id:long}")]
         public async Task<ActionResult<BusinessToRead>> GetAsync(long id)
         {
-            var business = await repository.GetBusinessAsync(id);
+            var result = await repository.GetAsync(id);
 
-            if (business is null)
-                return NotFound();
-
-            return business;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateAsync(long id, BusinessToWrite businessFromCaller)
+        public async Task<ActionResult> UpdateAsync(BusinessToWrite businessFromCaller)
         {
             /* Update Pattern in Controllers:
                 1) Get domain entity from repository
@@ -80,99 +76,17 @@ namespace Menominee.Api.Businesses
                 4) return NoContent()
             */
 
-            var notFoundMessage = $"Could not find Business to update: {businessFromCaller.Name}";
-
-            if (!await repository.BusinessExistsAsync(id))
-                return NotFound(notFoundMessage);
-
             //1) Get domain entity from repository
-            var businessFromRepository = await repository.GetBusinessEntityAsync(id);
+            var businessFromRepository = await repository.GetEntityAsync(businessFromCaller.Id);
 
             if (businessFromRepository is null)
-                return NotFound(notFoundMessage);
+                return NotFound($"Could not find Business to update: {businessFromCaller.Name}");
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            if (businessFromRepository.Name.Name != businessFromCaller.Name)
-            {
-                var businessNameResult = businessFromRepository.Name.NewBusinessName(businessFromCaller.Name);
+            Updaters.UpdateBusiness(businessFromCaller, businessFromRepository);
 
-                if (businessNameResult.IsFailure)
-                    return BadRequest(businessNameResult.Error);
-
-                businessFromRepository.SetName(businessNameResult.Value);
-            }
-
-            if (businessFromCaller?.Address is not null)
-            {
-                var addressResult = Address.Create(
-                        businessFromCaller.Address.AddressLine1,
-                        businessFromCaller.Address.City,
-                        businessFromCaller.Address.State,
-                        businessFromCaller.Address.PostalCode,
-                        businessFromCaller.Address.AddressLine2);
-
-                if (addressResult.IsFailure)
-                    return BadRequest(addressResult.Error);
-
-                businessFromRepository.SetAddress(addressResult.Value);
-            }
-
-            // Client may send an empty or null Address VALUE OBJECT, signifying REMOVAL
-            if (businessFromCaller?.Address is null)
-                businessFromRepository.ClearAddress();
-
-            businessFromRepository.SetNotes(businessFromCaller.Notes);
-
-            // Client may send an empty or null phones collection of ENTITIES, signifying REMOVAL
-            foreach (var phone in businessFromCaller?.Phones)
-            {
-                if (phone.Id == 0)
-                    businessFromRepository.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-                if (phone.Id != 0)
-                {
-                    var contextPhone = businessFromRepository.Phones.FirstOrDefault(contextPhone => contextPhone.Id == phone.Id);
-                    contextPhone.SetNumber(phone.Number);
-                    contextPhone.SetIsPrimary(phone.IsPrimary);
-                    contextPhone.SetPhoneType(phone.PhoneType);
-                }
-
-                if (phone.Id != 0)
-                    businessFromRepository.RemovePhone(
-                        businessFromRepository.Phones.FirstOrDefault(
-                            contextPhone =>
-                            contextPhone.Id == phone.Id));
-            }
-
-            // Client may send an empty or null emails collection, signifying REMOVAL
-            List<Email> emails = new();
-            if (businessFromCaller?.Emails.Count > 0)
-            {
-                emails.AddRange(businessFromCaller.Emails
-                    .Select(email =>
-                            Email.Create(email.Address,
-                                         email.IsPrimary).Value));
-            }
-
-            var contactDetails = ContactDetailsFactory.Create(
-                businessFromCaller.Phones, businessFromCaller.Emails, businessFromCaller.Address).Value;
-
-            businessFromRepository.UpdateContactDetails(contactDetails);
-
-            businessFromRepository.SetNotes(businessFromCaller.Notes);
-
-            // Contact
-            if (businessFromCaller?.Contact is not null && businessFromCaller.Contact.IsNotEmpty)
-            {
-                var result = await personsController.UpdateAsync(
-                                    businessFromRepository.Contact.Id,
-                                    businessFromCaller.Contact);
-
-                var person = await personsRepository.GetPersonEntityAsync(businessFromRepository.Contact.Id);
-
-                if (person != null)
-                    businessFromRepository.SetContact(person);
-            }
+            // 3) Save changes to wherever the repository is pointing
+            await repository.SaveChangesAsync();
 
             /* Returning the updated resource is acceptible, for example:
                  return Ok(businessFromRepository);
@@ -191,29 +105,11 @@ namespace Menominee.Api.Businesses
             HTTP status code 400 Bad Request for an unsuccessful PUT
             */
 
-            await repository.SaveChangesAsync();
-
             return NoContent();
         }
 
-        private static void UpdateAddress(BusinessToWrite businessFromCaller, Business businessFromRepository)
-        {
-            if (businessFromCaller?.Address != null)
-                businessFromRepository.SetAddress(
-                    Address.Create(
-                        businessFromCaller.Address.AddressLine1,
-                        businessFromCaller.Address.City,
-                        businessFromCaller.Address.State,
-                        businessFromCaller.Address.PostalCode,
-                        businessFromCaller.Address.AddressLine2).Value);
-
-            // Client may send an empty or null Address VALUE OBJECT, signifying REMOVAL
-            if (businessFromCaller?.Address is null)
-                businessFromRepository.SetAddress(null);
-        }
-
         [HttpPost]
-        public async Task<ActionResult> AddAsync(BusinessToWrite businessToAdd)
+        public async Task<ActionResult<PostResponse>> AddAsync(BusinessToWrite businessToAdd)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
@@ -229,20 +125,19 @@ namespace Menominee.Api.Businesses
                 4. Return to consumer */
 
             // 1. Convert dto to domain entity
+            // No need to validate it here again, just call .Value right away
             var business = BusinessHelper.ConvertWriteDtoToEntity(businessToAdd);
 
             // 2. Add domain entity to repository
-            await repository.AddBusinessAsync(business);
+            repository.Add(business);
 
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
             // 4. Return new id and route to new resource after save
-            return CreatedAtAction(
-                nameof(GetAsync),
-                new { id = business.Id },
-                new { business.Id }
-            );
+            return Created(new Uri($"api/businesses/{business.Id}",
+                UriKind.Relative),
+                new { business.Id });
         }
 
 
@@ -255,13 +150,12 @@ namespace Menominee.Api.Businesses
              3) Save changes
              4) return NoContent()
             */
-            var businessFromRepository = await repository.GetBusinessEntityAsync(id);
+            var businessFromRepository = await repository.GetEntityAsync(id);
 
             if (businessFromRepository is null)
                 return NotFound($"Could not find Business in the database to delete with Id: {id}.");
 
-            repository.DeleteBusiness(businessFromRepository);
-
+            repository.Delete(businessFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();

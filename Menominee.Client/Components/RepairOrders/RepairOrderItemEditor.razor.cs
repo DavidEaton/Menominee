@@ -1,12 +1,13 @@
-﻿using Menominee.Shared.Models.Manufacturers;
-using Menominee.Shared.Models.ProductCodes;
-using Menominee.Shared.Models.RepairOrders.LineItems.Item;
-using Menominee.Shared.Models.SaleCodes;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Manufacturers;
+using Menominee.Shared.Models.ProductCodes;
+using Menominee.Shared.Models.RepairOrders.LineItems.Item;
+using Menominee.Shared.Models.SaleCodes;
 using Microsoft.AspNetCore.Components;
 
 namespace Menominee.Client.Components.RepairOrders
@@ -21,6 +22,9 @@ namespace Menominee.Client.Components.RepairOrders
 
         [Inject]
         public IProductCodeDataService ProductCodeDataService { get; set; }
+
+        [Inject]
+        public ILogger<RepairOrderItemEditor> Logger { get; set; }
 
         [Parameter]
         public RepairOrderItemToWrite Item { get; set; }
@@ -45,7 +49,7 @@ namespace Menominee.Client.Components.RepairOrders
         [Parameter]
         public EventCallback OnCancel { get; set; }
 
-        private IReadOnlyList<ManufacturerToReadInList> Manufacturers = null;
+        private IReadOnlyList<ManufacturerToReadInList> Manufacturers = new List<ManufacturerToReadInList>();
         private IReadOnlyList<SaleCodeToReadInList> SaleCodes = null;
         private IReadOnlyList<ProductCodeToReadInList> ProductCodes = null;
 
@@ -74,13 +78,31 @@ namespace Menominee.Client.Components.RepairOrders
             if (parametersSet)
                 return;
             parametersSet = true;
-            Manufacturers = (await ManufacturerDataService.GetAllManufacturersAsync()).ToList();
-            SaleCodes = (await SaleCodeDataService.GetAllSaleCodesAsync()).ToList();
+            SaleCodes = (await SaleCodeDataService.GetAllAsync()).ToList();
 
-            ManufacturerList = new();
+            await ManufacturerDataService.GetAllAsync()
+                .Match(
+                    success =>
+                    {
+                        Manufacturers = success;
+                    },
+                    failure => Logger.LogError(failure)
+                );
+
+            ManufacturerList = new()
+            {
+                new()
+                {
+                    Id = 0,
+                    Code = "",
+                    Prefix = "",
+                    Name = "<< All >>"
+                }
+            };
+
             foreach (var mfr in Manufacturers)
             {
-                if (mfr.Prefix.Length > 0)
+                if (mfr.Id != 0 && mfr.Prefix?.Length > 0)       // FIX ME - need server to only return list of configured Mfrs
                 {
                     ManufacturerList.Add(new ManufacturerX
                     {
@@ -233,21 +255,24 @@ namespace Menominee.Client.Components.RepairOrders
 
         private async Task LoadProductCodes()
         {
-            ProductCodes = (await ProductCodeDataService.GetAllProductCodesAsync(Item.Manufacturer.Id, Item.SaleCode.Id)).ToList();
+            await ProductCodeDataService.GetByManufacturerAndSaleCodeAsync(Item.Manufacturer.Id, Item.SaleCode.Id)
+                .Match(
 
-            ProductCodeList = new();
-            foreach (var prodCode in ProductCodes)
-            {
-                ProductCodeList.Add(new ProductCodeX
+                success =>
                 {
-                    Id = prodCode.Id,
-                    Code = prodCode.Code,
-                    Name = prodCode.Name
-                });
-            }
+                    ProductCodes = success;
+                },
+                failure => Logger.LogError(failure));
+
+            SetProductCodeList();
 
             CanChangeProductCode = ProductCodeList.Count > 0;
 
+            SetItemProductCode();
+        }
+
+        private void SetItemProductCode()
+        {
             if (ProductCodeList.Count.Equals(1))
             {
                 Item.ProductCode = new()
@@ -257,6 +282,16 @@ namespace Menominee.Client.Components.RepairOrders
                     Name = ProductCodes[0].Name,
                 };
             }
+        }
+
+        public void SetProductCodeList()
+        {
+            ProductCodeList = ProductCodes.Select(prodCode => new ProductCodeX
+            {
+                Id = prodCode.Id,
+                Code = prodCode.Code,
+                Name = prodCode.Name
+            }).ToList();
         }
     }
 }

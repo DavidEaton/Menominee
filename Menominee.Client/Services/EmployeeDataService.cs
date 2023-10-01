@@ -1,4 +1,4 @@
-﻿using Menominee.Shared.Models;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Shared.Models.Employees;
 using System.Net.Http.Json;
 
@@ -12,21 +12,27 @@ namespace Menominee.Client.Services
 
         public EmployeeDataService(HttpClient httpClient, ILogger<EmployeeDataService> logger)
         {
-            this.httpClient = httpClient;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             this.logger = logger;
         }
-        public async Task<IReadOnlyList<EmployeeToRead>> GetAllEmployees()
+
+        public async Task<Result<IReadOnlyList<EmployeeToRead>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get all employees";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<EmployeeToRead>>($"{UriSegment}");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Failed to get all employees");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<EmployeeToRead>>($"{UriSegment}/listing");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<EmployeeToRead>>(errorMessage);
             }
 
-            return null;
+            catch (Exception ex)
+            {
+                logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<EmployeeToRead>>(errorMessage);
+            }
         }
     }
 }

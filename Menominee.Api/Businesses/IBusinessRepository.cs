@@ -7,13 +7,12 @@ namespace Menominee.Api.Businesses
 {
     public interface IBusinessRepository
     {
-        Task AddBusinessAsync(Business entity);
-        Task<IReadOnlyList<BusinessToRead>> GetBusinessesAsync();
-        Task<BusinessToRead> GetBusinessAsync(long id);
-        Task<IReadOnlyList<BusinessToReadInList>> GetBusinessesListAsync();
-        void DeleteBusiness(Business entity);
-        Task<bool> BusinessExistsAsync(long id);
+        void Add(Business entity);
+        void Delete(Business entity);
+        Task<BusinessToRead> GetAsync(long id);
+        Task<IReadOnlyList<BusinessToRead>> GetAllAsync();
+        Task<IReadOnlyList<BusinessToReadInList>> GetListAsync();
+        Task<Business> GetEntityAsync(long id);
         Task SaveChangesAsync();
-        Task<Business> GetBusinessEntityAsync(long id);
     }
 }

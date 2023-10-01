@@ -1,14 +1,14 @@
-﻿using Menominee.Shared.Models.Taxes;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Http;
+using Menominee.Shared.Models.Taxes;
 
 namespace Menominee.Client.Services.Taxes
 {
     public interface ISalesTaxDataService
     {
-        Task<IReadOnlyList<SalesTaxToReadInList>> GetAllSalesTaxesAsync();
-        Task<SalesTaxToRead> GetSalesTaxAsync(long id);
-        Task<SalesTaxToRead> AddSalesTaxAsync(SalesTaxToWrite salesTax);
-        Task UpdateSalesTaxAsync(SalesTaxToWrite salesTax, long id);
+        Task<Result<IReadOnlyList<SalesTaxToReadInList>>> GetAllAsync();
+        Task<Result<SalesTaxToRead>> GetAsync(long id);
+        Task<Result<PostResponse>> AddAsync(SalesTaxToWrite salesTax);
+        Task<Result> UpdateAsync(SalesTaxToWrite salesTax);
     }
 }

@@ -1,9 +1,7 @@
-﻿using Menominee.Shared.Models.Payables.Vendors;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Payables.Vendors;
+using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Payables.Pages
@@ -16,13 +14,13 @@ namespace Menominee.Client.Components.Payables.Pages
         [Inject]
         public IVendorDataService VendorDataService { get; set; }
 
-        //[Inject]
-        //public ILogger<VendorList> Logger { get; set; }
+        [Inject]
+        ILogger<VendorListPage> Logger { get; set; }
 
         [Parameter]
         public long VendorToSelect { get; set; } = 0;
 
-        public IReadOnlyList<VendorToRead> VendorsList;
+        public IReadOnlyList<VendorToRead> Vendors;
         public IEnumerable<VendorToRead> SelectedList { get; set; } = Enumerable.Empty<VendorToRead>();
         public VendorToRead SelectedItem { get; set; }
 
@@ -50,18 +48,33 @@ namespace Menominee.Client.Components.Payables.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            VendorsList = (await VendorDataService.GetAllVendorsAsync()).ToList();
+            await GetVendorsAsync();
 
-            if (VendorsList.Count > 0)
+            if (Vendors.Count > 0)
             {
                 if (VendorToSelect > 0)
-                    SelectedItem = VendorsList.Where(x => x.Id == VendorToSelect).FirstOrDefault();
+                    SelectedItem = Vendors.Where(x => x.Id == VendorToSelect).FirstOrDefault();
 
                 if (VendorToSelect == 0 || SelectedItem == null)
-                    SelectedItem = VendorsList.FirstOrDefault();
+                    SelectedItem = Vendors.FirstOrDefault();
 
                 SelectedId = SelectedItem.Id;
                 SelectedList = new List<VendorToRead> { SelectedItem };
+            }
+        }
+
+        private async Task GetVendorsAsync()
+        {
+            if (VendorDataService is not null)
+            {
+                await VendorDataService.GetAllAsync()
+                .Match(
+                    success => Vendors = success
+                        .Where(vendor => vendor.IsActive == true)
+                        .OrderBy(vendor => vendor.VendorCode)
+                        .ToList(),
+
+                    failure => Logger.LogError(failure));
             }
         }
 

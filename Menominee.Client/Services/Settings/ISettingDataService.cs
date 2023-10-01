@@ -1,13 +1,15 @@
-﻿using Menominee.Domain.Entities.Settings;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Http;
+using Menominee.Domain.Entities.Settings;
 using Menominee.Shared.Models.Settings;
 
 namespace Menominee.Client.Services.Settings;
 
 public interface ISettingDataService
 {
-    Task<SettingToRead?> GetSetting(SettingName name);
-    Task<IReadOnlyList<SettingToRead>?> GetSettingsList();
-    Task<IReadOnlyList<SettingToRead>?> GetSettingsList(SettingGroup group);
-    Task<SettingToRead?> SaveSetting(SettingToWrite setting);
-    Task<IReadOnlyList<SettingToRead>?> SaveSettingsList(IReadOnlyList<SettingToWrite> settings);
+    Task<Result<SettingToRead?>> GetAsync(SettingName name);
+    Task<Result<IReadOnlyList<SettingToRead?>>> GetAllAsync();
+    Task<Result<IReadOnlyList<SettingToRead?>>> GetByGroupAsync(SettingGroup group);
+    Task<Result<PostResponse>> AddAsync(SettingToWrite setting);
+    Task<Result> AddMultipleAsync(IReadOnlyList<SettingToWrite> settings);
 }

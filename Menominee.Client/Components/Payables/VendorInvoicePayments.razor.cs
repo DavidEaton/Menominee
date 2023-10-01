@@ -1,7 +1,9 @@
-﻿using Menominee.Shared.Models.Payables.Invoices;
-using Menominee.Shared.Models.Payables.Invoices.Payments;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Client.Components.Settings.Pages;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Payables.Invoices;
+using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Microsoft.AspNetCore.Components;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
@@ -28,6 +30,9 @@ namespace Menominee.Client.Components.Payables
         [CascadingParameter]
         public FormMode FormMode { get; set; }
 
+        [Inject]
+        ILogger<VendorPaymentMethodsPage> Logger { get; set; }
+
         public IEnumerable<VendorInvoicePaymentToWrite> SelectedPayments { get; set; } = Enumerable.Empty<VendorInvoicePaymentToWrite>();
 
         public VendorInvoicePaymentToWrite Payment { get; set; }
@@ -45,7 +50,11 @@ namespace Menominee.Client.Components.Payables
 
         protected override async Task OnInitializedAsync()
         {
-            PaymentMethods = (await PaymentMethodDataService.GetAllPaymentMethodsAsync()).ToList();
+            await PaymentMethodDataService.GetAllAsync()
+            .Match(
+                success => PaymentMethods = success,
+                failure => Logger.LogError(failure));
+
             if (PaymentMethods.Count < 9)
             {
                 popupHeight = PaymentMethods.Count * 32;

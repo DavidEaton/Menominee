@@ -1,87 +1,97 @@
 ﻿using Blazored.Toast.Services;
-using Menominee.Shared.Models;
+using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
+using Menominee.Shared.Models.Users;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Menominee.Client.Services
 {
-    public class UserDataService : IUserDataService
+    public class UserDataService : DataServiceBase<UserDataService>, IUserDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<UserDataService> logger;
         private const string UriSegment = "api/user";
-        private const string MediaType = "application/json";
         private readonly IToastService toastService;
 
-        public UserDataService(HttpClient httpClient, ILogger<UserDataService> logger, IToastService toastService)
+        public UserDataService(HttpClient httpClient,
+            ILogger<UserDataService> logger,
+            IToastService toastService,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<IReadOnlyList<UserToRead>> GetAll()
+        public async Task<Result<IReadOnlyList<UserResponse>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get Users";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<UserToRead>>($"{UriSegment}");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<UserResponse>>($"{UriSegment}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<UserResponse>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all users");
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<UserResponse>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task<UserToRead> GetUser(string id)
+        public async Task<Result<UserResponse>> GetAsync(string id)
         {
+            var errorMessage = $"Failed to get user with id {id}";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<UserToRead>(UriSegment + $"/{id}");
+                var result = await httpClient.GetFromJsonAsync<UserResponse>(UriSegment + $"/{id}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<UserResponse>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get user with id {id}", id);
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<UserResponse>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task<bool> Register(RegisterUser registerModel)
+        public async Task<Result<PostResponse>> RegisterAsync(RegisterUserRequest fromCaller)
         {
-            var content = new StringContent(JsonSerializer.Serialize(registerModel), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
-
-            if (response.IsSuccessStatusCode)
+            var entityType = "Manufacturer";
+            try
             {
-                toastService.ShowSuccess($"{registerModel.Email} added successfully", "Added");
-                return true;
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
+
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
+
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.Email} failed to update", "Save Failed");
+
+                return result;
             }
-
-            toastService.ShowError($"{registerModel.Email} failed to add. {response.ReasonPhrase}.", "Add Failed");
-
-            return false;
-        }
-
-        public async Task UpdateUser(RegisterUser registerUser, long id)
-        {
-            var content = new StringContent(JsonSerializer.Serialize(registerUser), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync(UriSegment + $"/{id}", content);
-
-            if (response.IsSuccessStatusCode)
+            catch (Exception ex)
             {
-                toastService.ShowSuccess($"{registerUser.Email} updated successfully", "Saved");
-                return;
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
             }
-
-            toastService.ShowError($"{registerUser.Email} failed to update", "Save Failed");
         }
 
-        public Task UpdateUser(RegisterUser registerUser, string id)
+        public async Task<Result> UpdateAsync(RegisterUserRequest fromCaller)
         {
-            throw new NotImplementedException();
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                user => $"{user.ToString}",
+                user => user.Id);
         }
     }
 }

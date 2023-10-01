@@ -1,6 +1,6 @@
+using Menominee.Shared.Models.Users;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Menominee.Shared.Models;
 
 namespace Menominee.Api.Users
 {
@@ -9,8 +9,8 @@ namespace Menominee.Api.Users
         string ShopIdAttributeName { get; }
         string ShopNameAttributeName { get; }
         string ShopRoleAttributeName { get; }
-        Task<List<UserToRead>> GetUsers();
-        Task<RegisterUserResult> CreateUser(RegisterUser user);
-        public string CustomAttributeName(string baseName);
+        Task<List<UserResponse>> GetAllAsync();
+        Task<RegisterUserResult> RegisterAsync(RegisterUserRequest user);
+        string CustomAttributeName(string baseName);
     }
 }

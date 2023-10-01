@@ -1,12 +1,12 @@
-﻿using Menominee.Shared.Models.SaleCodes;
+﻿using Blazored.Toast.Services;
 using Menominee.Client.Services.SaleCodes;
+using Menominee.Client.Services.Settings;
 using Menominee.Common.Enums;
+using Menominee.Domain.Entities.Settings;
+using Menominee.Shared.Models.SaleCodes;
+using Menominee.Shared.Models.Settings;
 using Microsoft.AspNetCore.Components;
 using Telerik.Blazor.Components;
-using Menominee.Client.Services.Settings;
-using Menominee.Domain.Entities.Settings;
-using Menominee.Shared.Models.Settings;
-using Blazored.Toast.Services;
 
 namespace Menominee.Client.Components.Settings.Pages
 {
@@ -35,7 +35,7 @@ namespace Menominee.Client.Components.Settings.Pages
         {
             await LoadSettings();
 
-            SaleCodes = (await SaleCodeDataService.GetAllSaleCodeShopSuppliesAsync()).ToList();
+            SaleCodes = (await SaleCodeDataService.GetAllShopSuppliesAsync()).ToList();
 
             if (SaleCodes?.Count > 0)
             {
@@ -77,7 +77,13 @@ namespace Menominee.Client.Components.Settings.Pages
 
         private async Task LoadSettings()
         {
-            Settings = await SettingDataService.GetSettingsList(SettingGroup.ShopSupplies);
+            var result = await SettingDataService.GetByGroupAsync(SettingGroup.ShopSupplies);
+
+            if (result.IsSuccess)
+                Settings = result.Value;
+
+            if (result.IsFailure)
+                ToastService.ShowError($" Failed to load with error: {result.Error}");
 
             if (Settings is null) return;
 
@@ -143,7 +149,7 @@ namespace Menominee.Client.Components.Settings.Pages
                 };
             }).ToList();
 
-            await SettingDataService.SaveSettingsList(updatedSettings);
+            await SettingDataService.AddMultipleAsync(updatedSettings);
         }
 
         private async Task UpdateHandler(GridCommandEventArgs args)
@@ -155,7 +161,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         private async Task UpdateSaleCode(SaleCodeShopSuppliesToReadInList itemInList)
         {
-            SaleCodeToRead itemToRead = await SaleCodeDataService.GetSaleCodeAsync(itemInList.Id);
+            SaleCodeToRead itemToRead = await SaleCodeDataService.GetAsync(itemInList.Id);
             if (itemToRead == null)
                 return;
 
@@ -168,14 +174,14 @@ namespace Menominee.Client.Components.Settings.Pages
 
             var itemToWrite = SaleCodeHelper.ConvertReadToWriteDto(itemToRead);
 
-            var response = await SaleCodeDataService.UpdateSaleCodeAsync(itemToWrite, itemToRead.Id);
+            var response = await SaleCodeDataService.UpdateAsync(itemToWrite);
 
             if (response.IsFailure)
             {
                 ToastService.ShowError(response.Error);
             }
 
-            SaleCodes = (await SaleCodeDataService.GetAllSaleCodeShopSuppliesAsync()).ToList();
+            SaleCodes = (await SaleCodeDataService.GetAllShopSuppliesAsync()).ToList();
         }
 
         public class ShopSuppliesSettings

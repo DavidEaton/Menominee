@@ -1,89 +1,100 @@
 ﻿using Blazored.Toast.Services;
+using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Menominee.Client.Services.Payables.PaymentMethods
 {
-    public class VendorInvoicePaymentMethodDataService : IVendorInvoicePaymentMethodDataService
+    public class VendorInvoicePaymentMethodDataService : DataServiceBase<VendorInvoicePaymentMethodDataService>, IVendorInvoicePaymentMethodDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<VendorInvoicePaymentMethodDataService> logger;
         private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/vendorinvoicepaymentmethods";
 
-        public VendorInvoicePaymentMethodDataService(HttpClient httpClient, ILogger<VendorInvoicePaymentMethodDataService> logger, IToastService toastService)
+        public VendorInvoicePaymentMethodDataService(HttpClient httpClient,
+            ILogger<VendorInvoicePaymentMethodDataService> logger,
+            IToastService toastService,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>> GetAllPaymentMethodsAsync()
+        public async Task<Result<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get all payment methods";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>($"{UriSegment}/list");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>($"{UriSegment}/list");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all payment methods");
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task<VendorInvoicePaymentMethodToRead> GetPaymentMethodAsync(long id)
+        public async Task<Result<VendorInvoicePaymentMethodToRead>> GetAsync(long id)
         {
+            var errorMessage = $"Failed to get payment method with id {id}";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<VendorInvoicePaymentMethodToRead>($"{UriSegment}/{id}");
+                var result = await httpClient.GetFromJsonAsync<VendorInvoicePaymentMethodToRead>(UriSegment + $"/{id}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<VendorInvoicePaymentMethodToRead>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get payment method with id {id}", id);
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<VendorInvoicePaymentMethodToRead>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task<VendorInvoicePaymentMethodToRead> AddPaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethod)
+        public async Task<Result<PostResponse>> AddAsync(VendorInvoicePaymentMethodToWrite fromCaller)
         {
-            var options = new JsonSerializerOptions
+            var entityType = "Business";
+            try
             {
-                PropertyNameCaseInsensitive = true
-            };
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
 
-            var content = new StringContent(JsonSerializer.Serialize(payMethod), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
 
-            if (response.IsSuccessStatusCode)
-            {
-                return await JsonSerializer.DeserializeAsync<VendorInvoicePaymentMethodToRead>(await response.Content.ReadAsStreamAsync(), options);
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.Name} failed to update", "Save Failed");
+
+                return result;
             }
-
-            toastService.ShowError($"Failed to add payment method. {response.ReasonPhrase}.", "Add Failed");
-
-            return null;
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
+            }
         }
 
-        public async Task UpdatePaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethod, long id)
+        public async Task<Result> UpdateAsync(VendorInvoicePaymentMethodToWrite fromCaller)
         {
-            var content = new StringContent(JsonSerializer.Serialize(payMethod), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                toastService.ShowSuccess("Payment method saved successfully", "Saved");
-                return;
-            }
-
-            toastService.ShowError($"Payment method failed to update:  Id = {id}", "Save Failed");
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                productCode => $"{productCode.ToString}",
+                productCode => productCode.Id);
         }
 
-        public async Task DeletePaymentMethodAsync(long id)
+        public async Task DeleteAsync(long id)
         {
             var response = await httpClient.DeleteAsync($"{UriSegment}/{id}");
 

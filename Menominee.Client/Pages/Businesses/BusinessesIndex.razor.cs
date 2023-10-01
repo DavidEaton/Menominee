@@ -31,7 +31,7 @@ namespace Menominee.Client.Pages.Businesses
         private readonly AddressEditor addressEditor;
         protected override async Task OnInitializedAsync()
         {
-            await BusinessDataService.GetAllBusinesses()
+            await BusinessDataService.GetAllAsync()
                 .Match(
                     success => Businesses = success,
                     failure => Logger.LogError(failure)
@@ -74,7 +74,7 @@ namespace Menominee.Client.Pages.Businesses
                 _ => BusinessFormMode
             };
 
-            var businessResult = await BusinessDataService.GetBusiness(id)
+            var businessResult = await BusinessDataService.GetAsync(id)
                 .OnFailure(error =>
                 {
                     Logger.LogError(error);
@@ -132,7 +132,7 @@ namespace Menominee.Client.Pages.Businesses
         {
             if (!string.IsNullOrWhiteSpace(Business.Name))
             {
-                await BusinessDataService.AddBusiness(Business);
+                await BusinessDataService.AddAsync(Business);
                 await EndAddEditAsync();
             }
         }
@@ -141,7 +141,7 @@ namespace Menominee.Client.Pages.Businesses
         {
             if (!string.IsNullOrWhiteSpace(Business.Name))
             {
-                await BusinessDataService.UpdateBusiness(Business);
+                await BusinessDataService.UpdateAsync(Business);
                 await EndAddEditAsync();
             }
         }
@@ -162,7 +162,7 @@ namespace Menominee.Client.Pages.Businesses
         {
             BusinessFormMode = FormMode.Unknown;
             AddressFormMode = FormMode.Unknown;
-            await BusinessDataService.GetAllBusinesses()
+            await BusinessDataService.GetAllAsync()
                 .Match(
                     success => Businesses = success,
                     failure => Logger.LogError(failure));

@@ -8,21 +8,20 @@ namespace Menominee.Api.Inventory
     public interface IInventoryItemRepository
     {
         void Add(InventoryItem entity);
-        Task<bool> Exists(long id);
-        Task<InventoryItemToRead> GetItem(long id);
-        Task<InventoryItemToRead> GetItem(long manufacturerId, string itemNumber);
-        Task<IReadOnlyList<InventoryItemToRead>> GetItems();
-        Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInList();
-        Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInList(long manufacturerId);
-        Task<IReadOnlyList<InventoryItem>> GetInventoryItemEntities(List<long> ids);
-        Task<InventoryItem> GetItemEntity(long id);
-        Task<InventoryItemPart> GetInventoryItemPartEntity(long id);
-        Task<InventoryItemWarranty> GetInventoryItemWarrantyEntity(long id);
-        Task<InventoryItemInspection> GetInventoryItemInspectionEntity(long id);
-        Task<InventoryItemLabor> GetInventoryItemLaborEntity(long id);
-        Task<InventoryItemTire> GetInventoryItemTireEntity(long id);
-        Task<InventoryItemPackage> GetInventoryItemPackageEntity(long id);
-        Task SaveChanges();
         void Delete(InventoryItem entity);
+        Task<InventoryItemToRead> GetAsync(long id);
+        Task<InventoryItemToRead> GetAsync(long manufacturerId, string itemNumber);
+        Task<IReadOnlyList<InventoryItemToRead>> GetAllAsync();
+        Task<IReadOnlyList<InventoryItemToReadInList>> GetListAsync();
+        Task<IReadOnlyList<InventoryItemToReadInList>> GetListAsync(long manufacturerId);
+        Task<IReadOnlyList<InventoryItem>> GetEntitiesAsync(List<long> ids);
+        Task<InventoryItem> GetEntityAsync(long id);
+        Task<InventoryItemPart> GetPartEntityAsync(long id);
+        Task<InventoryItemWarranty> GetWarrantyEntityAsync(long id);
+        Task<InventoryItemInspection> GetInspectionEntityAsync(long id);
+        Task<InventoryItemLabor> GetLaborEntityAsync(long id);
+        Task<InventoryItemTire> GetTireEntityAsync(long id);
+        Task<InventoryItemPackage> GetPackageEntityAsync(long id);
+        Task SaveChangesAsync();
     }
 }

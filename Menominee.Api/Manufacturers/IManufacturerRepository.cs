@@ -1,4 +1,5 @@
-﻿using Menominee.Domain.Entities.Inventory;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.Manufacturers;
 using System;
 using System.Collections.Generic;
@@ -8,18 +9,17 @@ namespace Menominee.Api.Manufacturers
 {
     public interface IManufacturerRepository
     {
-        Task AddManufacturerAsync(Manufacturer manufacturer);
-        Task<Manufacturer> GetManufacturerEntityAsync(long id);
-        Task<ManufacturerToRead> GetManufacturerAsync(long id);
-        Task<IReadOnlyList<ManufacturerToReadInList>> GetManufacturerListAsync();
-        Task DeleteManufacturerAsync(long id);
-        Task<bool> ManufacturerExistsAsync(long id);
-        Task<IReadOnlyList<Manufacturer>> GetManufacturerEntitiesAsync(List<long> manufacturerIds = null);
-        Task<List<string>> GetExistingPrefixList();
-        Task<List<long>> GetExistingIdList();
+        void Add(Manufacturer entity);
+        void Delete(Manufacturer entity);
+        Task<Manufacturer> GetEntityAsync(long id);
+        Task<ManufacturerToRead> GetAsync(long id);
+        Task<IReadOnlyList<ManufacturerToReadInList>> GetListAsync();
+        Task<Result<IReadOnlyList<Manufacturer>>> GetEntitiesAsync(List<long> manufacturerIds = null);
+        Task<List<string>> GetExistingPrefixListAsync();
+        Task<List<long>> GetExistingIdsAsync();
         Task ExecuteInTransactionAsync(Func<Task> operations);
-        Task ToggleIdentityInsert(bool enable);
-        long DetermineManufacturerId(List<long> existingIds);
+        Task ToggleIdentityInsertAsync(bool enable);
+        long GetNextManufacturerId(List<long> existingIds);
         Task SaveChangesAsync();
     }
 }

@@ -58,6 +58,7 @@ public class VehiclesControllerShould : IntegrationTestBase
         var updatedYear = 2008;
         var updatedVehicle = new VehicleToWrite()
         {
+            Id = vehicleToUpdate.Id,
             VIN = vehicleToUpdate.VIN,
             Year = updatedYear,
             Make = vehicleToUpdate.Make,

@@ -1,5 +1,5 @@
-﻿using Menominee.Shared.Models.Inventory.InventoryItems;
-using Menominee.Client.Services.Inventory;
+﻿using Menominee.Client.Services.Inventory;
+using Menominee.Shared.Models.Inventory.InventoryItems;
 using Microsoft.AspNetCore.Components;
 
 namespace Menominee.Client.Components.Inventory.Pages
@@ -20,20 +20,16 @@ namespace Menominee.Client.Components.Inventory.Pages
         protected override async Task OnInitializedAsync()
         {
             if (ItemId == 0)
-            {
                 Item = new();
-            }
             else
             {
-                var readDto = await DataService.GetItemAsync(ItemId);
-                if (readDto != null)
+                var result = await DataService.GetAsync(ItemId);
+                if (result.IsSuccess)
+                    Item = InventoryItemHelper.ConvertReadToWriteDto(result.Value);
+
+                if (result.IsFailure)
                 {
-                    Item = InventoryItemHelper.ConvertReadToWriteDto(readDto);
-                }
-                else
-                {
-                    // FIX ME - what's the best way to handle this?
-                    ItemId = 0;
+                    ItemId = default;
                     Item = new();
                 }
             }
@@ -43,12 +39,12 @@ namespace Menominee.Client.Components.Inventory.Pages
         {
             if (ItemId == 0)
             {
-                var item = await DataService.AddItemAsync(Item);
-                ItemId = item.Id;
+                var item = await DataService.AddAsync(Item);
+                ItemId = item.Value.Id;
             }
             else
             {
-                await DataService.UpdateItemAsync(Item, ItemId);
+                await DataService.UpdateAsync(Item);
             }
 
             EndEdit();

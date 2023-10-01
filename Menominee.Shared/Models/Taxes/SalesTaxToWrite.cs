@@ -5,6 +5,7 @@ namespace Menominee.Shared.Models.Taxes
 {
     public class SalesTaxToWrite
     {
+        public long Id { get; set; }
         public string Description { get; set; }
         public SalesTaxType TaxType { get; set; }
         public int Order { get; set; }

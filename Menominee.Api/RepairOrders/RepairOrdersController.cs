@@ -6,6 +6,7 @@ using Menominee.Api.Manufacturers;
 using Menominee.Api.ProductCodes;
 using Menominee.Api.SaleCodes;
 using Menominee.Api.Vehicles;
+using Menominee.Common.Http;
 using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.RepairOrders;
 using Menominee.Shared.Models.ProductCodes;
@@ -33,7 +34,6 @@ namespace Menominee.Api.RepairOrders
         private readonly ISaleCodeRepository saleCodeRepository;
         private readonly IManufacturerRepository manufacturersRepository;
         private readonly IEmployeeRepository employeeRepository;
-        private readonly string BasePath = "/api/repairorders";
 
         public RepairOrdersController(
             IRepairOrderRepository repository,
@@ -68,47 +68,44 @@ namespace Menominee.Api.RepairOrders
         }
 
         [HttpGet("listing")]
-        public async Task<ActionResult<IReadOnlyList<RepairOrderToReadInList>>> GetRepairOrderListAsync()
+        public async Task<ActionResult<IReadOnlyList<RepairOrderToReadInList>>> GetListAsync()
         {
-            var results = await repository.Get();
+            var result = await repository.GetListAsync();
 
-            if (results == null)
-                return NotFound();
-
-            return Ok(results);
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         [HttpGet("{id:long}")]
-        public async Task<ActionResult<RepairOrderToRead>> GetRepairOrderAsync(long id)
+        public async Task<ActionResult<RepairOrderToRead>> GetAsync(long id)
         {
-            var result = await repository.Get(id);
+            var result = await repository.GetAsync(id);
 
-            if (result == null)
-                return NotFound();
-
-            return result;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> Update(long id, RepairOrderToWrite repairOrderFromCaller)
+        public async Task<ActionResult> UpdateAsync(RepairOrderToWrite repairOrderFromCaller)
         {
-            var repairOrderFromRepository = await repository.GetEntity(id);
+            var repairOrderFromRepository = await repository.GetEntityAsync(repairOrderFromCaller.Id);
 
             if (repairOrderFromRepository is null)
-                return NotFound($"Could not find Repair Order #{id} to update.");
+                return NotFound($"Could not find Repair Order Id {repairOrderFromCaller.Id} to update.");
 
-            var customer = await customerRepository.GetCustomerEntityAsync(repairOrderFromCaller.Customer.Id);
+            var customer = await customerRepository.GetEntityAsync(repairOrderFromCaller.Customer.Id);
             if (customer is null)
-                return NotFound($"Could not find Customer #{repairOrderFromCaller.Customer.Id} to update.");
+                return NotFound($"Could not find Customer Id {repairOrderFromCaller.Customer.Id} to update.");
 
             var vehicle = await vehicleRepository.GetEntityAsync(repairOrderFromCaller.Vehicle.Id);
             if (vehicle is null)
-                return NotFound($"Could not find Vehicle #{repairOrderFromCaller.Vehicle.Id} to update.");
-
-            var repairOrderNumbers = new List<long>();
+                return NotFound($"Could not find Vehicle Id {repairOrderFromCaller.Vehicle.Id} to update.");
 
             var result = UpdateRepairOrder(repairOrderFromCaller, repairOrderFromRepository, customer, vehicle);
 
+            // Using Result here is overkill; asp.net pipeline has already invoked FluentValidation validator(s)
             if (result.IsFailure)
                 return BadRequest(result.Error);
 
@@ -117,7 +114,7 @@ namespace Menominee.Api.RepairOrders
             UpdateTaxes(repairOrderFromCaller, repairOrderFromRepository);
             UpdateStatuses(repairOrderFromCaller, repairOrderFromRepository);
 
-            await repository.SaveChanges();
+            await repository.SaveChangesAsync();
 
             return NoContent();
         }
@@ -311,28 +308,24 @@ namespace Menominee.Api.RepairOrders
         }
 
         [HttpPost]
-        public async Task<ActionResult> Add(RepairOrderToWrite repairOrderToAdd)
+        public async Task<ActionResult<PostResponse>> AddAsync(RepairOrderToWrite repairOrderToAdd)
         {
-            var customer = await customerRepository.GetCustomerEntityAsync(repairOrderToAdd.Customer.Id);
+            var customer = await customerRepository.GetEntityAsync(repairOrderToAdd.Customer.Id);
             var vehicle = await vehicleRepository.GetEntityAsync(repairOrderToAdd.Vehicle.Id);
-            var repairOrderNumbers = await repository.GetTodaysRepairOrderNumbers();
+            var repairOrderNumbers = await repository.GetTodaysRepairOrderNumbersAsync();
             var saleCodeIds = repairOrderToAdd.Services.Select(service => service.SaleCode.Id).ToList();
-            //var saleCodeIds = repairOrderToAdd.Services
-            //.SelectMany(service => service.LineItems) // Flatten the nested collections
-            //.Select(lineItem => lineItem.Item.SaleCode.Id) // Select the SaleCode.Id from each item
-            //.ToList();
             var saleCodes = await saleCodeRepository.GetSaleCodeEntitiesAsync(saleCodeIds, all: true);
             var services = repairOrderToAdd.Services;
-            var lineItems = services.SelectMany(x => x.LineItems).ToList();
+            var allLineItems = services.SelectMany(service => service.LineItems).ToList();
 
-            var productCodes = await productCodeRepository.GetProductCodeEntitiesAsync();
-            var manufacturerIds = lineItems.Select(lineItem => lineItem.Item.Id);
+            var allProductCodes = await productCodeRepository.GetEntitiesAsync();
+            var allLineItemManufacturerIds = allLineItems.Select(lineItem => lineItem.Item.Id);
             //var manufacturers = await manufacturersRepository.GetManufacturerEntitiesAsync((List<long>)manufacturerIds); // We haven't saved yet, so LineItem.Item.Id == 0;
-            var manufacturers = await manufacturersRepository.GetManufacturerEntitiesAsync();
+            var allLineItemManufacturers = await manufacturersRepository.GetEntitiesAsync();
             // TODO: Find the manufacturers, saleCodes and productCodes in repairOrderToAdd.Services => LineItems
 
 
-            var employees = await employeeRepository.GetEmployeeEntities();
+            var employees = await employeeRepository.GetEntitiesAsync();
             var itemParts = new List<RepairOrderItemPart>();
             var lastInvoiceNumberOrSeed = repository.GetLastInvoiceNumberOrSeed();
             var repairOrder = RepairOrder.Create(
@@ -346,23 +339,24 @@ namespace Menominee.Api.RepairOrders
                 taxes: RepairOrderTaxHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Taxes),
                 payments: PaymentHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Payments)
                 ).Value;
-            await repository.Add(repairOrder);
-            await repository.SaveChanges();
 
-            return Created(
-                new Uri($"{BasePath}/{repairOrder.Id}", UriKind.Relative),
-                new { id = repairOrder.Id });
+            repository.Add(repairOrder);
+            await repository.SaveChangesAsync();
+
+            return Created(new Uri($"api/RepairOrders/{repairOrder.Id}",
+                UriKind.Relative),
+                new { repairOrder.Id });
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<ActionResult> Delete(long id)
+        public async Task<ActionResult> DeleteAsync(long id)
         {
-            var roFromRepository = await repository.Get(id);
-            if (roFromRepository == null)
+            var repairOrder = await repository.GetEntityAsync(id);
+            if (repairOrder is null)
                 return NotFound($"Could not find Repair Order in the database to delete with id of {id}.");
 
-            await repository.Delete(id);
-            await repository.SaveChanges();
+            repository.Delete(repairOrder);
+            await repository.SaveChangesAsync();
 
             return NoContent();
         }

@@ -19,18 +19,13 @@ namespace Menominee.Api.Payables.PaymentMethods
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddPaymentMethodAsync(VendorInvoicePaymentMethod payMethod)
+        public void Delete(VendorInvoicePaymentMethod payMethod)
         {
             if (payMethod is not null)
-                await context.AddAsync(payMethod);
+                context.Remove(payMethod);
         }
 
-        public void DeletePaymentMethod(VendorInvoicePaymentMethod payMethod)
-        {
-            context.Remove(payMethod);
-        }
-
-        public async Task<VendorInvoicePaymentMethodToRead> GetPaymentMethodAsync(long id)
+        public async Task<VendorInvoicePaymentMethodToRead> GetAsync(long id)
         {
             var payMethodFromContext = await context.VendorInvoicePaymentMethods
                 .Include(method => method.ReconcilingVendor)
@@ -43,7 +38,7 @@ namespace Menominee.Api.Payables.PaymentMethods
                 : null;
         }
 
-        public async Task<VendorInvoicePaymentMethod> GetPaymentMethodEntityAsync(long id)
+        public async Task<VendorInvoicePaymentMethod> GetEntityAsync(long id)
         {
             var payMethodFromContext = await context.VendorInvoicePaymentMethods
                 .Include(method => method.ReconcilingVendor)
@@ -55,7 +50,7 @@ namespace Menominee.Api.Payables.PaymentMethods
                 : null;
         }
 
-        public async Task<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>> GetPaymentMethodListAsync()
+        public async Task<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>> GetListAsync()
         {
             IReadOnlyList<VendorInvoicePaymentMethod> payMethods = await context.VendorInvoicePaymentMethods
                 .Include(method => method.ReconcilingVendor)
@@ -82,27 +77,15 @@ namespace Menominee.Api.Payables.PaymentMethods
             return result;
         }
 
-        public async Task<IReadOnlyList<VendorInvoicePaymentMethodToRead>> GetPaymentMethodsAsync()
-        {
-            IReadOnlyList<VendorInvoicePaymentMethod> payMethods = await context.VendorInvoicePaymentMethods
-                .Include(method => method.ReconcilingVendor)
-                .AsSplitQuery()
-                .AsNoTracking()
-                .ToListAsync();
-
-            return payMethods.Select(payMethod => VendorInvoicePaymentMethodHelper.ConvertToReadDto(payMethod))
-                             .ToList();
-        }
-
-        public async Task<bool> PaymentMethodExistsAsync(long id)
-        {
-            return await context.VendorInvoicePaymentMethods.AnyAsync(payMethod => payMethod.Id == id);
-        }
-
         public async Task SaveChangesAsync()
         {
             await context.SaveChangesAsync();
         }
 
+        public void Add(VendorInvoicePaymentMethod payMethod)
+        {
+            if (payMethod is not null)
+                context.Attach(payMethod);
+        }
     }
 }

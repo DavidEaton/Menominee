@@ -28,7 +28,7 @@
                            OnAddAsync="Add"
                            OnRowClicked="EditAsync"></CustomersGrid>
             }
-            @if ((FormMode == FormMode.Add || FormMode == FormMode.Edit))
+            @if ((FormMode == FormMode.Add || FormMode == FormMode.Edit && Customer is not null))
             {
                 @if (Customer?.Person is null && Customer?.Business is null)
                 {

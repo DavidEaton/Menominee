@@ -1,4 +1,5 @@
-﻿using Menominee.Client.Services;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Client.Services;
 using Menominee.Shared.Models.Employees;
 using Microsoft.AspNetCore.Components;
 
@@ -17,7 +18,11 @@ namespace Menominee.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            EmployeesList = (await EmployeeDataService.GetAllEmployees()).ToList();
+            await EmployeeDataService.GetAllAsync()
+                .Match(
+                    success => EmployeesList = success,
+                    failure => Logger.LogError(failure)
+            );
         }
 
         private void SetSelectedId(long id)

@@ -1,4 +1,5 @@
 ﻿using Menominee.Api.Common;
+using Menominee.Common.Http;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.CreditCards;
 using Microsoft.AspNetCore.Mvc;
@@ -19,44 +20,41 @@ namespace Menominee.Api.CreditCards
         }
 
         [HttpGet("listing")]
-        public async Task<ActionResult<IReadOnlyList<CreditCardToReadInList>>> GetCreditCardListAsync()
+        public async Task<ActionResult<IReadOnlyList<CreditCardToReadInList>>> GetListAsync()
         {
-            var results = await repository.GetCreditCardListAsync();
+            var results = await repository.GetListAsync();
             return Ok(results);
         }
 
         [HttpGet("{id:long}")]
-        public async Task<ActionResult<CreditCardToRead>> GetCreditCardAsync(long id)
+        public async Task<ActionResult<CreditCardToRead>> GetAsync(long id)
         {
-            var result = await repository.GetCreditCardAsync(id);
+            var result = await repository.GetAsync(id);
 
-            if (result == null)
-                return NotFound();
-
-            return result;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateCreditCardAsync(long id, CreditCardToWrite creditCard)
+        public async Task<ActionResult> UpdateAsync(CreditCardToWrite creditCardFromCaller)
         {
-            if (!await repository.CreditCardExistsAsync(creditCard.Id))
-                return NotFound($"Could not find Credit Card to update: {creditCard.Name}");
+            var creditCardFromRepository = await repository.GetEntityAsync(creditCardFromCaller.Id);
 
-            var creditCardFromRepository = await repository.GetCreditCardEntityAsync(id);
+            if (creditCardFromRepository is null)
+                return NotFound($"Could not find Credit Card to update: {creditCardFromCaller.Name}");
 
-            if (creditCardFromRepository.Name != creditCard.Name)
-                creditCardFromRepository.SetName(creditCard.Name);
+            if (creditCardFromRepository.Name != creditCardFromCaller.Name)
+                creditCardFromRepository.SetName(creditCardFromCaller.Name);
 
-            if (creditCardFromRepository.FeeType != creditCard.FeeType)
-                creditCardFromRepository.SetFeeType(creditCard.FeeType);
+            if (creditCardFromRepository.FeeType != creditCardFromCaller.FeeType)
+                creditCardFromRepository.SetFeeType(creditCardFromCaller.FeeType);
 
-            if (creditCardFromRepository.Fee != creditCard.Fee)
-                creditCardFromRepository.SetFee(creditCard.Fee);
+            if (creditCardFromRepository.Fee != creditCardFromCaller.Fee)
+                creditCardFromRepository.SetFee(creditCardFromCaller.Fee);
 
-            if (creditCardFromRepository.IsAddedToDeposit != creditCard.IsAddedToDeposit)
-                creditCardFromRepository.SetIsAddedToDeposit(creditCard.IsAddedToDeposit);
-
-            await repository.UpdateCreditCardAsync(creditCardFromRepository);
+            if (creditCardFromRepository.IsAddedToDeposit != creditCardFromCaller.IsAddedToDeposit)
+                creditCardFromRepository.SetIsAddedToDeposit(creditCardFromCaller.IsAddedToDeposit);
 
             await repository.SaveChangesAsync();
 
@@ -64,31 +62,28 @@ namespace Menominee.Api.CreditCards
         }
 
         [HttpPost]
-        public async Task<ActionResult<CreditCardToRead>> AddCreditCardAsync(CreditCardToWrite creditCardToAdd)
+        public async Task<ActionResult<PostResponse>> AddAsync(CreditCardToWrite creditCardToAdd)
         {
-            var result = CreditCard.Create(creditCardToAdd.Name, creditCardToAdd.FeeType, creditCardToAdd.Fee, creditCardToAdd.IsAddedToDeposit);
+            // No need to validate it here again, just call .Value right away
+            var creditCard = CreditCard.Create(creditCardToAdd.Name, creditCardToAdd.FeeType, creditCardToAdd.Fee, creditCardToAdd.IsAddedToDeposit).Value;
 
-            if (result.IsFailure)
-                return BadRequest($"Could not add new Credit Card '{creditCardToAdd.Name}'.");
-
-            await repository.AddCreditCardAsync(result.Value);
-
+            repository.Add(creditCard);
             await repository.SaveChangesAsync();
 
-            return Created(
-              new Uri($"api/creditCardscontroller/{result.Value.Id}", UriKind.Relative),
-              new { result.Value.Id });
+            return Created(new Uri($"api/creditCards/{creditCard.Id}",
+                UriKind.Relative),
+                new { creditCard.Id });
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<ActionResult> DeleteCreditCardAsync(long id)
+        public async Task<ActionResult> DeleteAsync(long id)
         {
-            var ccFromRepository = await repository.GetCreditCardAsync(id);
-            if (ccFromRepository == null)
+            var cardFromRepository = await repository.GetEntityAsync(id);
+
+            if (cardFromRepository is null)
                 return NotFound($"Could not find Credit Card in the database to delete with Id: {id}.");
 
-            await repository.DeleteCreditCardAsync(id);
-
+            repository.Delete(cardFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();

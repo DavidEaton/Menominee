@@ -1,4 +1,5 @@
 ﻿using Menominee.Api.Common;
+using Menominee.Domain.Entities.Taxes;
 using Menominee.Shared.Models.Taxes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,42 +18,39 @@ namespace Menominee.Api.Taxes
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        // api/excisefees/listing
-        [Route("listing")]
-        [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ExciseFeeToReadInList>>> GetExciseFeeListAsync()
+        [HttpGet("listing")]
+        public async Task<ActionResult<IReadOnlyList<ExciseFeeToReadInList>>> GetListAsync()
         {
-            var results = await repository.GetExciseFeeListAsync();
-            return Ok(results);
+            var result = await repository.GetListAsync();
+
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/excisefees/1
         [HttpGet("{id:long}")]
-        public async Task<ActionResult<ExciseFeeToRead>> GetExciseFeeAsync(long id)
+        public async Task<ActionResult<ExciseFeeToRead>> GetAsync(long id)
         {
-            var result = await repository.GetExciseFeeAsync(id);
+            var result = await repository.GetAsync(id);
 
-            if (result == null)
-                return NotFound();
-
-            return result;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/excisefees/1
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateExciseFeeAsync(long id, ExciseFeeToWrite exciseFee)
+        public async Task<ActionResult> UpdateAsync(ExciseFeeToWrite exciseFeeToUpdate)
         {
-            if (!await repository.ExciseFeeExistsAsync(id))
-                return NotFound($"Could not find Excise Fee to update: {exciseFee.Description}");
+            var exciseFeeFromRepository = await repository.GetEntityAsync(exciseFeeToUpdate.Id);
+            if (exciseFeeFromRepository is null)
+                return NotFound($"Could not find Excise Fee to update: {exciseFeeToUpdate.Description}");
 
-            //1) Get domain entity from repository
-            var exciseFeeFromRepository = await repository.GetExciseFeeEntityAsync(id);
+            if (ExciseFeesAreEqual(exciseFeeFromRepository, exciseFeeToUpdate))
+                return NoContent();
 
-            // 2) Update domain entity with data in data transfer object(DTO)
-
-            exciseFeeFromRepository.SetDescription(exciseFee.Description);
-            exciseFeeFromRepository.SetFeeType(exciseFee.FeeType);
-            exciseFeeFromRepository.SetAmount(exciseFee.Amount);
+            exciseFeeFromRepository.SetDescription(exciseFeeToUpdate.Description);
+            exciseFeeFromRepository.SetFeeType(exciseFeeToUpdate.FeeType);
+            exciseFeeFromRepository.SetAmount(exciseFeeToUpdate.Amount);
 
             await repository.SaveChangesAsync();
 
@@ -60,38 +58,40 @@ namespace Menominee.Api.Taxes
         }
 
         [HttpPost]
-        public async Task<ActionResult<ExciseFeeToRead>> AddExciseFeeAsync(ExciseFeeToAdd exciseFeeToAdd)
+        public async Task<ActionResult<ExciseFeeToRead>> AddAsync(ExciseFeeToAdd exciseFeeToAdd)
         {
-            // 1. Convert dto to domain entity
-            var exciseFee = ExciseFeeHelper.ConvertAddDtoToEntity(exciseFeeToAdd);
+            var exciseFee = ExciseFee.Create(
+                exciseFeeToAdd.Description,
+                exciseFeeToAdd.FeeType,
+                exciseFeeToAdd.Amount)
+                .Value;
 
-            // 2. Add domain entity to repository
-            await repository.AddExciseFeeAsync(exciseFee);
-
-            // 3. Save changes on repository
+            repository.Add(exciseFee);
             await repository.SaveChangesAsync();
 
-            // 4. Return new fee from database to consumer after save
-            return CreatedAtRoute("GetExciseFeeAsync",
-                new { exciseFee.Id },
-                ExciseFeeHelper.ConvertToReadDto(exciseFee));
+            return Created(
+                new Uri($"api/ExciseFeesController/{exciseFee.Id}", UriKind.Relative),
+                new { exciseFee.Id });
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<ActionResult> DeleteExciseFeeAsync(long id)
+        public async Task<ActionResult> DeleteAsync(long id)
         {
             // TODO - Is this where we should this delete the entries in the SalesTaxTaxableExciseFee table too?
             // Yes if cascade deelets ==  true
-            var exciseFeeFromRepository = await repository.GetExciseFeeEntityAsync(id);
-
+            var exciseFeeFromRepository = await repository.GetEntityAsync(id);
             if (exciseFeeFromRepository is null)
                 return NotFound($"Could not find Excise Fee in the database to delete with Id: {id}.");
 
-            repository.DeleteExciseFee(exciseFeeFromRepository);
-
+            repository.Delete(exciseFeeFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();
         }
+
+        private static bool ExciseFeesAreEqual(ExciseFee exciseFeeFromRepository, ExciseFeeToWrite exciseFeeToUpdate) =>
+            exciseFeeFromRepository.Description == exciseFeeToUpdate.Description
+                && exciseFeeFromRepository.FeeType == exciseFeeToUpdate.FeeType
+                && exciseFeeFromRepository.Amount == exciseFeeToUpdate.Amount;
     }
 }

@@ -17,20 +17,20 @@ namespace Menominee.Api.Taxes
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        // api/salestaxes/listing
-        [Route("listing")]
-        [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<SalesTaxToReadInList>>> GetSalesTaxListAsync()
+        [HttpGet("listing")]
+        public async Task<ActionResult<IReadOnlyList<SalesTaxToReadInList>>> GetListAsync()
         {
-            var results = await repository.GetSalesTaxListAsync();
-            return Ok(results);
+            var result = await repository.GetListAsync();
+
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/salestaxes/1
         [HttpGet("{id:long}")]
-        public async Task<ActionResult<SalesTaxToRead>> GetSalesTaxAsync(long id)
+        public async Task<ActionResult<SalesTaxToRead>> GetAsync(long id)
         {
-            var result = await repository.GetSalesTaxAsync(id);
+            var result = await repository.GetAsync(id);
 
             if (result == null)
                 return NotFound();
@@ -38,38 +38,50 @@ namespace Menominee.Api.Taxes
             return result;
         }
 
-        // api/salestaxes/1
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateSalesTaxAsync(long id, SalesTaxToWrite salesTax)
+        public async Task<ActionResult> UpdateAsync(SalesTaxToWrite salesTaxToUpdate)
         {
-            if (!await repository.SalesTaxExistsAsync(id))
-                return NotFound($"Could not find Sales Tax to update: {salesTax.Description}");
+            var taxFromRepository = await repository.GetEntityAsync(salesTaxToUpdate.Id);
+            if (taxFromRepository is null)
+                return NotFound($"Could not find Sales Tax to update: {salesTaxToUpdate.Description}");
 
-            //1) Get domain entity from repository
-            SalesTax taxFromRepository = await repository.GetSalesTaxEntityAsync(id);
+            if (TaxesAreEqual(taxFromRepository, salesTaxToUpdate))
+                return NoContent();
 
-            // 2) Update domain entity with data in data transfer object(DTO)
-            taxFromRepository.SetDescription(salesTax.Description);
-            taxFromRepository.SetTaxType(salesTax.TaxType);
-            taxFromRepository.SetOrder(salesTax.Order);
-            taxFromRepository.SetIsAppliedByDefault(salesTax.IsAppliedByDefault);
-            taxFromRepository.SetIsTaxable(salesTax.IsTaxable);
-            taxFromRepository.SetTaxIdNumber(salesTax.TaxIdNumber);
-            taxFromRepository.SetPartTaxRate(salesTax.PartTaxRate);
-            taxFromRepository.SetLaborTaxRate(salesTax.LaborTaxRate);
-            //taxFromRepository.SetExciseFees(ExciseFeeHelper.ConvertWriteDtosToEntities(salesTax.ExciseFees));
-
-            await repository.UpdateSalesTaxAsync(taxFromRepository);
-
+            UpdateSalesTax(salesTaxToUpdate, taxFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();
         }
 
-        [HttpPost]
-        public async Task<ActionResult<SalesTaxToRead>> AddSalesTaxAsync(SalesTaxToWrite taxToAdd)
+        private void UpdateSalesTax(SalesTaxToWrite salesTaxToUpdate, SalesTax taxFromRepository)
         {
-            // 1. Convert dto to domain entity
+            taxFromRepository.SetDescription(salesTaxToUpdate.Description);
+            taxFromRepository.SetTaxType(salesTaxToUpdate.TaxType);
+            taxFromRepository.SetOrder(salesTaxToUpdate.Order);
+            taxFromRepository.SetIsAppliedByDefault(salesTaxToUpdate.IsAppliedByDefault);
+            taxFromRepository.SetIsTaxable(salesTaxToUpdate.IsTaxable);
+            taxFromRepository.SetTaxIdNumber(salesTaxToUpdate.TaxIdNumber);
+            taxFromRepository.SetPartTaxRate(salesTaxToUpdate.PartTaxRate);
+            taxFromRepository.SetLaborTaxRate(salesTaxToUpdate.LaborTaxRate);
+            //taxFromRepository.SetExciseFees(ExciseFeeHelper.ConvertWriteDtosToEntities(salesTax.ExciseFees));
+        }
+
+        private bool TaxesAreEqual(SalesTax entity, SalesTaxToWrite dto)
+        {
+            return entity.Description == dto.Description
+                && entity.TaxType == dto.TaxType
+                && entity.Order == dto.Order
+                && entity.IsAppliedByDefault == dto.IsAppliedByDefault
+                && entity.IsTaxable == dto.IsTaxable
+                && entity.TaxIdNumber == dto.TaxIdNumber
+                && entity.PartTaxRate == dto.PartTaxRate
+                && entity.LaborTaxRate == dto.LaborTaxRate;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<SalesTaxToRead>> AddAsync(SalesTaxToWrite taxToAdd)
+        {
             var tax = SalesTax.Create(
                 taxToAdd.Description,
                 taxToAdd.TaxType,
@@ -81,29 +93,23 @@ namespace Menominee.Api.Taxes
                 taxToAdd.IsAppliedByDefault,
                 taxToAdd.IsTaxable).Value;
 
-            // 2. Add domain entity to repository
-            await repository.AddSalesTaxAsync(tax);
-
-            // 3. Save changes on repository
+            repository.Add(tax);
             await repository.SaveChangesAsync();
 
-            // 4. Return new tax from database to consumer after save
-            return CreatedAtRoute("GetSalesTaxAsync",
-                new { tax.Id },
-                SalesTaxHelper.ConvertToReadDto(tax));
+            return Created(
+                new Uri($"api/SalesTaxes/{tax.Id}", UriKind.Relative),
+                new { tax.Id });
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<ActionResult> DeleteSalesTaxAsync(long id)
+        public async Task<ActionResult> DeleteAsync(long id)
         {
             // TODO - Is this where we should this delete the entries in the SalesTaxTaxableExciseFee table too?
-
-            var tax = await repository.GetSalesTaxAsync(id);
-            if (tax == null)
+            var taxFromRepository = await repository.GetEntityAsync(id);
+            if (taxFromRepository is null)
                 return NotFound($"Could not find Sales Tax in the database to delete with Id: {id}.");
 
-            await repository.DeleteSalesTaxAsync(id);
-
+            repository.Delete(taxFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();

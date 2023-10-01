@@ -6,9 +6,9 @@ namespace Menominee.Api.SellingPriceNames;
 
 public interface ISellingPriceNameRepository
 {
-    Task<IReadOnlyList<SellingPriceName>> GetAll();
-    Task<SellingPriceName> GetEntity(long id);
     void Add(SellingPriceName entity);
     void Delete(SellingPriceName entity);
-    Task SaveChanges();
+    Task<IReadOnlyList<SellingPriceName>> GetAllAsync();
+    Task<SellingPriceName> GetEntityAsync(long id);
+    Task SaveChangesAsync();
 }

@@ -1,4 +1,5 @@
-﻿using Menominee.Api.Data;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Api.Data;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.SaleCodes;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +20,16 @@ namespace Menominee.Api.SaleCodes
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddSaleCodeAsync(SaleCode saleCode)
+        public void Add(SaleCode saleCode)
         {
-            if (saleCode != null)
-                await context.AddAsync(saleCode);
+            if (saleCode is not null)
+                context.Attach(saleCode);
+        }
+
+        public void Delete(SaleCode saleCode)
+        {
+            if (saleCode is not null)
+                context.Remove(saleCode);
         }
 
         public async Task DeleteSaleCodeAsync(long id)
@@ -33,7 +40,7 @@ namespace Menominee.Api.SaleCodes
         }
 
 
-        public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
+        public async Task<SaleCodeToRead> GetAsync(long id)
         {
             return SaleCodeHelper.ConvertToReadDto(await context.SaleCodes
                 .Include(saleCode => saleCode.ShopSupplies)
@@ -42,18 +49,21 @@ namespace Menominee.Api.SaleCodes
                 .FirstOrDefaultAsync(saleCode => saleCode.Id == id));
         }
 
-        public async Task<IReadOnlyList<SaleCode>> GetSaleCodeEntitiesAsync(List<long> ids, bool all = false)
+        public async Task<Result<IReadOnlyList<SaleCode>>> GetSaleCodeEntitiesAsync(List<long> ids, bool all = false)
         {
-            return all
-                    ? await context.SaleCodes
-                        .ToListAsync()
-                    : await context.SaleCodes
-                        .Where(saleCode =>
-                            ids.Contains(saleCode.Id)).ToListAsync();
+            var saleCodes = all
+                ? await context.SaleCodes.ToListAsync()
+                : await context.SaleCodes
+                    .Where(saleCode => ids.Contains(saleCode.Id))
+                    .ToListAsync();
+
+            if (saleCodes == null || !saleCodes.Any())
+                return Result.Failure<IReadOnlyList<SaleCode>>("No sale codes found.");
+
+            return Result.Success<IReadOnlyList<SaleCode>>(saleCodes);
         }
 
-
-        public async Task<SaleCode> GetSaleCodeEntityAsync(string code)
+        public async Task<SaleCode> GetEntityAsync(string code)
         {
             var saleCodeFromContext = await context.SaleCodes
                 .FirstOrDefaultAsync(saleCode => saleCode.Code == code);
@@ -61,7 +71,7 @@ namespace Menominee.Api.SaleCodes
             return saleCodeFromContext;
         }
 
-        public async Task<SaleCode> GetSaleCodeEntityAsync(long id)
+        public async Task<SaleCode> GetEntityAsync(long id)
         {
             var saleCodeFromContext = await context.SaleCodes
                 .FirstOrDefaultAsync(saleCode => saleCode.Id == id);
@@ -69,7 +79,7 @@ namespace Menominee.Api.SaleCodes
             return saleCodeFromContext;
         }
 
-        public async Task<IReadOnlyList<SaleCodeToReadInList>> GetSaleCodeListAsync()
+        public async Task<IReadOnlyList<SaleCodeToReadInList>> GetListAsync()
         {
             var saleCodes = await context.SaleCodes.ToListAsync();
 
@@ -78,7 +88,7 @@ namespace Menominee.Api.SaleCodes
                 .ToList();
         }
 
-        public async Task<IReadOnlyList<SaleCodeShopSuppliesToRead>> GetSaleCodeShopSupplies(long Id)
+        public async Task<IReadOnlyList<SaleCodeShopSuppliesToRead>> GetShopSuppliesAsync(long Id)
         {
             var shopSupplies = await context.SaleCodeShopSupplies.ToListAsync();
 
@@ -96,7 +106,7 @@ namespace Menominee.Api.SaleCodes
                 .ToList();
         }
 
-        public async Task<IReadOnlyList<SaleCodeShopSuppliesToReadInList>> GetSaleCodeShopSuppliesListAsync()
+        public async Task<IReadOnlyList<SaleCodeShopSuppliesToReadInList>> GetShopSuppliesListAsync()
         {
             return await context.SaleCodes
                 .Include(saleCode => saleCode.ShopSupplies)
@@ -104,14 +114,9 @@ namespace Menominee.Api.SaleCodes
                 .ToListAsync();
         }
 
-        public async Task<bool> SaleCodeExistsAsync(long id)
+        public async Task SaveChangesAsync()
         {
-            return await context.SaleCodes.AnyAsync(saleCode => saleCode.Id == id);
-        }
-
-        public async Task<bool> SaveChangesAsync()
-        {
-            return await context.SaveChangesAsync() > 0;
+            await context.SaveChangesAsync();
         }
     }
 }

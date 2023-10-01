@@ -1,30 +1,26 @@
-﻿using Menominee.Shared.Models.Inventory.InventoryItems;
-using Menominee.Shared.Models.Manufacturers;
-using Menominee.Shared.Models.Payables.Invoices.LineItems;
-using Menominee.Shared.Models.SaleCodes;
-using Menominee.Client.Services.Manufacturers;
+﻿using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Inventory.InventoryItems;
+using Menominee.Shared.Models.Manufacturers;
+using Menominee.Shared.Models.Payables.Invoices.LineItems;
+using Menominee.Shared.Models.SaleCodes;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Payables
 {
     public partial class VendorInvoiceItemEditor
     {
         [Inject]
-        public IManufacturerDataService manufacturerDataService { get; set; }
+        public IManufacturerDataService ManufacturerDataService { get; set; }
 
         [Inject]
-        public IProductCodeDataService productCodeDataService { get; set; }
+        public IProductCodeDataService ProductCodeDataService { get; set; }
 
         [Inject]
-        public ISaleCodeDataService saleCodeDataService { get; set; }
+        public ISaleCodeDataService SaleCodeDataService { get; set; }
 
         [Parameter]
         public VendorInvoiceLineItemToWrite LineItem { get; set; }
@@ -44,7 +40,7 @@ namespace Menominee.Client.Components.Payables
         private bool ItemSelectDialogVisible { get; set; } = false;
         public InventoryItemToReadInList SelectedInventoryItem { get; set; }
         private bool CanEdit { get; set; } = false;
-        private IReadOnlyList<ManufacturerToReadInList> Manufacturers;
+        private IReadOnlyList<ManufacturerToReadInList> Manufacturers = new List<ManufacturerToReadInList>();
         private IList<InvoiceItemType> ItemTypes { get; set; } = new List<InvoiceItemType>();
         private IReadOnlyList<SaleCodeToReadInList> SaleCodes { get; set; } = new List<SaleCodeToReadInList>();
 
@@ -54,14 +50,21 @@ namespace Menominee.Client.Components.Payables
 
         protected override async Task OnInitializedAsync()
         {
-            Manufacturers = (await manufacturerDataService.GetAllManufacturersAsync())
-                                                          .Where(mfr => mfr.Prefix?.Length > 0
-                                                          // TODO: Move where clause to api method
-                                                                     && mfr.Id != StaticManufacturerCodes.Package)
-                                                          .OrderBy(mfr => mfr.Prefix)
-                                                          .ToList();
+            var resultTask = await ManufacturerDataService.GetAllAsync();
+            if (resultTask.IsSuccess)
+            {
+                Manufacturers = resultTask.Value
+                                             .Where(mfr => mfr.Prefix?.Length > 0
+                                                        && mfr.Id != StaticManufacturerCodes.Custom
+                                                        && mfr.Id != StaticManufacturerCodes.Package)
+                                             .OrderBy(mfr => mfr.Prefix)
+                                             .ToList();
+            }
 
-            SaleCodes = (await saleCodeDataService.GetAllSaleCodesAsync())
+            if (resultTask.IsFailure)
+                Manufacturers = new List<ManufacturerToReadInList>();
+
+            SaleCodes = (await SaleCodeDataService.GetAllAsync())
                                                           .OrderBy(saleCode => saleCode.Code)
                                                           .ToList();
 
@@ -111,12 +114,14 @@ namespace Menominee.Client.Components.Payables
 
             if (SelectedInventoryItem is not null)
             {
-                var productCode = await productCodeDataService.GetProductCodeAsync(SelectedInventoryItem.ProductCode.Id);
+                var productCode = await ProductCodeDataService.GetAsync(SelectedInventoryItem.ProductCode.Id);
 
-                LineItem.Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(SelectedInventoryItem.Manufacturer.Id);
+                var manufacturerResult = await ManufacturerDataService.GetAsync(StaticManufacturerCodes.Miscellaneous);
+                if (manufacturerResult.IsSuccess)
+                    LineItem.Item.Manufacturer = manufacturerResult.Value;
 
-                if (productCode?.SaleCode?.Code.Length > 0)
-                    LineItem.Item.SaleCode = productCode.SaleCode;
+                if (productCode.Value.SaleCode?.Code.Length > 0)
+                    LineItem.Item.SaleCode = productCode.Value.SaleCode;
 
                 LineItem.Item.PartNumber = SelectedInventoryItem.ItemNumber;
                 LineItem.Item.Description = SelectedInventoryItem.Description;

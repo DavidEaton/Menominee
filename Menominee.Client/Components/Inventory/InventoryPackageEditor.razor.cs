@@ -1,32 +1,17 @@
-﻿using Menominee.Shared.Models.Inventory.InventoryItems;
-using Menominee.Shared.Models.Inventory.InventoryItems.Package;
-using Menominee.Client.Services.Manufacturers;
-using Menominee.Client.Services.ProductCodes;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Inventory.InventoryItems;
+using Menominee.Shared.Models.Inventory.InventoryItems.Package;
+using Menominee.Shared.Models.ProductCodes;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
 using Telerik.Blazor.Components.Editor;
 
 namespace Menominee.Client.Components.Inventory
 {
-    public partial class InventoryPackageEditor
+    public partial class InventoryPackageEditor : InventoryEditorBase
     {
-        [Inject]
-        public IManufacturerDataService manufacturerDataService { get; set; }
-
-        [Inject]
-        public IProductCodeDataService productCodeDataService { get; set; }
-
-        [Parameter]
-        public InventoryItemToWrite Item { get; set; }
-
-        [Parameter]
-        public string Title { get; set; } = "Edit Package";
-
         [Parameter]
         public EventCallback OnValidSubmit { get; set; }
 
@@ -34,18 +19,17 @@ namespace Menominee.Client.Components.Inventory
         public EventCallback OnDiscard { get; set; }
 
         [CascadingParameter]
-        public DialogFactory Dialogs { get; set; }
+        public DialogFactory Dialogs { get; set; } = null!;
 
-        private bool parametersSet = false;
         private FormMode ItemFormMode = FormMode.Unknown;
-        private InventoryItemPackagePlaceholderToWrite SelectedPlaceholder;
+        private InventoryItemPackagePlaceholderToWrite SelectedPlaceholder { get; set; } = new();
         private long ItemId { get; set; } = 0;      // TODO: ItemId won't work for new items since their Ids will all be 0
-        private InventoryItemPackagePlaceholderToWrite Placeholder { get; set; }
+        private InventoryItemPackagePlaceholderToWrite Placeholder { get; set; } = new();
 
-        private TelerikGrid<InventoryItemPackagePlaceholderToWrite> PlaceholdersGrid { get; set; }
-        private InventoryItemPackagePlaceholderToWrite PlaceholderToAdd { get; set; }
-        public InventoryItemToReadInList SelectedInventoryItem { get; set; }
-        public List<InventoryItemPackagePlaceholderToWrite> SelectedPlaceholders { get; set; }
+        private TelerikGrid<InventoryItemPackagePlaceholderToWrite> PlaceholdersGrid { get; set; } = null!;
+        private InventoryItemPackagePlaceholderToWrite PlaceholderToAdd { get; set; } = new();
+        public InventoryItemToReadInList SelectedInventoryItem { get; set; } = new();
+        public List<InventoryItemPackagePlaceholderToWrite> SelectedPlaceholders { get; set; } = null!;
         public List<IEditorTool> EditTools { get; set; } =
             new List<IEditorTool>()
             {
@@ -58,27 +42,41 @@ namespace Menominee.Client.Components.Inventory
 
         protected override async Task OnParametersSetAsync()
         {
-            if (parametersSet)
+            await InitializeNewItemAsPackage();
+        }
+
+        private async Task InitializeNewItemAsPackage()
+        {
+            if (Item?.Package is not null)
                 return;
 
-            parametersSet = true;
+            await LoadItemManufacturerByMiscellaneousStaticManufacturerCode();
+            await InitializeItemManufacturerProductCode();
+            InitializePackage();
+            Title = "Add Package";
+        }
 
-            if (Item?.Package == null)
-            {
-                // TODO: How do we handle improper manufacturer / productcode setups?  What if these don't exist yet?
-                //Item.ManufacturerId = PackageMfrId;
-                Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Package);
-                Item.ProductCode = await productCodeDataService.GetProductCodeAsync(
-                    (await productCodeDataService.GetAllProductCodesAsync(
-                        Item.Manufacturer.Id))
-                        .ToList()
-                        .FirstOrDefault().Id);
-                Item.Package = new();
-                Item.ItemType = InventoryItemType.Package;
+        private async Task InitializeItemManufacturerProductCode()
+        {
+            await ProductCodeDataService.GetByManufacturerAsync(Item.Manufacturer.Id)
+                .Match(
+                    async success =>
+                        Item.ProductCode = await GetProductCodeByFirstId(success),
+                    failure =>
+                        Item.ProductCode = new ProductCodeToRead()
+                );
+        }
+        private async Task<ProductCodeToRead> GetProductCodeByFirstId(IReadOnlyList<ProductCodeToReadInList> productCodes)
+        {
+            var firstId = productCodes.FirstOrDefault()?.Id ?? 0;
+            var productCodeResult = await ProductCodeDataService.GetAsync(firstId);
+            return productCodeResult.IsSuccess ? productCodeResult.Value : new ProductCodeToRead();
+        }
 
-                Title = "Add Package";
-            }
-
+        private void InitializePackage()
+        {
+            Item.Package = new InventoryItemPackageToWrite();
+            Item.ItemType = InventoryItemType.Package;
         }
 
         private void OnAddPlaceholder()
@@ -97,9 +95,6 @@ namespace Menominee.Client.Components.Inventory
             SelectedPlaceholder = itemToAdd;
             SelectedPlaceholders = new List<InventoryItemPackagePlaceholderToWrite> { SelectedPlaceholder };
         }
-
-
-
 
 
 

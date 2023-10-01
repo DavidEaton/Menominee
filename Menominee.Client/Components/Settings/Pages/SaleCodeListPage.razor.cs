@@ -1,9 +1,9 @@
-﻿using Menominee.Shared.Models.SaleCodes;
+﻿using Blazored.Toast.Services;
 using Menominee.Client.Services.SaleCodes;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.SaleCodes;
 using Microsoft.AspNetCore.Components;
 using Telerik.Blazor.Components;
-using Blazored.Toast.Services;
 
 namespace Menominee.Client.Components.Settings.Pages
 {
@@ -35,7 +35,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            SaleCodes = (await SaleCodeDataService.GetAllSaleCodesAsync()).ToList();
+            SaleCodes = (await SaleCodeDataService.GetAllAsync()).ToList();
 
             if (SaleCodes?.Count > 0)
             {
@@ -62,7 +62,7 @@ namespace Menominee.Client.Components.Settings.Pages
         {
             if (Id != 0)
             {
-                var saleCode = await SaleCodeDataService.GetSaleCodeAsync(Id);
+                var saleCode = await SaleCodeDataService.GetAsync(Id);
                 if (saleCode != null)
                 {
                     SaleCode = SaleCodeHelper.ConvertReadToWriteDto(saleCode);
@@ -95,7 +95,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected async Task HandleAddSubmitAsync()
         {
-            var response = await SaleCodeDataService.AddSaleCodeAsync(SaleCode);
+            var response = await SaleCodeDataService.AddAsync(SaleCode);
 
             if (response.IsFailure)
             {
@@ -111,7 +111,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected async Task HandleEditSubmitAsync()
         {
-            var response = await SaleCodeDataService.UpdateSaleCodeAsync(SaleCode, Id);
+            var response = await SaleCodeDataService.UpdateAsync(SaleCode);
 
             if (response.IsFailure)
             {
@@ -133,7 +133,7 @@ namespace Menominee.Client.Components.Settings.Pages
         protected async Task EndAddEditAsync()
         {
             EditFormMode = FormMode.Unknown;
-            SaleCodes = (await SaleCodeDataService.GetAllSaleCodesAsync()).ToList();
+            SaleCodes = (await SaleCodeDataService.GetAllAsync()).ToList();
             SelectedSaleCode = SaleCodes.Where(x => x.Id == Id).FirstOrDefault();
             SelectedSaleCodes = new List<SaleCodeToReadInList> { SelectedSaleCode };
         }

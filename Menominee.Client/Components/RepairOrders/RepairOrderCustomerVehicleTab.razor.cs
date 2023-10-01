@@ -47,7 +47,7 @@ public partial class RepairOrderCustomerVehicleTab
     {
         if (customer.Id > 0)
         {
-            var result = await CustomerDataService.UpdateCustomer(customer);
+            var result = await CustomerDataService.UpdateAsync(customer);
 
             if (result.IsFailure)
             {
@@ -56,7 +56,7 @@ public partial class RepairOrderCustomerVehicleTab
         }
         else
         {
-            var result = await CustomerDataService.AddCustomer(customer);
+            var result = await CustomerDataService.AddAsync(customer);
 
             if (result.IsFailure)
             {
@@ -101,7 +101,7 @@ public partial class RepairOrderCustomerVehicleTab
     {
         if (vehicle.Id > 0)
         {
-            var result = await VehicleDataService.UpdateVehicle(vehicle);
+            var result = await VehicleDataService.UpdateAsync(vehicle);
 
             if (result.IsFailure)
             {
@@ -110,7 +110,7 @@ public partial class RepairOrderCustomerVehicleTab
         }
         else
         {
-            var result = await VehicleDataService.AddVehicle(vehicle);
+            var result = await VehicleDataService.AddAsync(vehicle);
 
             if (result.IsFailure)
             {

@@ -26,9 +26,9 @@
         }
     }
 
-    @if ((PersonFormMode == FormMode.Add || PersonFormMode == FormMode.Edit) && PersonToWrite != null)
+    @if ((PersonFormMode == FormMode.Add || PersonFormMode == FormMode.Edit) && Person != null)
     {
-        <PersonContactableEditor Person="PersonToWrite"
+        <PersonContactableEditor Person="Person"
                                  FormMode="PersonFormMode"
                                  Save="SubmitHandlerAsync"
                                  Close="EndAddEditAsync"/>

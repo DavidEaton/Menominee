@@ -35,7 +35,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            await CreditCardDataService.GetAllCreditCardsAsync()
+            await CreditCardDataService.GetAllAsync()
                 .Match(
                     success =>
                     {
@@ -84,7 +84,7 @@ namespace Menominee.Client.Components.Settings.Pages
         {
             if (Id != 0)
             {
-                var creditCardResult = await CreditCardDataService.GetCreditCardAsync(Id)
+                var creditCardResult = await CreditCardDataService.GetAsync(Id)
                     .OnFailure(error =>
                     {
                         Logger.LogError(error);
@@ -132,7 +132,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
             try
             {
-                var addResult = await CreditCardDataService.AddCreditCardAsync(CreditCard);
+                var addResult = await CreditCardDataService.AddAsync(CreditCard);
 
                 if (addResult.IsFailure)
                 {
@@ -172,7 +172,7 @@ namespace Menominee.Client.Components.Settings.Pages
             if (CreditCard.FeeType == CreditCardFeeType.None)
                 CreditCard.Fee = 0.0;
 
-            await CreditCardDataService.UpdateCreditCardAsync(CreditCard);
+            await CreditCardDataService.UpdateAsync(CreditCard);
             await EndAddEditAsync();
         }
 
@@ -194,7 +194,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         private async Task GetAllCreditCardsAsync()
         {
-            await CreditCardDataService.GetAllCreditCardsAsync()
+            await CreditCardDataService.GetAllAsync()
                 .Match(
                     success =>
                     {

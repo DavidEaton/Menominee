@@ -21,12 +21,17 @@ namespace Menominee.Shared.Models.Businesses
 
             businessName = BusinessName.Create(business.Name).Value;
             if (business?.Address is not null)
-                businessAddress = Address.Create(
+            {
+                var result = Address.Create(
                     business.Address.AddressLine1,
                     business.Address.City,
                     business.Address.State,
                     business.Address.AddressLine2,
-                    business.Address.PostalCode).Value;
+                    business.Address.PostalCode);
+
+                if (result.IsSuccess)
+                    businessAddress = result.Value;
+            }
 
             if (business?.Phones?.Count > 0)
                 foreach (var phone in business.Phones)

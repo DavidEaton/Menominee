@@ -26,6 +26,9 @@ namespace Menominee.Client.Components.Payables.Pages
         [Parameter]
         public long ItemToSelect { get; set; } = 0;
 
+        [Inject]
+        ILogger<VendorInvoiceListPage> Logger { get; set; }
+
         private VendorInvoiceToRead? InvoiceToPrint { get; set; }
         private InvoiceTotals InvoiceTotals { get; set; } = new();
         private Dictionary<string, object> ReportParameters = new();
@@ -78,11 +81,18 @@ namespace Menominee.Client.Components.Payables.Pages
         private async Task GetVendorsAsync()
         {
             if (VendorDataService is not null)
-                Vendors = (await VendorDataService.GetAllVendorsAsync())
-                                                  .Where(vendor => vendor.IsActive == true)
-                                                  .OrderBy(vendor => vendor.VendorCode)
-                                                  .ToList();
+            {
+                await VendorDataService.GetAllAsync()
+                .Match(
+                    success => Vendors = success
+                        .Where(vendor => vendor.IsActive == true)
+                        .OrderBy(vendor => vendor.VendorCode)
+                        .ToList(),
+
+                    failure => Logger.LogError(failure));
+            }
         }
+
         private async Task OnVendorFilterChangeHandlerAsync(object vendorId)
         {
             ResourceParameters.VendorId = (long?)vendorId;
@@ -101,8 +111,16 @@ namespace Menominee.Client.Components.Payables.Pages
         private async Task GetInvoiceList()
         {
             if (VendorInvoiceDataService is not null)
-                InvoiceList = await VendorInvoiceDataService.GetInvoices(ResourceParameters);
+            {
+                var result = await VendorInvoiceDataService.GetAllByParametersAsync(ResourceParameters);
+
+                if (result.IsSuccess)
+                    InvoiceList = result.Value;
+                else
+                    InvoiceList = new List<VendorInvoiceToReadInList>().AsReadOnly();
+            }
         }
+
 
         private void SelectInvoices()
         {
@@ -149,10 +167,11 @@ namespace Menominee.Client.Components.Payables.Pages
             if (VendorInvoiceDataService is null)
                 return;
 
-            InvoiceToPrint = await VendorInvoiceDataService.GetInvoice(SelectedId);
-            if (InvoiceToPrint is not null)
+            var getInvoiceResult = await VendorInvoiceDataService.GetAsync(SelectedId);
+            if (getInvoiceResult.IsSuccess)
             {
                 // TODO: Need to get the real shop name and number to display on the report
+                InvoiceToPrint = getInvoiceResult.Value;
                 var documentTypeString = InvoiceToPrint.DocumentType == VendorInvoiceDocumentType.Invoice ? "Vendor Invoice" : InvoiceToPrint.DocumentType.GetDisplayName();
                 var nullDate = new DateTime(1899, 1, 1);
                 InvoiceTotals.Calculate(InvoiceToPrint);

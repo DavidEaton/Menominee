@@ -33,7 +33,7 @@ public class CustomersControllerShould : IntegrationTestBase
     {
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Get_Invalid_Route_Returns_NotFound()
     {
         var response = await HttpClient.GetAsync($"{Route}-invalid");
@@ -41,7 +41,7 @@ public class CustomersControllerShould : IntegrationTestBase
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Get_Invalid_Id_Returns_NotFound()
     {
         var response = await HttpClient.GetAsync($"{Route}/0");
@@ -49,7 +49,7 @@ public class CustomersControllerShould : IntegrationTestBase
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Get_Valid_Id_Returns_Customer()
     {
         var customerFromDatabase = DbContext.Customers.First();
@@ -60,7 +60,7 @@ public class CustomersControllerShould : IntegrationTestBase
 
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Add_a_Person_Customer()
     {
         var person = DbContext.Persons.First();
@@ -78,7 +78,7 @@ public class CustomersControllerShould : IntegrationTestBase
             .BeEquivalentTo(CustomerHelper.ConvertToReadDto(customer).Vehicles, options => options.Excluding(v => v.Id));
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Add_a_Business_Customer()
     {
         var business = DbContext.Businesses.First();
@@ -96,7 +96,7 @@ public class CustomersControllerShould : IntegrationTestBase
             .BeEquivalentTo(CustomerHelper.ConvertToReadDto(customer).Vehicles, options => options.Excluding(v => v.Id));
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Add_a_Phone()
     {
         var customerToUpdate = DbContext.Customers.First();
@@ -120,7 +120,7 @@ public class CustomersControllerShould : IntegrationTestBase
         customerFromEndpoint.Phones.Count.Should().Be(originalPhoneCount + 1);
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Add_an_Email()
     {
         var customerToUpdate = DbContext.Customers.First();
@@ -145,7 +145,7 @@ public class CustomersControllerShould : IntegrationTestBase
         customerFromEndpoint.Emails.Count.Should().Be(originalEmailCount + 1);
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Add_a_Vehicle()
     {
         var customerToUpdate = DbContext.Customers.First();
@@ -165,8 +165,7 @@ public class CustomersControllerShould : IntegrationTestBase
         customerFromEndpoint.Vehicles.Count.Should().Be(originalVehicleCount + 1);
     }
 
-    // FIXME: Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException : The database operation was expected to affect 1 row(s), but actually affected 0 row(s); data may have been modified or deleted since entities were loaded.
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Update_a_Business_Customer()
     {
         // TODO: Test more updates customerFromEndpoint properties
@@ -197,7 +196,7 @@ public class CustomersControllerShould : IntegrationTestBase
         //customerFromEndpoint.CustomerType.Should().Be(updatedCustomerType);
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Update_Customer_Vehicles()
     {
         var customerToUpdate = DbContext.Customers.First();
@@ -211,7 +210,7 @@ public class CustomersControllerShould : IntegrationTestBase
                 {
                     Id = vehicle.Id,
                     VIN = vehicle.VIN,
-                    Year = vehicle.Year + 1,
+                    Year = vehicle.Year - 1,
                     Make = vehicle.Make,
                     Model = vehicle.Model,
                     PlateStateProvince = vehicle.PlateStateProvince,
@@ -238,11 +237,11 @@ public class CustomersControllerShould : IntegrationTestBase
         foreach (var originalEntry in originalVehiclesIdYear)
         {
             endpointVehiclesIdYear.Should().ContainKey(originalEntry.Key);
-            endpointVehiclesIdYear[originalEntry.Key].Should().Be(originalEntry.Value + 1);
+            endpointVehiclesIdYear[originalEntry.Key].Should().Be(originalEntry.Value - 1);
         }
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Delete_a_Customer()
     {
         var customerToDelete = await DbContext.Customers.FirstAsync();
@@ -258,7 +257,7 @@ public class CustomersControllerShould : IntegrationTestBase
         deletedCustomerFromDatabase.Should().BeNull();
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Delete_a_Phone()
     {
         var index = 0;
@@ -289,7 +288,7 @@ public class CustomersControllerShould : IntegrationTestBase
         customerFromEndpoint.Phones.Count.Should().Be(phonesCount - 1);
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Delete_an_Email()
     {
         var index = 0;
@@ -320,7 +319,7 @@ public class CustomersControllerShould : IntegrationTestBase
         customerFromEndpoint.Emails.Count.Should().Be(emailsCount - 1);
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task Delete_a_Vehicle()
     {
         var customerToUpdate = DbContext.Customers.First();
@@ -350,7 +349,7 @@ public class CustomersControllerShould : IntegrationTestBase
         customerFromEndpoint.Vehicles.Should().NotContain(vehicle => vehicle.Id == deletedVehicleId);
     }
 
-    [Fact(Skip = "Skipping until MEN-944 is resolved")]
+    [Fact]
     public async Task GetCustomersAsync_With_Code()
     {
         var pagination = new Pagination

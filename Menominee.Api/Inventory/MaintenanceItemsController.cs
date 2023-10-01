@@ -1,4 +1,8 @@
 ﻿using Menominee.Api.Common;
+using Menominee.Api.Manufacturers;
+using Menominee.Api.ProductCodes;
+using Menominee.Common.Http;
+using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.Inventory.MaintenanceItems;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,10 +16,12 @@ namespace Menominee.Api.Inventory
     {
         private readonly IMaintenanceItemRepository maintenanceItemRepository;
         private readonly IInventoryItemRepository inventoryItemRepository;
-
+        private readonly IManufacturerRepository manufacturerRepository;
+        private readonly IProductCodeRepository productCodeRepository;
         public MaintenanceItemsController(
             IMaintenanceItemRepository maintenanceItemRepository,
             IInventoryItemRepository inventoryItemRepository,
+            IManufacturerRepository manufacturerRepository,
             ILogger<MaintenanceItemsController> logger) : base(logger)
         {
             this.maintenanceItemRepository =
@@ -23,23 +29,22 @@ namespace Menominee.Api.Inventory
 
             this.inventoryItemRepository =
                 inventoryItemRepository ?? throw new ArgumentNullException(nameof(inventoryItemRepository));
+
+            this.manufacturerRepository =
+                manufacturerRepository ?? throw new ArgumentNullException(nameof(manufacturerRepository));
         }
 
-        [Route("listing")]
-        [HttpGet]
+        [HttpGet("listing")]
         public async Task<ActionResult<IReadOnlyList<MaintenanceItemToReadInList>>> GetListAsync()
         {
-            var result = await maintenanceItemRepository.GetItemsInListAsync();
-
-            return result is null
-                ? NotFound()
-                : Ok(result);
+            var results = await maintenanceItemRepository.GetListAsync();
+            return Ok(results);
         }
 
         [HttpGet("{id:long}")]
         public async Task<ActionResult<MaintenanceItemToRead>> GetAsync(long id)
         {
-            var result = await maintenanceItemRepository.GetItemAsync(id);
+            var result = await maintenanceItemRepository.GetAsync(id);
 
             return result is null
                 ? NotFound()
@@ -47,35 +52,19 @@ namespace Menominee.Api.Inventory
         }
 
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateAsync(MaintenanceItemToWrite itemFromCaller, long id)
+        public async Task<ActionResult> UpdateAsync(MaintenanceItemToWrite itemFromCaller)
         {
-            var notFoundMessage = $"Could not find Maintenance Item # {id} to update.";
-
-            if (!await maintenanceItemRepository.ItemExistsAsync(id))
-                return NotFound(notFoundMessage);
-
-            var itemFromRepository = await maintenanceItemRepository.GetItemEntityAsync(id);
-
+            var itemFromRepository = await maintenanceItemRepository.GetEntityAsync(itemFromCaller.Id);
             if (itemFromRepository is null)
-                return NotFound(notFoundMessage);
+                return NotFound($"Could not find Maintenance Item # {itemFromCaller.Id} to update.");
 
             if (itemFromRepository.InventoryItem.Id != itemFromCaller.Item.Id)
-            {
-                var resultOrError = itemFromRepository.SetInventoryItem(
-                    await inventoryItemRepository.GetItemEntity(
+                itemFromRepository.SetInventoryItem(
+                    await inventoryItemRepository.GetEntityAsync(
                         itemFromCaller.Item.Id));
 
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
-
             if (itemFromRepository.DisplayOrder != itemFromCaller.DisplayOrder)
-            {
-                var resultOrError = itemFromRepository.SetDisplayOrder(itemFromCaller.DisplayOrder);
-
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
+                itemFromRepository.SetDisplayOrder(itemFromCaller.DisplayOrder);
 
             await maintenanceItemRepository.SaveChangesAsync();
 
@@ -83,37 +72,74 @@ namespace Menominee.Api.Inventory
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddAsync(
-            MaintenanceItemToWrite itemToAdd)
+        public async Task<ActionResult<PostResponse>> AddAsync(MaintenanceItemToWrite maintenanceItemToAdd)
         {
-            var inventoryItem = await inventoryItemRepository.GetItemEntity(itemToAdd.Item.Id);
+            if (await manufacturerRepository.GetEntityAsync(maintenanceItemToAdd.Item.Manufacturer.Id) is not Manufacturer manufacturer)
+                return NotFound($"Could not find Manufacturer with Id {maintenanceItemToAdd.Item.Manufacturer.Id}");
 
-            if (inventoryItem is null)
-                return NotFound($"Could not add new Inventory Item Number: {itemToAdd?.Item.ItemNumber}.");
+            if (await productCodeRepository.GetEntityAsync(maintenanceItemToAdd.Item.ProductCode.Id) is not ProductCode productCode)
+                return NotFound($"Could not find Product Code with Id {maintenanceItemToAdd.Item.ProductCode.Id}");
 
-            var maintenanceItemEntity = MaintenanceItemHelper.ConvertWriteDtoToEntity(itemToAdd, inventoryItem);
+            InventoryItem item = null;
+            InventoryItemPart part = null;
 
-            await maintenanceItemRepository.AddItemAsync(maintenanceItemEntity);
+            if (maintenanceItemToAdd.Item.Part is not null)
+            {
+                part = await inventoryItemRepository.GetPartEntityAsync(maintenanceItemToAdd.Item.Part.Id);
+                if (part is null)
+                    return NotFound($"Could not find Part with Id {maintenanceItemToAdd.Item.Part.Id}.");
+            }
 
+            if (maintenanceItemToAdd.Item.Id == 0)
+            {
+                item = InventoryItem.Create(
+                        manufacturer,
+                        maintenanceItemToAdd.Item.ItemNumber,
+                        maintenanceItemToAdd.Item.Description,
+                        productCode,
+                        maintenanceItemToAdd.Item.ItemType,
+                        part)
+                    .Value;
+            }
+
+            if (item is not null)
+            {
+                inventoryItemRepository.Add(item);
+                await inventoryItemRepository.SaveChangesAsync();
+            }
+
+            if (maintenanceItemToAdd.Item.Id > 0)
+            {
+                var inventoryItemFromRepository = await inventoryItemRepository.GetEntityAsync(maintenanceItemToAdd.Item.Id);
+
+                if (inventoryItemFromRepository is null)
+                    return NotFound($"Could not add new Maintenance Item Number: {maintenanceItemToAdd?.Item.ItemNumber}.");
+
+                item = inventoryItemFromRepository;
+            }
+
+            var maintenanceItem = MaintenanceItem.Create(
+                maintenanceItemToAdd.DisplayOrder,
+                item)
+                    .Value;
+
+            maintenanceItemRepository.Add(maintenanceItem);
             await maintenanceItemRepository.SaveChangesAsync();
 
-            return CreatedAtAction(
-                nameof(GetAsync),
-                new { id = maintenanceItemEntity.Id },
-                    new { maintenanceItemEntity.Id });
+            return Created(new Uri($"api/MaintenanceItems/{maintenanceItem.Id}",
+                UriKind.Relative),
+                new { maintenanceItem.Id });
         }
 
         [HttpDelete("{id:long}")]
         public async Task<ActionResult> DeleteAsync(long id)
         {
-            var notFoundMessage = $"Could not find Maintenance Item in the database to delete with Id = {id}.";
-
-            var itemFromRepository = await maintenanceItemRepository.GetItemEntityAsync(id);
+            var itemFromRepository = await maintenanceItemRepository.GetEntityAsync(id);
 
             if (itemFromRepository == null)
-                return NotFound(notFoundMessage);
+                return NotFound($"Could not find Maintenance Item in the database to delete with Id = {id}.");
 
-            maintenanceItemRepository.DeleteItem(itemFromRepository);
+            maintenanceItemRepository.Delete(itemFromRepository);
             await maintenanceItemRepository.SaveChangesAsync();
 
             return NoContent();

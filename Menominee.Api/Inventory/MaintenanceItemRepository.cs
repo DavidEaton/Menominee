@@ -19,31 +19,19 @@ namespace Menominee.Api.Inventory
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddItemAsync(MaintenanceItem item)
+        public void Add(MaintenanceItem item)
         {
-            if (await ItemExistsAsync(item.Id))
-                throw new Exception("Maintenance Item already exists");
-
-            if (item != null)
+            if (item is not null)
                 context.Attach(item);
         }
 
-        public void DeleteItem(MaintenanceItem item)
+        public void Delete(MaintenanceItem item)
         {
             if (item is not null)
                 context.Remove(item);
         }
 
-        public async Task DeleteItemAsync(long id)
-        {
-            var item = await context.MaintenanceItems
-                .FirstOrDefaultAsync(item => item.Id == id);
-
-            if (item is not null)
-                context.Remove(item);
-        }
-
-        public async Task<MaintenanceItemToRead> GetItemAsync(long id)
+        public async Task<MaintenanceItemToRead> GetAsync(long id)
         {
             var itemFromContext = await context.MaintenanceItems
                                                .Include(item => item.InventoryItem)
@@ -54,7 +42,7 @@ namespace Menominee.Api.Inventory
             return MaintenanceItemHelper.ConvertToReadDto(itemFromContext);
         }
 
-        public async Task<MaintenanceItem> GetItemEntityAsync(long id)
+        public async Task<MaintenanceItem> GetEntityAsync(long id)
         {
             return await context.MaintenanceItems
                                 .Include(item => item.InventoryItem)
@@ -62,7 +50,7 @@ namespace Menominee.Api.Inventory
                                 .FirstOrDefaultAsync(item => item.Id == id);
         }
 
-        public async Task<IReadOnlyList<MaintenanceItemToReadInList>> GetItemsInListAsync()
+        public async Task<IReadOnlyList<MaintenanceItemToReadInList>> GetListAsync()
         {
             var itemsFromContext = await context.MaintenanceItems
                                                 .Include(item => item.InventoryItem)
@@ -75,33 +63,9 @@ namespace Menominee.Api.Inventory
                                    .ToList();
         }
 
-        public async Task<bool> ItemExistsAsync(long id)
+        public async Task SaveChangesAsync()
         {
-            return await context.MaintenanceItems.AnyAsync(item => item.Id == id);
-        }
-
-        public async Task<bool> SaveChangesAsync()
-        {
-            return (await context.SaveChangesAsync()) > 0;
-        }
-
-        public async Task<MaintenanceItem> UpdateItemAsync(MaintenanceItem item)
-        {
-            // Tracking IS needed for commands for disconnected data collections
-            context.Entry(item).State = EntityState.Modified;
-
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await ItemExistsAsync(item.Id))
-                    return null;// something that tells the controller to return NotFound();
-                throw;
-            }
-
-            return null;
+            await context.SaveChangesAsync();
         }
     }
 }

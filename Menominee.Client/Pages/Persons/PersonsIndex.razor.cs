@@ -1,4 +1,5 @@
-﻿using Menominee.Client.Components.Address;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Client.Components.Address;
 using Menominee.Client.Services;
 using Menominee.Common.Enums;
 using Menominee.Shared.Models.Addresses;
@@ -14,9 +15,12 @@ namespace Menominee.Client.Pages.Persons
         [Inject]
         public IPersonDataService PersonDataService { get; set; }
 
+        [Inject]
+        public ILogger<PersonsIndex> Logger { get; set; }
+
         public IReadOnlyList<PersonToReadInList> Persons;
 
-        public PersonToWrite PersonToWrite { get; set; }
+        public PersonToWrite Person { get; set; }
         public TelerikGrid<PersonToReadInList> Grid { get; set; }
         private long Id { get; set; }
 
@@ -28,12 +32,17 @@ namespace Menominee.Client.Pages.Persons
 
         protected override async Task OnInitializedAsync()
         {
-            Persons = (await PersonDataService.GetAllPersons()).ToList();
+            await PersonDataService.GetAllAsync()
+                .Match(
+                    success => Persons = success,
+                    failure => Logger.LogError(failure)
+            );
+
         }
 
         private void AddAddress()
         {
-            PersonToWrite.Address = new();
+            Person.Address = new();
             AddressFormMode = FormMode.Add;
         }
 
@@ -50,51 +59,63 @@ namespace Menominee.Client.Pages.Persons
                 AddressFormMode = FormMode.Unknown;
             }
 
-            if (AddressFormMode == FormMode.Add && PersonToWrite.Address is not null)
+            if (AddressFormMode == FormMode.Add && Person.Address is not null)
             {
                 AddressFormMode = FormMode.Unknown;
                 StateHasChanged();  //TODO: When Person is new and Address is new, how to cancel?
                                     //Dialog does not close, console error: null reference exception
-                PersonToWrite.Address = null;
+                Person.Address = null;
             }
         }
 
         private async Task EditAsync(GridRowClickEventArgs args)
         {
-            Id = (args.Item as PersonToReadInList).Id;
-            PersonFormMode = FormMode.Edit;
-            Persons = null;
+            var id = (args.Item as PersonToReadInList)?.Id ?? Id;
+            var formMode = args.Item switch
+            {
+                PersonToReadInList => FormMode.Edit,
+                _ => PersonFormMode
+            };
 
-            var readDto = await PersonDataService.GetPerson(Id);
-            PersonToWrite = new PersonToWrite
+            var personResult = await PersonDataService.GetAsync(Id)
+                .OnFailure(error =>
+                {
+                    Logger.LogError(error);
+                    // TODO: Replace exception with toast message
+                    throw new Exception(error);
+                });
+
+            var person = personResult.Value;
+
+            Person = new PersonToWrite
             {
                 Name = new PersonNameToWrite
                 {
-                    FirstName = readDto.Name.FirstName,
-                    MiddleName = readDto.Name.MiddleName,
-                    LastName = readDto.Name.LastName
+                    FirstName = person.Name.FirstName,
+                    MiddleName = person.Name.MiddleName,
+                    LastName = person.Name.LastName
                 },
-                Gender = readDto.Gender,
-                Birthday = readDto.Birthday
+                Gender = person.Gender,
+                Birthday = person.Birthday
             };
 
-            if (readDto.Address != null)
+            if (person.Address != null)
             {
-                PersonToWrite.Address = new AddressToWrite
+                Person.Address = new AddressToWrite
                 {
-                    AddressLine1 = readDto.Address.AddressLine1,
-                    City = readDto.Address.City,
-                    State = readDto.Address.State,
-                    PostalCode = readDto.Address.PostalCode,
-                    AddressLine2 = readDto.Address.AddressLine2
+                    AddressLine1 = person.Address.AddressLine1,
+                    City = person.Address.City,
+                    State = person.Address.State,
+                    PostalCode = person.Address.PostalCode,
+                    AddressLine2 = person.Address.AddressLine2
                 };
             }
 
-            if (readDto?.Emails.Count > 0)
+            if (person?.Emails.Count > 0)
             {
-                foreach (var email in readDto.Emails)
+                foreach (var email in person.Emails)
                 {
-                    PersonToWrite.Emails.Add(new EmailToWrite
+                    Person.Emails.Add(new EmailToWrite
                     {
                         Address = email.Address,
                         IsPrimary = email.IsPrimary
@@ -102,11 +123,11 @@ namespace Menominee.Client.Pages.Persons
                 }
             }
 
-            if (readDto?.Phones.Count > 0)
+            if (person?.Phones.Count > 0)
             {
-                foreach (var phone in readDto.Phones)
+                foreach (var phone in person.Phones)
                 {
-                    PersonToWrite.Phones.Add(new PhoneToWrite
+                    Person.Phones.Add(new PhoneToWrite
                     {
                         Number = phone.Number,
                         PhoneType = phone.PhoneType,
@@ -114,38 +135,37 @@ namespace Menominee.Client.Pages.Persons
                     });
                 }
             }
-
         }
 
         private void Add()
         {
             PersonFormMode = FormMode.Add;
             Persons = null;
-            PersonToWrite = new();
-            PersonToWrite.Name = new();
+            Person = new();
+            Person.Name = new();
         }
 
         protected async Task HandleAddSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(PersonToWrite.Name.FirstName))
+            if (!string.IsNullOrWhiteSpace(Person.Name.FirstName))
             {
-                await PersonDataService.AddPerson(PersonToWrite);
+                await PersonDataService.AddAsync(Person);
                 await EndAddEditAsync();
             }
         }
 
         protected async Task HandleEditSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(PersonToWrite.Name.FirstName))
+            if (!string.IsNullOrWhiteSpace(Person.Name.FirstName))
             {
-                await PersonDataService.UpdatePerson(PersonToWrite, Id);
+                await PersonDataService.UpdateAsync(Person);
                 await EndAddEditAsync();
             }
         }
 
         protected async Task SubmitHandlerAsync()
         {
-            if (!string.IsNullOrWhiteSpace(PersonToWrite.Name.FirstName))
+            if (!string.IsNullOrWhiteSpace(Person.Name.FirstName))
             {
                 if (PersonFormMode == FormMode.Add)
                     await HandleAddSubmit();
@@ -159,7 +179,10 @@ namespace Menominee.Client.Pages.Persons
         {
             PersonFormMode = FormMode.Unknown;
             AddressFormMode = FormMode.Unknown;
-            Persons = (await PersonDataService.GetAllPersons()).ToList();
+            await PersonDataService.GetAllAsync()
+                .Match(
+                    success => Persons = success,
+                    failure => Logger.LogError(failure));
         }
     }
 }

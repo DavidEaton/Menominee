@@ -1,81 +1,97 @@
 ﻿using Blazored.Toast.Services;
+using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.RepairOrders;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Menominee.Client.Components.RepairOrders
 {
-    public class RepairOrderDataService : IRepairOrderDataService
+    public class RepairOrderDataService : DataServiceBase<RepairOrderDataService>, IRepairOrderDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<RepairOrderDataService> logger;
         private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/repairorders";
 
-        public RepairOrderDataService(HttpClient httpClient, ILogger<RepairOrderDataService> logger, IToastService toastService)
+        public RepairOrderDataService(HttpClient httpClient,
+            ILogger<RepairOrderDataService> logger,
+            IToastService toastService,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<RepairOrderToRead> AddRepairOrder(RepairOrderToWrite repairOrder)
+        public async Task<Result<PostResponse>> AddAsync(RepairOrderToWrite fromCaller)
         {
-            var content = new StringContent(JsonSerializer.Serialize(repairOrder), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return await JsonSerializer.DeserializeAsync<RepairOrderToRead>(await response.Content.ReadAsStreamAsync());
-            }
-
-            toastService.ShowError($"Failed to add repair order. {response.ReasonPhrase}.", "Add Failed");
-
-            return null;
-        }
-
-        public async Task<IReadOnlyList<RepairOrderToReadInList>> GetAllRepairOrders()
-        {
+            var entityType = "Repair Order";
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<RepairOrderToReadInList>>($"{UriSegment}/listing");
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
+
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
+
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.RepairOrderNumber} failed to update", "Save Failed");
+
+                return result;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all repair orders");
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
             }
-
-            return null;
         }
 
-        public async Task<RepairOrderToRead> GetRepairOrder(long id)
+        public async Task<Result<IReadOnlyList<RepairOrderToReadInList>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get Repair Orders";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<RepairOrderToRead>($"{UriSegment}/{id}");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<RepairOrderToReadInList>>($"{UriSegment}/listing");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<RepairOrderToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get repair order with id {id}", id);
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<RepairOrderToReadInList>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task UpdateRepairOrder(RepairOrderToWrite repairOrder, long id)
+        public async Task<Result<RepairOrderToRead>> GetAsync(long id)
         {
-            var content = new StringContent(JsonSerializer.Serialize(repairOrder), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);
+            var errorMessage = $"Failed to get Repair Order with id {id}";
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                toastService.ShowSuccess("Repair Order saved successfully", "Saved");
-                return;
+                var result = await httpClient.GetFromJsonAsync<RepairOrderToRead>(UriSegment + $"/{id}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<RepairOrderToRead>(errorMessage);
             }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<RepairOrderToRead>(errorMessage);
+            }
+        }
 
-            toastService.ShowError($"Repair Order failed to update:  RO #{repairOrder.RepairOrderNumber}", "Save Failed");
+        public async Task<Result> UpdateAsync(RepairOrderToWrite fromCaller)
+        {
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                repairOrder => $"{repairOrder.RepairOrderNumber}",
+                repairOrder => repairOrder.Id);
         }
     }
 }

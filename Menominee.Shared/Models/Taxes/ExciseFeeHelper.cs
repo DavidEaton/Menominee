@@ -94,17 +94,6 @@ namespace Menominee.Shared.Models.Taxes
             ?? new List<ExciseFee>();
         }
 
-        public static ExciseFee ConvertAddDtoToEntity(ExciseFeeToAdd excisefee)
-        {
-            return excisefee is null
-                ? null
-                : ExciseFee.Create(
-                    excisefee.Description,
-                    excisefee.FeeType,
-                    excisefee.Amount)
-                .Value;
-        }
-
         internal static List<ExciseFee> CovertReadDtoToEntity(List<ExciseFeeToRead> exciseFees)
         {
             return exciseFees.Select(fee =>

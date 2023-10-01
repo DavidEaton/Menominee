@@ -1,15 +1,15 @@
-﻿using Menominee.Shared.Models.Payables.Invoices.Payments;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Http;
+using Menominee.Shared.Models.Payables.Invoices.Payments;
 
 namespace Menominee.Client.Services.Payables.PaymentMethods
 {
     public interface IVendorInvoicePaymentMethodDataService
     {
-        Task<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>> GetAllPaymentMethodsAsync();
-        Task<VendorInvoicePaymentMethodToRead> GetPaymentMethodAsync(long id);
-        Task<VendorInvoicePaymentMethodToRead> AddPaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethod);
-        Task UpdatePaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethod, long id);
-        Task DeletePaymentMethodAsync(long id);
+        Task<Result<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>> GetAllAsync();
+        Task<Result<VendorInvoicePaymentMethodToRead>> GetAsync(long id);
+        Task<Result<PostResponse>> AddAsync(VendorInvoicePaymentMethodToWrite payMethod);
+        Task<Result> UpdateAsync(VendorInvoicePaymentMethodToWrite payMethod);
+        Task DeleteAsync(long id);
     }
 }

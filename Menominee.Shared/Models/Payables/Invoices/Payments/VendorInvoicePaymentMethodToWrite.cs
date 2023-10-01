@@ -1,10 +1,11 @@
-﻿using Menominee.Shared.Models.Payables.Vendors;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
+using Menominee.Shared.Models.Payables.Vendors;
 
 namespace Menominee.Shared.Models.Payables.Invoices.Payments
 {
     public class VendorInvoicePaymentMethodToWrite
     {
+        public long Id { get; set; }
         public string Name { get; set; }
         public bool IsActive { get; set; }
         //public bool IsOnAccountPaymentType { get; set; }

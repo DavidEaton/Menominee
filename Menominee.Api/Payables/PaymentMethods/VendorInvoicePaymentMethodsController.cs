@@ -1,5 +1,6 @@
 ﻿using Menominee.Api.Common;
 using Menominee.Api.Payables.Vendors;
+using Menominee.Common.Http;
 using Menominee.Domain.Entities.Payables;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Microsoft.AspNetCore.Mvc;
@@ -28,33 +29,29 @@ namespace Menominee.Api.Payables.PaymentMethods
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>> GetListAsync()
         {
-            var payMethods = await repository.GetPaymentMethodListAsync();
+            var result = await repository.GetListAsync();
 
-            if (payMethods == null)
-                return NotFound();
-
-            return Ok(payMethods);
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         [HttpGet("{id:long}")]
         public async Task<ActionResult<VendorInvoicePaymentMethodToRead>> GetAsync(long id)
         {
-            var payMethod = await repository.GetPaymentMethodAsync(id);
+            var result = await repository.GetAsync(id);
 
-            if (payMethod == null)
-                return NotFound();
-
-            return Ok(payMethod);
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateAsync(VendorInvoicePaymentMethodToWrite paymentMethodToUpdate, long id)
+        public async Task<ActionResult> UpdateAsync(VendorInvoicePaymentMethodToWrite paymentMethodToUpdate)
         {
-            var notFoundMessage = $"Could not find Vendor Invoice Payment Method {paymentMethodToUpdate.Name} to update with Id = {id}.";
-
-            var paymentMethodFromRepository = await repository.GetPaymentMethodEntityAsync(id);
+            var paymentMethodFromRepository = await repository.GetEntityAsync(paymentMethodToUpdate.Id);
             if (paymentMethodFromRepository is null)
-                return NotFound(notFoundMessage);
+                return NotFound($"Could not find Vendor Invoice Payment Method {paymentMethodToUpdate.Name} to update with Id = {paymentMethodToUpdate.Id}.");
 
             var paymentMethodNames = await repository.GetPaymentMethodNamesAsync();
 
@@ -79,7 +76,11 @@ namespace Menominee.Api.Payables.PaymentMethods
                 Vendor reconcilingVendor = null;
 
                 if (reconcilingVendorFromCaller is not null)
-                    reconcilingVendor = await vendorRepository.GetVendorEntityAsync(reconcilingVendorFromCaller.Id);
+                {
+                    var reconcilingVendorResult = await vendorRepository.GetEntityAsync(reconcilingVendorFromCaller.Id);
+                    if (reconcilingVendorResult.IsFailure)
+                        return NotFound($"Could not find Reconciling Vendor '{reconcilingVendorFromCaller.Name}' with Id: {reconcilingVendorFromCaller.Id}.");
+                }
 
                 paymentMethodFromRepository.SetReconcilingVendor(reconcilingVendor);
             }
@@ -90,46 +91,50 @@ namespace Menominee.Api.Payables.PaymentMethods
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddAsync(VendorInvoicePaymentMethodToWrite payMethodToAdd)
+        public async Task<ActionResult<PostResponse>> AddAsync(VendorInvoicePaymentMethodToWrite payMethodToAdd)
         {
             var paymentMethodNames =
                 await repository.GetPaymentMethodNamesAsync();
 
-            var reconcilingVendorFromCaller = payMethodToAdd.ReconcilingVendor is not null ? payMethodToAdd.ReconcilingVendor : null;
+            var reconcilingVendorFromCaller =
+                payMethodToAdd.ReconcilingVendor is not null
+                ? payMethodToAdd.ReconcilingVendor
+                : null;
+
             Vendor reconcilingVendor = null;
 
             if (reconcilingVendorFromCaller is not null)
-                reconcilingVendor = await vendorRepository.GetVendorEntityAsync(reconcilingVendorFromCaller.Id);
+            {
+                var reconcilingVendorResult = await vendorRepository.GetEntityAsync(reconcilingVendorFromCaller.Id);
+                if (reconcilingVendorResult.IsFailure)
+                    return NotFound($"Could not find Reconciling Vendor '{reconcilingVendorFromCaller.Name}' with Id: {reconcilingVendorFromCaller.Id}.");
+            }
 
-            var result = VendorInvoicePaymentMethod.Create(
+            // No need to validate it here again, just call .Value right away
+            var paymentMethod = VendorInvoicePaymentMethod.Create(
                 paymentMethodNames,
                 payMethodToAdd.Name,
                 payMethodToAdd.IsActive,
                 payMethodToAdd.PaymentType,
-                reconcilingVendor);
+                reconcilingVendor).Value;
 
-            if (result.IsFailure)
-                return BadRequest($"Could not add new Payment Method '{payMethodToAdd.Name}': {result.Error}.");
-
-            await repository.AddPaymentMethodAsync(result.Value);
+            repository.Add(paymentMethod);
             await repository.SaveChangesAsync();
 
-            return CreatedAtAction(
-            nameof(GetAsync),
-            new { id = result.Value.Id },
-                new { result.Value.Id });
-
+            return Created(
+               new Uri($"api/VendorInvoicePaymentMethodscontroller/{paymentMethod.Id}", UriKind.Relative),
+               new { paymentMethod.Id });
         }
 
         [HttpDelete("{id:long}")]
         public async Task<ActionResult> DeleteAsync(long id)
         {
-            var payMethodFromRepository = await repository.GetPaymentMethodEntityAsync(id);
+            var payMethodFromRepository = await repository.GetEntityAsync(id);
 
             if (payMethodFromRepository == null)
                 return NotFound($"Could not find Vendor Invoice Payment Method in the database to delete with Id: {id}.");
 
-            repository.DeletePaymentMethod(payMethodFromRepository);
+            repository.Delete(payMethodFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();

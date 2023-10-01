@@ -6,10 +6,10 @@ namespace Menominee.Client.Services.Customers
 {
     public interface ICustomerDataService
     {
-        Task<Result<IReadOnlyList<CustomerToReadInList>>> GetAllCustomers();
-        Task<Result<CustomerToRead>> GetCustomer(long id);
-        Task<Result<PostResponse>> AddCustomer(CustomerToWrite customer);
-        Task<Result> UpdateCustomer(CustomerToWrite customer);
-        Task DeleteCustomer(long id);
+        Task<Result<IReadOnlyList<CustomerToReadInList>>> GetAllAsync();
+        Task<Result<CustomerToRead>> GetAsync(long id);
+        Task<Result<PostResponse>> AddAsync(CustomerToWrite customer);
+        Task<Result> UpdateAsync(CustomerToWrite customer);
+        Task<Result> DeleteAsync(long id);
     }
 }

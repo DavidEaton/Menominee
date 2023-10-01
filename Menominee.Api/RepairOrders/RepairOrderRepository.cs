@@ -22,20 +22,19 @@ namespace Menominee.Api.RepairOrders
             _logger = logger;
         }
 
-        public async Task Add(RepairOrder repairOrder)
+        public void Add(RepairOrder repairOrder)
         {
-            if (repairOrder != null)
-                await context.AddAsync(repairOrder);
+            if (repairOrder is not null)
+                context.Attach(repairOrder);
         }
 
-        public async Task Delete(long id)
+        public void Delete(RepairOrder repairOrder)
         {
-            var repairOrderFromContext = await context.RepairOrders.FindAsync(id);
-            if (repairOrderFromContext != null)
-                context.Remove(repairOrderFromContext);
+            if (repairOrder is not null)
+                context.Remove(repairOrder);
         }
 
-        public async Task<RepairOrderToRead> Get(long id)
+        public async Task<RepairOrderToRead> GetAsync(long id)
         {
             var repairOrderFromContext = await context.RepairOrders
                 .Include(repairOrder => repairOrder.Customer)
@@ -86,9 +85,9 @@ namespace Menominee.Api.RepairOrders
             return RepairOrderHelper.ConvertToReadDto(repairOrderFromContext);
         }
 
-        public async Task<RepairOrder> GetEntity(long id)
+        public async Task<RepairOrder> GetEntityAsync(long id)
         {
-            var repairOrderFromContext = await context.RepairOrders
+            return await context.RepairOrders
                 .Include(repairOrder => repairOrder.Services)
                     .ThenInclude(service => service.LineItems)
                         .ThenInclude(lineItem => lineItem.Item.Manufacturer)
@@ -114,11 +113,9 @@ namespace Menominee.Api.RepairOrders
                 .Include(repairOrder => repairOrder.Taxes)
                 .Include(repairOrder => repairOrder.Payments)
                 .FirstOrDefaultAsync(repairOrder => repairOrder.Id == id);
-
-            return repairOrderFromContext;
         }
 
-        public async Task<IReadOnlyList<RepairOrderToReadInList>> Get()
+        public async Task<IReadOnlyList<RepairOrderToReadInList>> GetListAsync()
         {
             _logger.LogInformation("GetRepairOrderListAsync");
             IReadOnlyList<RepairOrder> repairOrders = await context.RepairOrders.ToListAsync();
@@ -129,7 +126,7 @@ namespace Menominee.Api.RepairOrders
                 .ToList();
         }
 
-        public async Task<List<long>> GetTodaysRepairOrderNumbers()
+        public async Task<List<long>> GetTodaysRepairOrderNumbersAsync()
         {
             var repairOrders = await context.RepairOrders.ToListAsync();
             var todayDatePart = long.Parse(DateTime.Today.ToString("yyyyMMdd")) * 1000;
@@ -140,12 +137,7 @@ namespace Menominee.Api.RepairOrders
                 .ToList();
         }
 
-        public async Task<bool> Exists(long id)
-        {
-            return await context.RepairOrders.AnyAsync(repairOrder => repairOrder.Id == id);
-        }
-
-        public async Task SaveChanges() =>
+        public async Task SaveChangesAsync() =>
             await context.SaveChangesAsync();
 
         public long GetLastInvoiceNumberOrSeed()

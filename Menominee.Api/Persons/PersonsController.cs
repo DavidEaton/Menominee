@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Api.Common;
+using Menominee.Common.Http;
 using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Persons;
@@ -26,7 +27,7 @@ namespace Menominee.Api.Persons
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<PersonToReadInList>>> GetListAsync()
         {
-            var persons = await repository.GetPersonsListAsync();
+            var persons = await repository.GetListAsync();
 
             return persons is not null
                 ? Ok(persons)
@@ -34,9 +35,9 @@ namespace Menominee.Api.Persons
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<PersonToRead>>> GetAsync()
+        public async Task<ActionResult<IReadOnlyList<PersonToRead>>> GetAllAsync()
         {
-            var persons = await repository.GetPersonsAsync();
+            var persons = await repository.GetAllAsync();
 
             return persons is not null
                 ? Ok(persons)
@@ -46,7 +47,7 @@ namespace Menominee.Api.Persons
         [HttpGet("{id:long}")]
         public async Task<ActionResult<PersonToRead>> GetAsync(long id)
         {
-            var person = await repository.GetPersonAsync(id);
+            var person = await repository.GetAsync(id);
 
             return person is not null
                 ? Ok(person)
@@ -54,18 +55,16 @@ namespace Menominee.Api.Persons
         }
 
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateAsync(long id, PersonToWrite personDto)
+        public async Task<ActionResult> UpdateAsync(PersonToWrite personFromCaller)
         {
-            var notFoundMessage = $"Could not find {personDto.Name.FirstName} {personDto.Name.LastName} to update";
-
-            var personFromRepository = await repository.GetPersonEntityAsync(id);
+            var personFromRepository = await repository.GetEntityAsync(personFromCaller.Id);
             if (personFromRepository is null)
-                return NotFound(notFoundMessage);
+                return NotFound($"Could not find {personFromCaller.Name.FirstName} {personFromCaller.Name.LastName} to update");
 
-            UpdateName(personDto, personFromRepository);
+            UpdateName(personFromCaller, personFromRepository);
 
             var contactDetails = ContactDetailsFactory
-                .Create(personDto.Phones.ToList(), personDto.Emails.ToList(), personDto.Address).Value;
+                .Create(personFromCaller.Phones.ToList(), personFromCaller.Emails.ToList(), personFromCaller.Address).Value;
 
             var phonesToDelete = personFromRepository.Phones
                 .Where(phone => !contactDetails.Phones.Any(phoneToKeep => phoneToKeep.Id == phone.Id))
@@ -87,18 +86,45 @@ namespace Menominee.Api.Persons
 
             personFromRepository.UpdateContactDetails(contactDetails);
 
-            personFromRepository.SetGender(personDto.Gender);
-            personFromRepository.SetBirthday(personDto.Birthday);
+            personFromRepository.SetGender(personFromCaller.Gender);
+            personFromRepository.SetBirthday(personFromCaller.Birthday);
 
-            if (personDto?.DriversLicense is not null)
+            if (personFromCaller?.DriversLicense is not null)
             {
-                personFromRepository.SetDriversLicense(DriversLicense.Create(personDto.DriversLicense.Number,
-                    personDto.DriversLicense.State,
+                personFromRepository.SetDriversLicense(DriversLicense.Create(personFromCaller.DriversLicense.Number,
+                    personFromCaller.DriversLicense.State,
                     DateTimeRange.Create(
-                    personDto.DriversLicense.Issued,
-                    personDto.DriversLicense.Expiry).Value).Value);
+                    personFromCaller.DriversLicense.Issued,
+                    personFromCaller.DriversLicense.Expiry).Value).Value);
             }
 
+            await repository.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<PostResponse>> AddAsync(PersonToWrite personToAdd)
+        {
+            var person = PersonHelper.ConvertWriteDtoToEntity(personToAdd);
+
+            repository.Add(person);
+            await repository.SaveChangesAsync();
+
+            return Created(new Uri($"/api/PersonsController/{person.Id}",
+                UriKind.Relative),
+                new { person.Id });
+        }
+
+        [HttpDelete("{id:long}")]
+        public async Task<ActionResult> DeleteAsync(long id)
+        {
+            var personFromRepository = await repository.GetEntityAsync(id);
+
+            if (personFromRepository == null)
+                return NotFound($"Could not find Person in the database to delete with Id: {id}.");
+
+            repository.Delete(personFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();
@@ -121,35 +147,5 @@ namespace Menominee.Api.Persons
             !string.Equals(name.FirstName, nameDto?.FirstName) ||
             !string.Equals(name.MiddleName, nameDto?.MiddleName) ||
             !string.Equals(name.LastName, nameDto?.LastName);
-
-        [HttpPost]
-        public async Task<ActionResult> AddAsync(PersonToWrite personToAdd)
-        {
-            var person = PersonHelper.ConvertWriteDtoToEntity(personToAdd);
-
-            await repository.AddPersonAsync(person);
-            await repository.SaveChangesAsync();
-
-            return CreatedAtAction(
-                nameof(GetAsync),
-                new { id = person.Id },
-                new { person.Id });
-        }
-
-        [HttpDelete("{id:long}")]
-        public async Task<ActionResult> DeleteAsync(long id)
-        {
-            var personFromRepository = await repository.GetPersonEntityAsync(id);
-
-            if (personFromRepository == null)
-            {
-                return NotFound($"Could not find Person in the database to delete with Id: {id}.");
-            }
-
-            repository.DeletePerson(personFromRepository);
-            await repository.SaveChangesAsync();
-
-            return NoContent();
-        }
     }
 }

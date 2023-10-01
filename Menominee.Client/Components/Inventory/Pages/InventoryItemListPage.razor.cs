@@ -1,13 +1,10 @@
-﻿using Menominee.Shared;
-using Menominee.Shared.Models.Inventory.InventoryItems;
-using Menominee.Shared.Models.Manufacturers;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Inventory.InventoryItems;
+using Menominee.Shared.Models.Manufacturers;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Inventory.Pages
@@ -21,7 +18,10 @@ namespace Menominee.Client.Components.Inventory.Pages
         public IInventoryItemDataService DataService { get; set; }
 
         [Inject]
-        public IManufacturerDataService MfrDataService { get; set; }
+        public IManufacturerDataService ManufacturerDataService { get; set; }
+
+        [Inject]
+        public ILogger<InventoryItemListPage> Logger { get; set; }
 
         [Parameter]
         public long ItemToSelect { get; set; } = 0;
@@ -66,7 +66,7 @@ namespace Menominee.Client.Components.Inventory.Pages
 
             SelectedItemType = InventoryItemType.Part;
 
-            ItemsList = (await DataService.GetAllItemsAsync()).ToList();
+            ItemsList = (await DataService.GetAllAsync()).Value.ToList();
 
             SelectedItem = ItemsList.DefaultIfEmpty(new InventoryItemToReadInList { Id = 0 })
                                      .FirstOrDefault(item => ItemToSelect == 0 || item.Id == ItemToSelect);
@@ -78,16 +78,26 @@ namespace Menominee.Client.Components.Inventory.Pages
 
         protected override async Task OnParametersSetAsync()
         {
-            Manufacturers = (await MfrDataService.GetAllManufacturersAsync()).ToList();
+            await ManufacturerDataService.GetAllAsync()
+                .Match(
+                    success =>
+                    {
+                        Manufacturers = success;
+                    },
+                    failure => Logger.LogError(failure)
+                );
 
-            ManufacturerList = new();
-            ManufacturerList.Add(new ManufacturerX
+            ManufacturerList = new()
             {
-                Id = 0,
-                Code = "",
-                Prefix = "",
-                Name = "<< All >>"
-            });
+                new()
+                {
+                    Id = 0,
+                    Code = "",
+                    Prefix = "",
+                    Name = "<< All >>"
+                }
+            };
+
             foreach (var mfr in Manufacturers)
             {
                 if (mfr.Id != 0 && mfr.Prefix?.Length > 0)       // FIX ME - need server to only return list of configured Mfrs
@@ -105,9 +115,9 @@ namespace Menominee.Client.Components.Inventory.Pages
         private async Task FilterItemsList(long mfrId)
         {
             if (mfrId > 0)
-                ItemsList = (await DataService.GetAllItemsAsync(mfrId)).ToList();
+                ItemsList = (await DataService.GetByManufacturerAsync(mfrId)).Value.ToList();
             else
-                ItemsList = (await DataService.GetAllItemsAsync()).ToList();
+                ItemsList = (await DataService.GetAllAsync()).Value.ToList();
 
             if (ItemsList.Count > 0)
             {

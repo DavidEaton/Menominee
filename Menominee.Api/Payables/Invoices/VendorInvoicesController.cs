@@ -5,6 +5,7 @@ using Menominee.Api.Payables.PaymentMethods;
 using Menominee.Api.Payables.Vendors;
 using Menominee.Api.SaleCodes;
 using Menominee.Api.Taxes;
+using Menominee.Common.Http;
 using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.Payables;
@@ -36,8 +37,8 @@ namespace Menominee.Api.Payables.Invoices
             IVendorInvoicePaymentMethodRepository paymentMethodRepository,
             ISalesTaxRepository salesTaxRepository,
             IManufacturerRepository manufacturerRepository,
-            ISaleCodeRepository saleCodeRepository
-            , ILogger<VendorInvoicesController> logger) : base(logger)
+            ISaleCodeRepository saleCodeRepository,
+            ILogger<VendorInvoicesController> logger) : base(logger)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
             this.vendorRepository = vendorRepository ?? throw new ArgumentNullException(nameof(vendorRepository)); ;
@@ -47,11 +48,11 @@ namespace Menominee.Api.Payables.Invoices
             this.saleCodeRepository = saleCodeRepository ?? throw new ArgumentNullException(nameof(saleCodeRepository));
         }
 
-        [Route("listing")]
-        [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToReadInList>>> GetListAsync([FromQuery] ResourceParameters resourceParameters)
+        [HttpGet("listing")]
+        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToReadInList>>> GetListByParametersAsync
+            ([FromQuery] ResourceParameters resourceParameters)
         {
-            var result = await repository.GetList(resourceParameters);
+            var result = await repository.GetListByParametersAsync(resourceParameters);
 
             return result is null
                 ? NotFound()
@@ -59,9 +60,9 @@ namespace Menominee.Api.Payables.Invoices
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToRead>>> GetAsync([FromQuery] ResourceParameters resourceParameters)
+        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToRead>>> GetByParametersAsync([FromQuery] ResourceParameters resourceParameters)
         {
-            var result = await repository.GetInvoices(resourceParameters);
+            var result = await repository.GetByParametersAsync(resourceParameters);
 
             return result is null
                 ? NotFound()
@@ -71,32 +72,29 @@ namespace Menominee.Api.Payables.Invoices
         [HttpGet("{id:long}")]
         public async Task<ActionResult<VendorInvoiceToRead>> GetAsync(long id)
         {
-            var result = await repository.Get(id);
+            var result = await repository.GetAsync(id);
 
             return result is null
                 ? NotFound()
                 : Ok(result);
         }
 
-        private async Task<(IReadOnlyList<Manufacturer> manufacturers, IReadOnlyList<SaleCode> salesCodes, Vendor vendor)> GetEntitiesForUpdate(VendorInvoiceToWrite invoiceFromCaller)
-        {
-            var manufacturersFromRepository = await GetManufacturersInInvoice(invoiceFromCaller);
-            var salesCodesFromRepository = await GetSaleCodesInInvoice(invoiceFromCaller);
-            var vendorFromRepository = await vendorRepository.GetVendorEntityAsync(invoiceFromCaller.Vendor.Id);
-
-            return (manufacturersFromRepository, salesCodesFromRepository, vendorFromRepository);
-        }
-
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> Update(long id, VendorInvoiceToWrite invoiceFromCaller)
+        public async Task<ActionResult> UpdateAsync(VendorInvoiceToWrite invoiceFromCaller)
         {
-            var invoiceFromRepository = await repository.GetEntity(id);
+            var invoiceFromRepository = await repository.GetEntityAsync(invoiceFromCaller.Id);
 
             if (invoiceFromRepository is null)
-                return NotFound($"Could not find Vendor Invoice to update with Id = {id}.");
+                return NotFound($"Could not find Invoice to update with Id = {invoiceFromCaller.Id}.");
 
-            var (manufacturers, saleCodes, vendorFromRepository) = await GetEntitiesForUpdate(invoiceFromCaller);
-            var vendorInvoiceNumbers = await repository.GetVendorInvoiceNumbers(invoiceFromCaller.Vendor.Id);
+            var containedEntitiesResult = await GetContainedEntitiesAsync(invoiceFromCaller);
+
+            if (containedEntitiesResult.IsFailure)
+                return BadRequest(containedEntitiesResult.Error);
+
+            var (manufacturers, saleCodes, vendorFromRepository) = containedEntitiesResult.Value;
+
+            var vendorInvoiceNumbers = await repository.GetVendorInvoiceNumbersAsync(invoiceFromCaller.Vendor.Id);
 
             var result = UpdateVendorInvoiceProperties(
                 invoiceFromRepository, invoiceFromCaller, vendorInvoiceNumbers, vendorFromRepository);
@@ -104,15 +102,85 @@ namespace Menominee.Api.Payables.Invoices
             if (result.IsFailure)
                 return BadRequest(result.Error);
 
-            UpdateLineItems(invoiceFromCaller, invoiceFromRepository, manufacturers, saleCodes);
-            await UpdatePayments(invoiceFromCaller, invoiceFromRepository);
-            await UpdateTaxes(invoiceFromCaller, invoiceFromRepository);
+            UpdateLineItemsAsync(invoiceFromCaller, invoiceFromRepository, manufacturers, saleCodes);
+            await UpdatePaymentsAsync(invoiceFromCaller, invoiceFromRepository);
+            await UpdateTaxesAsync(invoiceFromCaller, invoiceFromRepository);
 
-            await repository.SaveChanges();
+            await repository.SaveChangesAsync();
             return NoContent();
         }
 
-        private async Task UpdateTaxes(VendorInvoiceToWrite invoiceFromCaller, VendorInvoice invoiceFromRepository)
+        [HttpPost]
+        public async Task<ActionResult<PostResponse>> AddAsync(VendorInvoiceToWrite invoiceToAdd)
+        {
+            var failureMessage = $"Could not add new Invoice, Number: {invoiceToAdd?.InvoiceNumber}. Vendor '{invoiceToAdd?.Vendor.Name}' not found.";
+
+            var result = await vendorRepository.GetEntityAsync(invoiceToAdd.Vendor.Id);
+            if (result.IsFailure)
+                // TODO: log exception here
+                return NotFound(new ApiError { Message = $"{failureMessage} - {result.Error}" });
+
+            var vendorFromRepository = result.Value;
+
+            var manufacturersResult = await manufacturerRepository.GetEntitiesAsync(
+                invoiceToAdd.LineItems
+                    .Select(lineItem => lineItem.Item.Manufacturer.Id)
+                    .ToList());
+
+            if (manufacturersResult.IsFailure)
+                // TODO: log exception here
+                return NotFound(new ApiError { Message = manufacturersResult.Error });
+
+
+            var manufacturers = manufacturersResult.Value;
+
+            var saleCodesResult = await saleCodeRepository.GetSaleCodeEntitiesAsync(
+                invoiceToAdd.LineItems
+                    .Select(lineItem => lineItem.Item.SaleCode.Id)
+                    .ToList());
+
+            if (saleCodesResult.IsFailure)
+                // TODO: log exception here
+                return NotFound(new ApiError { Message = saleCodesResult.Error });
+
+            var saleCodes = saleCodesResult.Value;
+
+            // No need to validate it here again, just call .Value right away
+            var invoice = VendorInvoiceHelper.ConvertWriteToEntity(
+                invoiceToAdd,
+                vendorFromRepository,
+                VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoiceToAdd.LineItems, manufacturers, saleCodes),
+                VendorInvoicePaymentHelper.ConvertWriteDtosToEntities(invoiceToAdd.Payments),
+                VendorInvoiceTaxHelper.ConvertWriteDtosToEntities(invoiceToAdd.Taxes),
+                await repository.GetVendorInvoiceNumbersAsync(vendorFromRepository.Id));
+
+            repository.Add(invoice);
+            await repository.SaveChangesAsync();
+
+            return Created(
+               new Uri($"api/vendorinvoicescontroller/{invoice.Id}", UriKind.Relative),
+               new { invoice.Id });
+        }
+
+        private async Task<Result<(IReadOnlyList<Manufacturer>, IReadOnlyList<SaleCode>, Vendor)>> GetContainedEntitiesAsync(VendorInvoiceToWrite invoiceFromCaller)
+        {
+            var manufacturersResult = await GetManufacturersInInvoiceAsync(invoiceFromCaller);
+            var salesCodesResult = await GetSaleCodesInInvoiceAsync(invoiceFromCaller);
+            var vendorResult = await vendorRepository.GetEntityAsync(invoiceFromCaller.Vendor.Id);
+
+            if (manufacturersResult.IsFailure)
+                return Result.Failure<(IReadOnlyList<Manufacturer>, IReadOnlyList<SaleCode>, Vendor)>("Failed to get manufacturers.");
+
+            if (salesCodesResult.IsFailure)
+                return Result.Failure<(IReadOnlyList<Manufacturer>, IReadOnlyList<SaleCode>, Vendor)>("Failed to get sale codes.");
+
+            if (vendorResult.IsFailure)
+                return Result.Failure<(IReadOnlyList<Manufacturer>, IReadOnlyList<SaleCode>, Vendor)>("Failed to get vendor.");
+
+            return Result.Success((manufacturersResult.Value, salesCodesResult.Value, vendorResult.Value));
+        }
+
+        private async Task UpdateTaxesAsync(VendorInvoiceToWrite invoiceFromCaller, VendorInvoice invoiceFromRepository)
         {
             foreach (var tax in invoiceFromRepository.Taxes)
             {
@@ -125,11 +193,11 @@ namespace Menominee.Api.Payables.Invoices
 
                 if (tax.SalesTax.Id != taxFromCaller.SalesTax.Id)
                     tax.SetSalesTax(
-                        await salesTaxRepository.GetSalesTaxEntityAsync(taxFromCaller.SalesTax.Id));
+                        await salesTaxRepository.GetEntityAsync(taxFromCaller.SalesTax.Id));
             }
         }
 
-        private async Task UpdatePayments(VendorInvoiceToWrite invoiceFromCaller, VendorInvoice invoiceFromRepository)
+        private async Task UpdatePaymentsAsync(VendorInvoiceToWrite invoiceFromCaller, VendorInvoice invoiceFromRepository)
         {
             foreach (var payment in invoiceFromRepository.Payments)
             {
@@ -142,11 +210,11 @@ namespace Menominee.Api.Payables.Invoices
 
                 if (payment.PaymentMethod.Id != paymentFromCaller.PaymentMethod.Id)
                     payment.SetPaymentMethod(
-                        await paymentMethodRepository.GetPaymentMethodEntityAsync(paymentFromCaller.PaymentMethod.Id));
+                        await paymentMethodRepository.GetEntityAsync(paymentFromCaller.PaymentMethod.Id));
             }
         }
 
-        private static void UpdateLineItems(VendorInvoiceToWrite invoiceFromCaller, VendorInvoice invoiceFromRepository, IReadOnlyList<Manufacturer> manufacturers, IReadOnlyList<SaleCode> saleCodes)
+        private static void UpdateLineItemsAsync(VendorInvoiceToWrite invoiceFromCaller, VendorInvoice invoiceFromRepository, IReadOnlyList<Manufacturer> manufacturers, IReadOnlyList<SaleCode> saleCodes)
         {
             foreach (var line in invoiceFromRepository.LineItems)
             {
@@ -198,6 +266,8 @@ namespace Menominee.Api.Payables.Invoices
             IReadOnlyList<string> vendorInvoiceNumbers,
             Vendor vendor)
         {
+            // TODO: We don't need to validate the vendor here, it was already
+            // validated in the asp.net request pipeline
             return Result.Combine(
                 (vendor is not null) && (vendor.Id != invoiceFromRepository.Vendor.Id)
                     ? invoiceFromRepository.SetVendor(vendor)
@@ -222,106 +292,73 @@ namespace Menominee.Api.Payables.Invoices
                     : Result.Success());
         }
 
-        // POST: api/vendorinvoices
-        [HttpPost]
-        public async Task<ActionResult> Add(VendorInvoiceToWrite invoiceToAdd)
+        private async Task<Result<IReadOnlyList<Manufacturer>>> GetManufacturersInInvoiceAsync(VendorInvoiceToWrite invoice)
         {
-            var failureMessage = $"Could not add new Invoice, Number: {invoiceToAdd?.InvoiceNumber}. Vendor '{invoiceToAdd?.Vendor.Name}' not found.";
-
-            var vendorFromRepository = await vendorRepository.GetVendorEntityAsync(invoiceToAdd.Vendor.Id);
-
-            if (vendorFromRepository is null)
-                return NotFound(new ApiError { Message = failureMessage });
-
-            var manufacturers = await manufacturerRepository.GetManufacturerEntitiesAsync(
-                invoiceToAdd.LineItems.Select(
-                    lineItem =>
-                    lineItem.Item.Manufacturer.Id)
-                .ToList());
-
-            var saleCodes = await saleCodeRepository.GetSaleCodeEntitiesAsync(
-                invoiceToAdd.LineItems.Select(
-                    lineItem =>
-                    lineItem.Item.SaleCode.Id)
-                .ToList());
-
-            var invoiceEntity = VendorInvoiceHelper.ConvertWriteToEntity(
-                invoiceToAdd,
-                vendorFromRepository,
-                VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoiceToAdd.LineItems, manufacturers, saleCodes),
-                VendorInvoicePaymentHelper.ConvertWriteDtosToEntities(invoiceToAdd.Payments),
-                VendorInvoiceTaxHelper.ConvertWriteDtosToEntities(invoiceToAdd.Taxes),
-                await repository.GetVendorInvoiceNumbers(vendorFromRepository.Id));
-
-            await repository.Add(invoiceEntity);
-            await repository.SaveChanges();
-            return CreatedAtAction(
-                nameof(GetAsync),
-                new { id = invoiceEntity.Id },
-                new { invoiceEntity.Id });
-        }
-
-        [HttpDelete("{id:long}")]
-        public async Task<ActionResult> DeleteAsync(long id)
-        {
-            var invoiceFromRepository = await repository.GetEntity(id);
-
-            if (invoiceFromRepository is null)
-                return NotFound($"Could not find Vendor Invoice in the database to delete with Id: {id}.");
-
-            repository.Delete(invoiceFromRepository);
-
-            await repository.SaveChanges();
-
-            return NoContent();
-        }
-
-        private async Task<IReadOnlyList<Manufacturer>> GetManufacturersInInvoice(VendorInvoiceToWrite invoice)
-        {
-            return await manufacturerRepository.GetManufacturerEntitiesAsync(
-                invoice.LineItems
-                    .Where(
-                        lineItem =>
-                        lineItem is not null
-                        && lineItem.Item is not null
-                        && lineItem.Item.Manufacturer is not null)
-                    .Select(lineItem => lineItem.Item.Manufacturer.Id)
-                    .Distinct()
-                    .ToList());
-        }
-
-        private async Task<IReadOnlyList<SaleCode>> GetSaleCodesInInvoice(VendorInvoiceToWrite invoice)
-        {
-            if (invoice is null || invoice.LineItems is null)
-                return new List<SaleCode>();
-
-            return await saleCodeRepository.GetSaleCodeEntitiesAsync(
-                invoice.LineItems
-                    .Where(lineItem =>
-                        lineItem is not null
-                        && lineItem.Item is not null
-                        && lineItem.Item.SaleCode is not null)
-                    .Select(lineItem => lineItem.Item.SaleCode.Id)
-                    .Distinct()
-                    .ToList());
-        }
-
-        private async Task<IReadOnlyList<Vendor>> GetVendorsInInvoice(VendorInvoiceToWrite invoice)
-        {
-            var result = new List<Vendor>() { await vendorRepository.GetVendorEntityAsync(invoice.Vendor.Id) };
-
-            List<long> ids = new();
-
-            foreach (var payment in invoice.Payments)
+            try
             {
-                if (payment.PaymentMethod.ReconcilingVendor is not null)
-                    ids.Add(payment.PaymentMethod.ReconcilingVendor.Id);
+                var manufacturerIds = invoice.LineItems
+                                            .Where(lineItem => lineItem?.Item?.Manufacturer != null)
+                                            .Select(lineItem => lineItem.Item.Manufacturer.Id)
+                                            .Distinct()
+                                            .ToList();
+
+                if (!manufacturerIds.Any())
+                {
+                    return Result.Failure<IReadOnlyList<Manufacturer>>("No manufacturers found in the invoice.");
+                }
+
+                var manufacturersResult = await manufacturerRepository.GetEntitiesAsync(manufacturerIds);
+
+                if (manufacturersResult.IsFailure)
+                {
+                    return Result.Failure<IReadOnlyList<Manufacturer>>(manufacturersResult.Error);
+                }
+
+                return manufacturersResult;
             }
+            catch (Exception ex)
+            {
+                // TODO: Log the exception here
+                return Result.Failure<IReadOnlyList<Manufacturer>>($"An error occurred while fetching manufacturers: {ex.Message}");
+            }
+        }
 
-            result.AddRange(
-                await vendorRepository.GetVendorEntitiesAsync(ids));
+        private async Task<Result<IReadOnlyList<SaleCode>>> GetSaleCodesInInvoiceAsync(VendorInvoiceToWrite invoice)
+        {
+            try
+            {
+                if (invoice is null || invoice.LineItems is null)
+                {
+                    return Result.Failure<IReadOnlyList<SaleCode>>("Invoice or line items are null.");
+                }
 
-            return result;
+                var saleCodes = await saleCodeRepository.GetSaleCodeEntitiesAsync(
+                    invoice.LineItems
+                        .Where(lineItem =>
+                            lineItem is not null
+                            && lineItem.Item is not null
+                            && lineItem.Item.SaleCode is not null)
+                        .Select(lineItem => lineItem.Item.SaleCode.Id)
+                        .Distinct()
+                        .ToList());
+
+                if (saleCodes.IsFailure)
+                {
+                    return saleCodes;
+                }
+
+                if (!saleCodes.Value.Any())
+                {
+                    return Result.Failure<IReadOnlyList<SaleCode>>("No sale codes found.");
+                }
+
+                return Result.Success(saleCodes.Value);
+            }
+            catch (Exception ex)
+            {
+                // TODO: log the exception here
+                return Result.Failure<IReadOnlyList<SaleCode>>($"An error occurred while fetching sale codes: {ex.Message}");
+            }
         }
     }
 }

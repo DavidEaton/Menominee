@@ -1,6 +1,5 @@
 ﻿using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Common.Enums;
-using Menominee.Common.Http;
 using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Components;
 
@@ -17,6 +16,9 @@ namespace Menominee.Client.Components.Payables.Pages
         [Parameter]
         public long Id { get; set; }
 
+        [Inject]
+        ILogger<VendorEditor> Logger { get; set; }
+
         private VendorToWrite Vendor { get; set; }
         private FormMode FormMode { get; set; }
 
@@ -32,19 +34,18 @@ namespace Menominee.Client.Components.Payables.Pages
             }
             else
             {
-                VendorToRead vendorToRead = await VendorDataService.GetVendorAsync(Id);
+                var result = await VendorDataService.GetAsync(Id);
 
-                if (vendorToRead is not null)
-                {
-                    Vendor = VendorHelper.ConvertReadToWriteDto(vendorToRead);
-                    FormMode = FormMode.Edit;
-                }
-                else
+                if (result.IsFailure)
                 {
                     // TODO: Need to handle this gracefully
-                    Vendor = null;
+                    Logger.LogError($"Failed to get vendor with id {Id}");
+                    Vendor = new();
                     FormMode = FormMode.View;
                 }
+
+                Vendor = VendorHelper.ConvertReadToWriteDto(result.Value);
+                FormMode = FormMode.Edit;
             }
         }
 
@@ -52,12 +53,18 @@ namespace Menominee.Client.Components.Payables.Pages
         {
             if (Id == 0)
             {
-                PostResponse result = await VendorDataService.AddVendorAsync(Vendor);
-                Id = result.Id;
+                var result = await VendorDataService.AddAsync(Vendor);
+
+                if (result.IsSuccess)
+                    Id = result.Value.Id;
+
+                if (result.IsFailure)
+                    // TODO: log it, display toast message
+                    return;
             }
 
             else
-                await VendorDataService.UpdateVendorAsync(Vendor, Id);
+                await VendorDataService.UpdateAsync(Vendor);
 
             EndEdit();
         }

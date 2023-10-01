@@ -1,16 +1,13 @@
-﻿using Menominee.Shared.Models.Addresses;
-using Menominee.Shared.Models.Payables.Invoices.Payments;
-using Menominee.Shared.Models.Payables.Vendors;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Client.Shared;
 using Menominee.Client.Shared.Models;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Addresses;
+using Menominee.Shared.Models.Payables.Invoices.Payments;
+using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Payables
 {
@@ -31,24 +28,36 @@ namespace Menominee.Client.Components.Payables
         [Parameter]
         public FormMode FormMode { get; set; }
 
+        [Inject]
+        ILogger<VendorEditor> Logger { get; set; }
+
         private string Title { get; set; }
         private IList<VendorTypeEnumModel> VendorTypeEnumData { get; set; } = new List<VendorTypeEnumModel>();
         private ObservableCollection<PaymentTypeModel> PaymentMethodList { get; set; } = new ObservableCollection<PaymentTypeModel>();
         protected long PaymentMethodId { get; set; } = 0;
         protected bool AutoComplete { get; set; } = false;
         private bool parametersSet = false;
-
+        private IReadOnlyList<VendorInvoicePaymentMethodToReadInList> paymentMethodList = new List<VendorInvoicePaymentMethodToReadInList>();
         protected override async Task OnInitializedAsync()
         {
             foreach (VendorRole type in Enum.GetValues(typeof(VendorRole)))
                 VendorTypeEnumData.Add(new VendorTypeEnumModel { DisplayText = EnumExtensions.GetDisplayName(type), Value = type });
 
-            IReadOnlyList<VendorInvoicePaymentMethodToReadInList> paymentMethodList = (await PaymentMethodDataService.GetAllPaymentMethodsAsync()).ToList();
+            await GetPaymentMethodList();
+
             PaymentMethodList.Add(new PaymentTypeModel { Id = 0, DisplayText = "None" });
             foreach (var method in paymentMethodList)
             {
                 PaymentMethodList.Add(new PaymentTypeModel { Id = method.Id, DisplayText = method.Name });
             }
+        }
+
+        private async Task GetPaymentMethodList()
+        {
+            await PaymentMethodDataService.GetAllAsync()
+            .Match(
+                success => paymentMethodList = success,
+                failure => Logger.LogError(failure));
         }
 
         protected override void OnParametersSet()
@@ -80,10 +89,19 @@ namespace Menominee.Client.Components.Payables
                 Vendor.DefaultPaymentMethod = null;
             else
             {
-                var readDto = await PaymentMethodDataService.GetPaymentMethodAsync(PaymentMethodId);
-                Vendor.DefaultPaymentMethod = new();
-                Vendor.DefaultPaymentMethod.PaymentMethod = readDto;
-                Vendor.DefaultPaymentMethod.AutoCompleteDocuments = AutoComplete;
+                var result = await PaymentMethodDataService.GetAsync(PaymentMethodId);
+
+                if (result.IsFailure)
+                {
+                    Logger.LogError(result.Error);
+                    return;
+                }
+
+                Vendor.DefaultPaymentMethod = new()
+                {
+                    PaymentMethod = result.Value,
+                    AutoCompleteDocuments = AutoComplete
+                };
             }
 
             await OnValidSubmit.InvokeAsync(this);

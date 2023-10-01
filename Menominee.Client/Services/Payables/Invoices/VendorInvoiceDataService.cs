@@ -1,93 +1,98 @@
 ﻿using Blazored.Toast.Services;
+using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Payables.Invoices;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Menominee.Client.Services.Payables.Invoices
 {
-    public class VendorInvoiceDataService : IVendorInvoiceDataService
+    public class VendorInvoiceDataService : DataServiceBase<VendorInvoiceDataService>, IVendorInvoiceDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<VendorInvoiceDataService> logger;
         private readonly IToastService toastService;
-        private const string MediaType = "application/json";
-        //private const string UriSegment = "api/payables/vendorinvoices";
         private const string UriSegment = "api/vendorinvoices";
 
-        public VendorInvoiceDataService(HttpClient httpClient, ILogger<VendorInvoiceDataService> logger, IToastService toastService)
+        public VendorInvoiceDataService(HttpClient httpClient,
+            ILogger<VendorInvoiceDataService> logger,
+            IToastService toastService,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoices(ResourceParameters resourceParameters)
+        public async Task<Result<IReadOnlyList<VendorInvoiceToReadInList>>> GetAllByParametersAsync(ResourceParameters resourceParameters)
         {
             // TODO: Pass resourceParameters, NOT query string built from resourceParameters
-            var parameters = $"VendorId={resourceParameters?.VendorId}&Status={resourceParameters.Status}";
+            var parameters = $"VendorId={resourceParameters?.VendorId}&Status={resourceParameters?.Status}";
+            var errorMessage = "Failed to get all businesses";
 
             try
             {
-                return await httpClient
-                    .GetFromJsonAsync<IReadOnlyList<VendorInvoiceToReadInList>>($"{UriSegment}/listing?{parameters}");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<VendorInvoiceToReadInList>>($"{UriSegment}/listing?{parameters}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<VendorInvoiceToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all vendor invoices");
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<VendorInvoiceToReadInList>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task<VendorInvoiceToRead> GetInvoice(long id)
+        public async Task<Result<VendorInvoiceToRead>> GetAsync(long id)
         {
+            var errorMessage = $"Failed to get Vendor Invoice with id {id}";
             try
             {
-                return await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{UriSegment}/{id}");
+                var result = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>(UriSegment + $"/{id}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<VendorInvoiceToRead>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get vendoir invoice with id {id}", id);
-                Console.WriteLine($"Error getting invoice #{id}: {ex.Message}");
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<VendorInvoiceToRead>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task<VendorInvoiceToRead> AddInvoice(VendorInvoiceToWrite invoice)
+        public async Task<Result<PostResponse>> AddAsync(VendorInvoiceToWrite fromCaller)
         {
-            var options = new JsonSerializerOptions
+            var entityType = "Vendor Invoice";
+            try
             {
-                PropertyNameCaseInsensitive = true
-            };
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
 
-            var content = new StringContent(JsonSerializer.Serialize(invoice), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
 
-            if (response.IsSuccessStatusCode)
-            {
-                toastService.ShowSuccess($"Added vendor invoice.", "Added");
-                return await JsonSerializer.DeserializeAsync<VendorInvoiceToRead>(await response.Content.ReadAsStreamAsync(), options);
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.InvoiceNumber} failed to update", "Save Failed");
+
+                return result;
             }
-
-            toastService.ShowError($"Failed to add vendor invoice. {response.ReasonPhrase}.", "Add Failed");
-
-            return null;
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
+            }
         }
 
-        public async Task UpdateInvoice(VendorInvoiceToWrite invoice, long id)
+        public async Task<Result> UpdateAsync(VendorInvoiceToWrite fromCaller)
         {
-            var content = new StringContent(JsonSerializer.Serialize(invoice), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                toastService.ShowSuccess("Invoice saved successfully", "Saved");
-                return;
-            }
-
-            toastService.ShowError($"Invoice failed to update:  Id = {id}", "Save Failed");
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                invoice => $"{invoice.ToString}",
+                invoice => invoice.Id);
         }
     }
 }

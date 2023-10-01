@@ -1,95 +1,120 @@
 ﻿using Blazored.Toast.Services;
-using System.Text.Json;
-using System.Text;
-using System.Net.Http.Json;
+using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Inventory.MaintenanceItems;
+using Menominee.Shared.Models.Vehicles;
+using System.Net.Http.Json;
 
 namespace Menominee.Client.Services.Inventory
 {
-    public class MaintenanceItemDataService : IMaintenanceItemDataService
+    public class MaintenanceItemDataService : DataServiceBase<MaintenanceItemDataService>, IMaintenanceItemDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<MaintenanceItemDataService> logger;
         private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/maintenanceitems";
 
-        public MaintenanceItemDataService(HttpClient httpClient, ILogger<MaintenanceItemDataService> logger, IToastService toastService)
+        public MaintenanceItemDataService(HttpClient httpClient,
+            ILogger<MaintenanceItemDataService> logger,
+            IToastService toastService,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<MaintenanceItemToRead> AddItemAsync(MaintenanceItemToWrite item)
+        public async Task<Result<PostResponse>> AddAsync(MaintenanceItemToWrite fromCaller)
         {
-            var content = new StringContent(JsonSerializer.Serialize(item), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                //toastService.ShowSuccess($"{business.Name} added successfully", "Added");
-                return await JsonSerializer.DeserializeAsync<MaintenanceItemToRead>(await response.Content.ReadAsStreamAsync());
-            }
-
-            //toastService.ShowError($"{business.Name} failed to add. {response.ReasonPhrase}.", "Add Failed");
-            return null;
-        }
-
-        public async Task<IReadOnlyList<MaintenanceItemToReadInList>> GetAllItemsAsync()
-        {
+            var entityType = "Maintenance Item";
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<MaintenanceItemToReadInList>>($"{UriSegment}/listing");
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
+
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
+
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.Item.ItemNumber} failed to update", "Save Failed");
+
+                return result;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all maintenance items");
-                Console.WriteLine($"Message: {ex.Message}");
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
             }
-
-            return null;
         }
 
-        public async Task<MaintenanceItemToRead> GetItemAsync(long id)
+        public async Task<Result<IReadOnlyList<MaintenanceItemToReadInList>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get all maintenance items";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<MaintenanceItemToRead>($"{UriSegment}/{id}");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<MaintenanceItemToReadInList>>($"{UriSegment}/listing");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<MaintenanceItemToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get maintenance item with id {id}", id);
-                Console.WriteLine($"Message: {ex.Message}");
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<MaintenanceItemToReadInList>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task UpdateItemAsync(MaintenanceItemToWrite item, long id)
+        public async Task<Result<MaintenanceItemToRead>> GetAsync(long id)
         {
-            var content = new StringContent(JsonSerializer.Serialize(item), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);
+            var errorMessage = $"Failed to get maintenance item with id {id}";
 
-            if (response.IsSuccessStatusCode)
-            {
-                //toastService.ShowSuccess("Inventory Item saved successfully", "Saved");
-                return;
-            }
-
-            //toastService.ShowError($"Inventory Item failed to update:  Id = {id}", "Save Failed");
-        }
-
-        public async Task DeleteItemAsync(long id)
-        {
             try
             {
-                await httpClient.DeleteAsync($"{UriSegment}/{id}");
+                var result = await httpClient.GetFromJsonAsync<MaintenanceItemToRead>(UriSegment + $"/{id}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<MaintenanceItemToRead>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to delete maintenance item with id {id}", id);
-                Console.WriteLine($"Message :{ex.Message}");
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<MaintenanceItemToRead>(errorMessage);
+            }
+        }
+
+        public async Task<Result> UpdateAsync(MaintenanceItemToWrite fromCaller)
+        {
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                item => $"{item.Item.ItemNumber}",
+                item => item.Id);
+        }
+
+        public async Task<Result> DeleteAsync(long id)
+        {
+            try
+            {
+                var response = await httpClient.DeleteAsync($"{UriSegment}/{id}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    Logger.LogError(message: errorMessage);
+                    return Result.Failure<VehicleToRead>(errorMessage);
+                }
+
+                return Result.Success();
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Failed to delete item";
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<VehicleToRead>(errorMessage);
             }
         }
     }

@@ -1,6 +1,6 @@
 using Menominee.Api.Common;
 using Menominee.Shared;
-using Menominee.Shared.Models;
+using Menominee.Shared.Models.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,10 +22,10 @@ namespace Menominee.Api.Users
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<UserToRead>>> GetUsers()
+        public async Task<ActionResult<IReadOnlyList<UserResponse>>> GetAll()
         {
             // TODO: filter by tenant
-            var results = (await GraphUserService.GetUsers());
+            var results = (await GraphUserService.GetAllAsync());
 
             if (results == null)
                 return NotFound();
@@ -34,11 +34,11 @@ namespace Menominee.Api.Users
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(RegisterUser user)
+        public async Task<ActionResult> Post(RegisterUserRequest user)
         {
             if (ModelState.IsValid)
             {
-                var result = await GraphUserService.CreateUser(user);
+                var result = await GraphUserService.RegisterAsync(user);
 
                 if (!result.Successful)
                     return BadRequest(result);

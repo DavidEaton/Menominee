@@ -1,4 +1,5 @@
-﻿using Menominee.Api.Data;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Api.Data;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.Manufacturers;
 using Microsoft.EntityFrameworkCore;
@@ -19,21 +20,19 @@ namespace Menominee.Api.Manufacturers
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddManufacturerAsync(Manufacturer manufacturer)
+        public void Add(Manufacturer manufacturer)
         {
-            if (manufacturer != null)
-                await context.AddAsync(manufacturer);
+            if (manufacturer is not null)
+                context.Attach(manufacturer);
         }
 
-        public async Task DeleteManufacturerAsync(long id)
+        public void Delete(Manufacturer manufacturer)
         {
-            var manufacturerFromContext = await context.Manufacturers.FindAsync(id);
-
-            if (manufacturerFromContext is not null)
-                context.Remove(manufacturerFromContext);
+            if (manufacturer is not null)
+                context.Remove(manufacturer);
         }
 
-        public async Task<ManufacturerToRead> GetManufacturerAsync(long id)
+        public async Task<ManufacturerToRead> GetAsync(long id)
         {
             return ManufacturerHelper.ConvertToReadDto(
                 await context.Manufacturers
@@ -41,25 +40,37 @@ namespace Menominee.Api.Manufacturers
                 .FirstOrDefaultAsync(manufacturer => manufacturer.Id == id));
         }
 
-        public async Task<IReadOnlyList<Manufacturer>> GetManufacturerEntitiesAsync(List<long> ids = null)
+        public async Task<Result<IReadOnlyList<Manufacturer>>> GetEntitiesAsync(List<long> ids = null)
         {
-            IQueryable<Manufacturer> query = context.Manufacturers;
-
-            if (ids is not null)
+            try
             {
-                query = query.Where(manufacturer => ids.Contains(manufacturer.Id));
-            }
+                IQueryable<Manufacturer> query = context.Manufacturers;
 
-            return await query.ToListAsync();
+                if (ids is not null)
+                    query = query.Where(manufacturer => ids.Contains(manufacturer.Id));
+
+
+                var manufacturers = await query.ToListAsync();
+
+                if (!manufacturers.Any())
+                    return Result.Failure<IReadOnlyList<Manufacturer>>("No manufacturers found.");
+
+                return Result.Success<IReadOnlyList<Manufacturer>>(manufacturers);
+            }
+            catch (Exception ex)
+            {
+                // Consider logging the exception here
+                return Result.Failure<IReadOnlyList<Manufacturer>>($"An error occurred while fetching manufacturers: {ex.Message}");
+            }
         }
 
-        public async Task<Manufacturer> GetManufacturerEntityAsync(long id)
+        public async Task<Manufacturer> GetEntityAsync(long id)
         {
             return await context.Manufacturers
                 .FirstOrDefaultAsync(manufacturer => manufacturer.Id == id);
         }
 
-        public async Task<IReadOnlyList<ManufacturerToReadInList>> GetManufacturerListAsync()
+        public async Task<IReadOnlyList<ManufacturerToReadInList>> GetListAsync()
         {
             IReadOnlyList<Manufacturer> manufacturers = await context.Manufacturers
                 .AsNoTracking()
@@ -70,17 +81,12 @@ namespace Menominee.Api.Manufacturers
                 .ToList();
         }
 
-        public async Task<bool> ManufacturerExistsAsync(long id)
-        {
-            return await context.Manufacturers.AnyAsync(manufacturer => manufacturer.Id == id);
-        }
-
-        public async Task<List<string>> GetExistingPrefixList()
+        public async Task<List<string>> GetExistingPrefixListAsync()
         {
             return await context.Manufacturers.Select(manufacturer => manufacturer.Prefix).ToListAsync();
         }
 
-        public async Task<List<long>> GetExistingIdList()
+        public async Task<List<long>> GetExistingIdsAsync()
         {
             return await context.Manufacturers
                 .OrderBy(m => m.Id)
@@ -88,14 +94,14 @@ namespace Menominee.Api.Manufacturers
                 .ToListAsync();
         }
         // The value for a user created manufacturer.id is to start at 50,000
-        public long DetermineManufacturerId(List<long> existingIds)
+        public long GetNextManufacturerId(List<long> existingIds)
         {
             if (!existingIds.Any() || existingIds.Max() < 50000) // if there are no customer added manufacturers, start at 50,000
                 return 50000;
 
             return existingIds.Max() + 1; // increment to the next value
         }
-        public async Task ToggleIdentityInsert(bool enable)
+        public async Task ToggleIdentityInsertAsync(bool enable)
         {
             // toggle identity insert
             await context.Database.ExecuteSqlRawAsync(

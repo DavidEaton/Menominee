@@ -20,39 +20,37 @@ namespace Menominee.Api.Persons
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddPersonAsync(Person person)
+        public void Add(Person person)
         {
-            if (person != null)
-                await context.AddAsync(person);
+            if (person is not null)
+                context.Attach(person);
         }
 
-        public void DeletePerson(Person person)
+        public void Delete(Person person)
         {
             context.Remove(person);
         }
-        public async Task<Person> GetPersonEntityAsync(long id)
+        public async Task<Person> GetEntityAsync(long id)
         {
-            Person personFromContext = await context.Persons
+            return await context.Persons
                 .Include(person => person.Phones
                     .OrderByDescending(phone => phone.IsPrimary))
                 .Include(person => person.Emails
                     .OrderByDescending(email => email.IsPrimary))
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(person => person.Id == id);
-
-            return personFromContext;
         }
 
-        public async Task<PersonToRead> GetPersonAsync(long id)
+        public async Task<PersonToRead> GetAsync(long id)
         {
-            Person personFromContext = await GetPersonEntityAsync(id);
+            var personFromContext = await GetEntityAsync(id);
 
             return personFromContext is not null
                 ? PersonHelper.ConvertToReadDto(personFromContext)
                 : null;
         }
 
-        public async Task<IReadOnlyList<PersonToRead>> GetPersonsAsync()
+        public async Task<IReadOnlyList<PersonToRead>> GetAllAsync()
         {
             IReadOnlyList<Person> personsFromContext = await context.Persons
                 .Include(person => person.Phones
@@ -69,7 +67,7 @@ namespace Menominee.Api.Persons
                 .ToList();
         }
 
-        public async Task<IReadOnlyList<PersonToReadInList>> GetPersonsListAsync()
+        public async Task<IReadOnlyList<PersonToReadInList>> GetListAsync()
         {
             IReadOnlyList<Person> personsFromContext = await context.Persons
                 .Include(person => person.Phones
@@ -89,12 +87,6 @@ namespace Menominee.Api.Persons
         public async Task SaveChangesAsync()
         {
             await context.SaveChangesAsync();
-        }
-
-        public async Task<bool> PersonExistsAsync(long id)
-        {
-            return await context.Persons
-                .AnyAsync(person => person.Id == id);
         }
 
         public void DeletePhone(Phone phone)

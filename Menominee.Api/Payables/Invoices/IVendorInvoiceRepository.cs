@@ -7,15 +7,13 @@ namespace Menominee.Api.Payables.Invoices
 {
     public interface IVendorInvoiceRepository
     {
-        Task Add(VendorInvoice entity);
-        Task<VendorInvoice> GetEntity(long id);
-        Task<VendorInvoiceToRead> Get(long id);
-        Task<IReadOnlyList<VendorInvoiceToRead>> GetInvoices(ResourceParameters resourceParameters);
-        Task<Vendor> GetVendor(long id);
-        Task<IReadOnlyList<VendorInvoiceToReadInList>> GetList(ResourceParameters resourceParameters);
+        void Add(VendorInvoice entity);
         void Delete(VendorInvoice entity);
-        Task<bool> Exists(long id);
-        Task SaveChanges();
-        Task<IReadOnlyList<string>> GetVendorInvoiceNumbers(long vendorId);
+        Task<VendorInvoice> GetEntityAsync(long id);
+        Task<VendorInvoiceToRead> GetAsync(long id);
+        Task<IReadOnlyList<VendorInvoiceToRead>> GetByParametersAsync(ResourceParameters resourceParameters);
+        Task<IReadOnlyList<VendorInvoiceToReadInList>> GetListByParametersAsync(ResourceParameters resourceParameters);
+        Task SaveChangesAsync();
+        Task<IReadOnlyList<string>> GetVendorInvoiceNumbersAsync(long vendorId);
     }
 }

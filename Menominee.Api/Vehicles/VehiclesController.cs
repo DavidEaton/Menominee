@@ -1,5 +1,6 @@
 ﻿using Menominee.Api.Common;
 using Menominee.Common.Enums;
+using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Vehicles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -30,7 +31,7 @@ public class VehiclesController : BaseApplicationController<VehiclesController>
         string searchTerm = "")
     {
         var vehicles = await repository
-            .GetVehiclesAsync(customerId, sortOrder, sortColumn, includeInactive, searchTerm);
+            .GetEntitiesAsync(customerId, sortOrder, sortColumn, includeInactive, searchTerm);
 
         return vehicles is null
             ? Ok(new List<VehicleToRead>())
@@ -52,78 +53,38 @@ public class VehiclesController : BaseApplicationController<VehiclesController>
     [HttpPost]
     public async Task<ActionResult> AddAsync(VehicleToWrite vehicleToAdd)
     {
-        var vehicle = VehicleHelper.ConvertWriteDtoToEntity(vehicleToAdd);
+        var vehicle = Vehicle.Create(
+                    vehicleToAdd.VIN,
+                    vehicleToAdd.Year,
+                    vehicleToAdd.Make,
+                    vehicleToAdd.Model,
+                    vehicleToAdd.Plate,
+                    vehicleToAdd.PlateStateProvince,
+                    vehicleToAdd.UnitNumber,
+                    vehicleToAdd.Color,
+                    vehicleToAdd.Active).Value;
 
-        repository.AddVehicle(vehicle);
-        await repository.SaveChanges();
+        repository.Add(vehicle);
+        await repository.SaveChangesAsync();
 
         return Created(
-            new Uri($"api/vehiclescontroller/{vehicle.Id}", UriKind.Relative),
+            new Uri($"api/vehicles/{vehicle.Id}", UriKind.Relative),
             new { vehicle.Id });
     }
 
     [HttpPut("{id:long}")]
-    public async Task<ActionResult> UpdateAsync(long id, VehicleToWrite vehicleToUpdate)
+    public async Task<ActionResult> UpdateAsync(VehicleToWrite vehicleToUpdate)
     {
-        var notFoundMessage = $"Vehicle with id {id} not found.";
-
-        var vehicleFromRepository = await repository.GetEntityAsync(id);
+        var vehicleFromRepository = await repository.GetEntityAsync(vehicleToUpdate.Id);
         if (vehicleFromRepository is null)
-        {
-            return NotFound(notFoundMessage);
-        }
+            return NotFound($"Vehicle with id {vehicleToUpdate.Id} not found.");
 
-        var vinResult = vehicleFromRepository.SetVin(vehicleToUpdate.VIN);
-        if (vinResult.IsFailure)
-        {
-            return BadRequest(vinResult.Error);
-        }
+        if (VehiclesAreEqual(vehicleFromRepository, vehicleToUpdate))
+            return NoContent();
 
-        var yearResult = vehicleFromRepository.SetYear(vehicleToUpdate.Year);
-        if (yearResult.IsFailure)
-        {
-            return BadRequest(yearResult.Error);
-        }
+        UpdateVehicle(vehicleToUpdate, vehicleFromRepository);
 
-        var makeResult = vehicleFromRepository.SetMake(vehicleToUpdate.Make);
-        if (makeResult.IsFailure)
-        {
-            return BadRequest(makeResult.Error);
-        }
-
-        var modelResult = vehicleFromRepository.SetModel(vehicleToUpdate.Model);
-        if (modelResult.IsFailure)
-        {
-            return BadRequest(modelResult.Error);
-        }
-
-        var plateResult = vehicleFromRepository.SetPlate(vehicleToUpdate.Plate);
-        if (plateResult.IsFailure)
-        {
-            return BadRequest(plateResult.Error);
-        }
-
-        var plateStateProvinceResult = vehicleFromRepository.SetPlateStateProvince(vehicleToUpdate.PlateStateProvince);
-        if (plateStateProvinceResult.IsFailure)
-        {
-            return BadRequest(plateStateProvinceResult.Error);
-        }
-
-        var unitNumberResult = vehicleFromRepository.SetUnitNumber(vehicleToUpdate.UnitNumber);
-        if (unitNumberResult.IsFailure)
-        {
-            return BadRequest(unitNumberResult.Error);
-        }
-
-        var colorResult = vehicleFromRepository.SetColor(vehicleToUpdate.Color);
-        if (colorResult.IsFailure)
-        {
-            return BadRequest(colorResult.Error);
-        }
-
-        vehicleFromRepository.SetActive(vehicleToUpdate.Active);
-
-        await repository.SaveChanges();
+        await repository.SaveChangesAsync();
 
         return NoContent();
     }
@@ -131,17 +92,37 @@ public class VehiclesController : BaseApplicationController<VehiclesController>
     [HttpDelete("{id:long}")]
     public async Task<ActionResult> DeleteAsync(long id)
     {
-        var notFoundMessage = $"Vehicle with id {id} not found.";
-
         var vehicleFromRepository = await repository.GetEntityAsync(id);
         if (vehicleFromRepository is null)
-        {
-            return NotFound(notFoundMessage);
-        }
+            return NotFound($"Vehicle with id {id} not found.");
 
-        repository.DeleteVehicle(vehicleFromRepository);
-        await repository.SaveChanges();
+        repository.Delete(vehicleFromRepository);
+        await repository.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    private static bool VehiclesAreEqual(Vehicle vehicleFromRepository, VehicleToWrite vehicleToUpdate) =>
+        vehicleFromRepository.VIN == vehicleToUpdate.VIN
+        && vehicleFromRepository.Year == vehicleToUpdate.Year
+        && vehicleFromRepository.Make == vehicleToUpdate.Make
+        && vehicleFromRepository.Model == vehicleToUpdate.Model
+        && vehicleFromRepository.Plate == vehicleToUpdate.Plate
+        && vehicleFromRepository.PlateStateProvince == vehicleToUpdate.PlateStateProvince
+        && vehicleFromRepository.UnitNumber == vehicleToUpdate.UnitNumber
+        && vehicleFromRepository.Color == vehicleToUpdate.Color
+        && vehicleFromRepository.Active == vehicleToUpdate.Active;
+
+    private static void UpdateVehicle(VehicleToWrite vehicleToUpdate, Vehicle vehicleFromRepository)
+    {
+        vehicleFromRepository.SetVin(vehicleToUpdate.VIN);
+        vehicleFromRepository.SetYear(vehicleToUpdate.Year);
+        vehicleFromRepository.SetMake(vehicleToUpdate.Make);
+        vehicleFromRepository.SetModel(vehicleToUpdate.Model);
+        vehicleFromRepository.SetPlate(vehicleToUpdate.Plate);
+        vehicleFromRepository.SetPlateStateProvince(vehicleToUpdate.PlateStateProvince);
+        vehicleFromRepository.SetUnitNumber(vehicleToUpdate.UnitNumber);
+        vehicleFromRepository.SetColor(vehicleToUpdate.Color);
+        vehicleFromRepository.SetActive(vehicleToUpdate.Active);
     }
 }

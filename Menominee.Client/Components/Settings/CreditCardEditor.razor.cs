@@ -1,10 +1,7 @@
-﻿using Menominee.Shared.Models.CreditCards;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
+using Menominee.Shared.Models.CreditCards;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Settings
 {

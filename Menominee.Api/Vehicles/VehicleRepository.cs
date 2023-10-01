@@ -1,6 +1,7 @@
 ﻿using Menominee.Api.Data;
 using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
+using Menominee.Shared.Models.Vehicles;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,27 +20,16 @@ public class VehicleRepository : IVehicleRepository
         this.context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public void AddVehicle(Vehicle entity)
+    public void Add(Vehicle vehicle)
     {
-        var existingEntity = context.Vehicles
-            .FirstOrDefault(vehicle => vehicle.Id.Equals(entity.Id));
-
-        if (existingEntity is not null)
-        {
-            context.Entry(existingEntity).State = EntityState.Detached;
-        }
-
-        context.Vehicles.Attach(entity);
+        if (vehicle is not null)
+            context.Attach(vehicle);
     }
 
-    public void DeleteVehicle(Vehicle entity)
+    public void Delete(Vehicle vehicle)
     {
-        context.Vehicles.Remove(entity);
-    }
-
-    public void DeleteVehicles(IReadOnlyList<Vehicle> entities)
-    {
-        context.Vehicles.RemoveRange(entities);
+        if (vehicle is not null)
+            context.Remove(vehicle);
     }
 
     public async Task<Vehicle> GetEntityAsync(long id)
@@ -52,7 +42,7 @@ public class VehicleRepository : IVehicleRepository
         return await context.Vehicles.FirstOrDefaultAsync(vehicle => vehicle.VIN == vin);
     }
 
-    public async Task<IReadOnlyList<Vehicle>> GetVehiclesAsync(long customerId, SortOrder sortOrder, VehicleSortColumn sortColumn, bool includeInactive, string searchTerm)
+    public async Task<IReadOnlyList<Vehicle>> GetEntitiesAsync(long customerId, SortOrder sortOrder, VehicleSortColumn sortColumn, bool includeInactive, string searchTerm)
     {
         var query = context.Vehicles
             .AsNoTracking()
@@ -105,8 +95,18 @@ public class VehicleRepository : IVehicleRepository
         };
     }
 
-    public async Task SaveChanges()
+    public async Task SaveChangesAsync()
     {
         await context.SaveChangesAsync();
+    }
+
+    public async Task<VehicleToRead> GetAsync(long id)
+    {
+        var vehicleFromContext = await context.Vehicles
+            .FirstOrDefaultAsync(vehicle => vehicle.Id == id);
+
+        return vehicleFromContext is not null
+            ? VehicleHelper.ConvertToReadDto(vehicleFromContext)
+            : null;
     }
 }

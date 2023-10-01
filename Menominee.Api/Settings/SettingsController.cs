@@ -24,9 +24,9 @@ namespace Menominee.Api.Settings
         /// </summary>
         /// <returns></returns>
         [HttpGet("{settingName}")]
-        public async Task<ActionResult<SettingToRead>> GetSetting(SettingName settingName)
+        public async Task<ActionResult<SettingToRead>> GetAsync(SettingName settingName)
         {
-            var setting = await repository.GetSetting(settingName);
+            var setting = await repository.GetAsync(settingName);
 
             if (setting is null)
                 return NotFound();
@@ -38,9 +38,9 @@ namespace Menominee.Api.Settings
         /// </summary>
         /// <returns>list of settingToRead</returns>
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<SettingToRead>>> GetSettingsListAsync()
+        public async Task<ActionResult<IReadOnlyList<SettingToRead>>> GetListAsync()
         {
-            var settings = await repository.GetSettingsListAsync();
+            var settings = await repository.GetListAsync();
 
             return settings.Any()
                 ? Ok(settings)
@@ -53,9 +53,9 @@ namespace Menominee.Api.Settings
         /// <param name="groupId">settingGroup</param>
         /// <returns>list of settingToRead with associated groupId</returns>
         [HttpGet("group/{group}")]
-        public async Task<ActionResult<IReadOnlyList<SettingToRead>>> GetSettingListByGroupAsync(SettingGroup group)
+        public async Task<ActionResult<IReadOnlyList<SettingToRead>>> GetByGroupAsync(SettingGroup group)
         {
-            var settings = await repository.GetSettingListByGroupAsync(group);
+            var settings = await repository.GetByGroupAsync(group);
 
             return settings.Any()
                 ? Ok(settings)
@@ -68,14 +68,14 @@ namespace Menominee.Api.Settings
         /// <param name="settings">list of settings to be added to database</param>
         /// <returns>All of the settings the database</returns>
         [HttpPost("settingList")]
-        public async Task<ActionResult<IReadOnlyList<SettingToRead>>> SaveSettingsListAsync(List<SettingToWrite> settings)
+        public async Task<ActionResult<IReadOnlyList<SettingToRead>>> SaveAsync(List<SettingToWrite> settings)
         {
-            var updateSettings = await repository.SaveSettingsListAsync(settings);
+            var updateSettings = await repository.SaveListAsync(settings);
 
             if (!updateSettings.Any())
                 return BadRequest();
 
-            return Created("Settings Created",updateSettings);
+            return Created("Settings Created", updateSettings);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Menominee.Api.Settings
         [HttpPut("settingList")]
         public async Task<ActionResult<IReadOnlyList<SettingToWrite>>> UpdateSettingsListAsync(List<SettingToWrite> settings)
         {
-            var updatedSettings = await repository.UpdateSettingsListAsync(settings);
+            var updatedSettings = await repository.UpdateListAsync(settings);
 
             if (!updatedSettings.Any())
                 return BadRequest();
@@ -102,7 +102,7 @@ namespace Menominee.Api.Settings
         [HttpPost]
         public async Task<ActionResult<SettingToRead>> SaveSetting(SettingToWrite setting)
         {
-            var updateSetting = await repository.SaveSetting(setting);
+            var updateSetting = await repository.SaveAsync(setting);
 
             if (updateSetting is null)
                 return BadRequest();
@@ -118,9 +118,9 @@ namespace Menominee.Api.Settings
         [HttpPut]
         public async Task<ActionResult<SettingToRead>> UpdateSetting(SettingToWrite setting)
         {
-            var updateSetting = await repository.UpdateSetting(setting);
+            var updateSetting = await repository.UpdateAsync(setting);
 
-            if(updateSetting is null)
+            if (updateSetting is null)
                 return BadRequest();
 
             return Ok(updateSetting);

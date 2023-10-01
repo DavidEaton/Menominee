@@ -1,4 +1,5 @@
-﻿@using Syncfusion.Blazor.DropDowns
+﻿@inherits InventoryEditorBase
+@using Syncfusion.Blazor.DropDowns
 
 <div class="m-form">
     <Card Title="@Title">
@@ -8,12 +9,12 @@
                     @if (ProductCodes != null && ProductCodes.Count > 0)
                     {
                         <label class="m-label" for="productCode">Product Code</label>
-                        <TelerikDropDownList @bind-Value="@productCodeId"
+                        <TelerikDropDownList @bind-Value="@ProductCodeId"
                                          Width="100%"
                                          Data="@ProductCodes"
                                          TextField="DisplayText"
                                          ValueField="Id"
-                                         OnChange="OnProductCodeChangeAsync"
+                                         OnChange="OnProductCodeChangedAsync"
                                          Id="productCode">
                         </TelerikDropDownList>
                     }

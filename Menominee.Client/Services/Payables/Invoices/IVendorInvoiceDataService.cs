@@ -1,16 +1,14 @@
-﻿using Menominee.Shared.Models.Payables.Invoices;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Http;
+using Menominee.Shared.Models.Payables.Invoices;
 
 namespace Menominee.Client.Services.Payables.Invoices
 {
     public interface IVendorInvoiceDataService
     {
-        Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoices(ResourceParameters resourceParameters);
-        Task<VendorInvoiceToRead> GetInvoice(long id);
-        //Task<VendorInvoiceToRead> AddInvoice(VendorInvoiceToAdd invoice);
-        Task<VendorInvoiceToRead> AddInvoice(VendorInvoiceToWrite invoice);
-        //Task UpdateInvoice(VendorInvoiceToEdit invoice, long id);
-        Task UpdateInvoice(VendorInvoiceToWrite invoice, long id);
+        Task<Result<IReadOnlyList<VendorInvoiceToReadInList>>> GetAllByParametersAsync(ResourceParameters resourceParameters);
+        Task<Result<VendorInvoiceToRead>> GetAsync(long id);
+        Task<Result<PostResponse>> AddAsync(VendorInvoiceToWrite invoice);
+        Task<Result> UpdateAsync(VendorInvoiceToWrite invoice);
     }
 }

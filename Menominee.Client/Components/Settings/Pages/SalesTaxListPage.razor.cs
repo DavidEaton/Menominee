@@ -1,10 +1,7 @@
-﻿using Menominee.Shared.Models.Taxes;
-using Menominee.Client.Services.Taxes;
+﻿using Menominee.Client.Services.Taxes;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Taxes;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Settings.Pages
@@ -33,7 +30,8 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            SalesTaxes = (await SalesTaxDataService.GetAllSalesTaxesAsync()).ToList();
+            await GetSalesTaxes();
+
             if (SalesTaxes?.Count > 0)
             {
                 SelectedSalesTax = SalesTaxes.FirstOrDefault();
@@ -62,34 +60,33 @@ namespace Menominee.Client.Components.Settings.Pages
         {
             if (Id > 0)
             {
-                var readDto = await SalesTaxDataService.GetSalesTaxAsync(Id);
-                SalesTax = new SalesTaxToWrite
-                {
-                    Description = readDto.Description,
-                    IsAppliedByDefault = readDto.IsAppliedByDefault,
-                    IsTaxable = readDto.IsTaxable,
-                    LaborTaxRate = readDto.LaborTaxRate,
-                    Order = readDto.Order,
-                    PartTaxRate = readDto.PartTaxRate,
-                    TaxIdNumber = readDto.TaxIdNumber,
-                    TaxType = readDto.TaxType
-                };
+                var result = await SalesTaxDataService.GetAsync(Id);
 
-                if (readDto?.ExciseFees.Count > 0)
-                {
-                    foreach (var tax in readDto.ExciseFees)
+                SalesTax = result.IsSuccess
+                    ? new SalesTaxToWrite
                     {
-                        SalesTax.ExciseFees.Add(new ExciseFeeToWrite
-                        {
-                            Amount = tax.Amount,
-                            Description = tax.Description,
-                            FeeType = tax.FeeType
-                        });
+                        Description = result.Value.Description,
+                        IsAppliedByDefault = result.Value.IsAppliedByDefault,
+                        IsTaxable = result.Value.IsTaxable,
+                        LaborTaxRate = result.Value.LaborTaxRate,
+                        Order = result.Value.Order,
+                        PartTaxRate = result.Value.PartTaxRate,
+                        TaxIdNumber = result.Value.TaxIdNumber,
+                        TaxType = result.Value.TaxType,
+                        ExciseFees = result.Value.ExciseFees
+                        ?.Select(
+                            tax => new ExciseFeeToWrite
+                            {
+                                Amount = tax.Amount,
+                                Description = tax.Description,
+                                FeeType = tax.FeeType
+                            })
+                        .ToList()
+                        ?? new List<ExciseFeeToWrite>()
                     }
-                }
+                    : new SalesTaxToWrite();
 
                 SalesTaxFormMode = FormMode.Edit;
-                //SalesTaxes = null;
             }
         }
 
@@ -117,14 +114,14 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected async Task HandleAddSubmitAsync()
         {
-            Id = (await SalesTaxDataService.AddSalesTaxAsync(SalesTax)).Id;
+            Id = (await SalesTaxDataService.AddAsync(SalesTax)).Value.Id;
             await EndAddEditAsync();
             Grid.Rebind();
         }
 
         protected async Task HandleEditSubmitAsync()
         {
-            await SalesTaxDataService.UpdateSalesTaxAsync(SalesTax, Id);
+            await SalesTaxDataService.UpdateAsync(SalesTax);
             await EndAddEditAsync();
         }
 
@@ -139,9 +136,18 @@ namespace Menominee.Client.Components.Settings.Pages
         protected async Task EndAddEditAsync()
         {
             SalesTaxFormMode = FormMode.Unknown;
-            SalesTaxes = (await SalesTaxDataService.GetAllSalesTaxesAsync()).ToList();
+            await GetSalesTaxes();
+
             SelectedSalesTax = SalesTaxes.Where(x => x.Id == Id).FirstOrDefault();
             SelectedSalesTaxes = new List<SalesTaxToReadInList> { SelectedSalesTax };
+        }
+
+        private async Task GetSalesTaxes()
+        {
+            var result = await SalesTaxDataService.GetAllAsync();
+
+            if (result.IsSuccess)
+                SalesTaxes = (IReadOnlyList<SalesTaxToReadInList>)result.Value.OrderByDescending(tax => tax.Order);
         }
     }
 }

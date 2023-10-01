@@ -7,13 +7,11 @@ namespace Menominee.Api.CreditCards
 {
     public interface ICreditCardRepository
     {
-        Task AddCreditCardAsync(CreditCard creditCard);
-        Task<CreditCard> GetCreditCardEntityAsync(long id);
-        Task<CreditCardToRead> GetCreditCardAsync(long id);
-        Task<IReadOnlyList<CreditCardToReadInList>> GetCreditCardListAsync();
-        Task<CreditCard> UpdateCreditCardAsync(CreditCard CreditCard);
-        Task DeleteCreditCardAsync(long id);
-        Task<bool> CreditCardExistsAsync(long id);
-        Task<bool> SaveChangesAsync();
+        void Add(CreditCard entity);
+        void Delete(CreditCard entity);
+        Task<CreditCard> GetEntityAsync(long id);
+        Task<CreditCardToRead> GetAsync(long id);
+        Task<IReadOnlyList<CreditCardToReadInList>> GetListAsync();
+        Task SaveChangesAsync();
     }
 }

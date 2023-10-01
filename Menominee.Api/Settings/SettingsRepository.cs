@@ -24,15 +24,15 @@ namespace Menominee.Api.Settings
         /// Get all of the configuration settings
         /// </summary>
         /// <returns>list of settings</returns>
-        public async Task<IReadOnlyList<SettingToRead>> GetSettingsListAsync()
+        public async Task<IReadOnlyList<SettingToRead>> GetListAsync()
         {
             var allSettings = await context.Settings
                 .AsNoTracking()
                 .ToListAsync();
 
-           return allSettings
-                .Select(setting => SettingHelper.ConvertToReadDto(setting))
-                .ToList();
+            return allSettings
+                 .Select(setting => SettingHelper.ConvertToReadDto(setting))
+                 .ToList();
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Menominee.Api.Settings
         /// </summary>
         /// <param name="settingName">The name of the setting to grab</param>
         /// <returns>a single SettignToRead dto from the database with the setting name</returns>
-        public async Task<SettingToRead> GetSetting(SettingName settingName)
+        public async Task<SettingToRead> GetAsync(SettingName settingName)
         {
             var setting = await context.Settings.Where(x => x.SettingName.Equals((SettingName)settingName)).AsNoTracking().FirstOrDefaultAsync();
 
@@ -52,7 +52,7 @@ namespace Menominee.Api.Settings
         /// </summary>
         /// <param name="groupId">The setting group</param>
         /// <returns>list of settings</returns>
-        public async Task<IReadOnlyList<SettingToRead>> GetSettingListByGroupAsync(SettingGroup group)
+        public async Task<IReadOnlyList<SettingToRead>> GetByGroupAsync(SettingGroup group)
         {
             var settings = await context.Settings.Where(setting => setting.SettingGroup.Equals((SettingGroup)group)).AsNoTracking().ToListAsync();
 
@@ -66,7 +66,7 @@ namespace Menominee.Api.Settings
         /// </summary>
         /// <param name="settings">list of settings</param>
         /// <returns>list of settings to read</returns>
-        public async Task<IReadOnlyList<SettingToRead>> SaveSettingsListAsync(List<SettingToWrite> settings)
+        public async Task<IReadOnlyList<SettingToRead>> SaveListAsync(List<SettingToWrite> settings)
         {
             var settingsToUpdate = new List<ConfigurationSetting>();
             if (settings is not null)
@@ -76,7 +76,7 @@ namespace Menominee.Api.Settings
 
                     if (settingExists != default || settingExists != null)
                     {
-                        settingExists.UpdateSettingProperties(settingExists.SettingName, settingExists.SettingGroup, settingExists.SettingValueType, setting.SettingValue);
+                        settingExists.SetProperties(settingExists.SettingName, settingExists.SettingGroup, settingExists.SettingValueType, setting.SettingValue);
                     }
                     else
                     {
@@ -90,7 +90,7 @@ namespace Menominee.Api.Settings
             await SaveChangesAsync();
 
             var getSettings = await context.Settings.AsNoTracking().ToListAsync();
-             
+
             return getSettings.Select(setting => SettingHelper.ConvertToReadDto(setting)).ToList();
         }
 
@@ -99,15 +99,16 @@ namespace Menominee.Api.Settings
         /// </summary>
         /// <param name="settings">a list of settings</param>
         /// <returns>read list of settings</returns>
-        public async Task<IReadOnlyList<SettingToRead>> UpdateSettingsListAsync(List<SettingToWrite> settings)
+        public async Task<IReadOnlyList<SettingToRead>> UpdateListAsync(List<SettingToWrite> settings)
         {
             if (settings is not null)
             {
                 settings.ForEach(setting =>
                 {
-                    var settingToUpdate = context.Settings.Where(x => x.SettingName == setting.SettingName).FirstOrDefault();
-                    if(settingToUpdate != default && settingToUpdate.SettingName == setting.SettingName)
-                        settingToUpdate.UpdateSettingProperties(settingToUpdate.SettingName, settingToUpdate.SettingGroup, settingToUpdate.SettingValueType, setting.SettingValue);
+                    var settingToUpdate = context.Settings
+                        .Where(settingToUpdate => settingToUpdate.SettingName == setting.SettingName).FirstOrDefault();
+                    if (settingToUpdate != default && settingToUpdate.SettingName == setting.SettingName)
+                        settingToUpdate.SetProperties(settingToUpdate.SettingName, settingToUpdate.SettingGroup, settingToUpdate.SettingValueType, setting.SettingValue);
                 });
 
                 await SaveChangesAsync();
@@ -123,13 +124,13 @@ namespace Menominee.Api.Settings
         /// </summary>
         /// <param name="setting">a single setting</param>
         /// <returns>A single SettingToRead dto of the updated setting</returns>
-        public async Task<SettingToRead> UpdateSetting(SettingToWrite setting)
+        public async Task<SettingToRead> UpdateAsync(SettingToWrite setting)
         {
             if (setting is not null)
             {
                 var updateSetting = context.Settings.Where(x => x.SettingName.Equals(setting.SettingName)).FirstOrDefault();
                 if (updateSetting != default && updateSetting.SettingName == setting.SettingName)
-                updateSetting.UpdateSettingProperties(updateSetting.SettingName, updateSetting.SettingGroup, updateSetting.SettingValueType, setting.SettingValue);
+                    updateSetting.SetProperties(updateSetting.SettingName, updateSetting.SettingGroup, updateSetting.SettingValueType, setting.SettingValue);
             }
 
             await SaveChangesAsync();
@@ -142,7 +143,7 @@ namespace Menominee.Api.Settings
         /// </summary>
         /// <param name="setting">a single setting</param>
         /// <returns>A single SettingToRead dto on the newly saved setting</returns>
-        public async Task<SettingToRead> SaveSetting(SettingToWrite setting)
+        public async Task<SettingToRead> SaveAsync(SettingToWrite setting)
         {
             if (setting is not null)
             {
@@ -150,7 +151,7 @@ namespace Menominee.Api.Settings
 
                 if (settingExists != default)
                 {
-                    settingExists.UpdateSettingProperties(settingExists.SettingName, settingExists.SettingGroup, settingExists.SettingValueType, setting.SettingValue);
+                    settingExists.SetProperties(settingExists.SettingName, settingExists.SettingGroup, settingExists.SettingValueType, setting.SettingValue);
                 }
                 else
                 {
@@ -163,23 +164,16 @@ namespace Menominee.Api.Settings
             return SettingHelper.ConvertToReadDto(await context.Settings.FirstOrDefaultAsync(x => x.SettingName.Equals(setting.SettingName)));
         }
 
-        public async Task<ConfigurationSetting> GetEntity(long id)
+        public async Task<ConfigurationSetting> GetEntityAsync(long id)
         {
             return await context.Settings
                 .FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
 
-        public void AddSetting(ConfigurationSetting entity)
+        public void Add(ConfigurationSetting entity)
         {
-            var existingEntity = context.Settings.Local
-                .FirstOrDefault(x => x.Id.Equals(entity.Id));
-
-            if (existingEntity is not null)
-            {
-                context.Entry(existingEntity).State = EntityState.Detached;
-            }
-
-            context.Settings.Attach(entity);
+            if (entity is not null)
+                context.Settings.Attach(entity);
         }
 
         /// <summary>

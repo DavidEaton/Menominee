@@ -1,15 +1,14 @@
-﻿using Menominee.Shared.Models.Persons;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Http;
+using Menominee.Shared.Models.Persons;
 
 namespace Menominee.Client.Services
 {
     public interface IPersonDataService
     {
-        Task<IReadOnlyList<PersonToReadInList>> GetAllPersons();
-        Task<PersonToRead> GetPersonDetails(long id);
-        Task<PersonToRead> AddPerson(PersonToWrite person);
-        Task UpdatePerson(PersonToWrite personToWrite, long id);
-        Task<PersonToRead> GetPerson(long id);
+        Task<Result<IReadOnlyList<PersonToReadInList>>> GetAllAsync();
+        Task<Result<PersonToRead>> GetAsync(long id);
+        Task<Result<PostResponse>> AddAsync(PersonToWrite person);
+        Task<Result> UpdateAsync(PersonToWrite person);
     }
 }

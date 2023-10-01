@@ -10,6 +10,7 @@ namespace Menominee.Shared.Models.SaleCodes
                 ? new()
                 : new()
                 {
+                    Id = saleCode.Id,
                     Code = saleCode.Code,
                     Name = saleCode.Name,
                     DesiredMargin = saleCode.DesiredMargin,
@@ -39,8 +40,7 @@ namespace Menominee.Shared.Models.SaleCodes
                     LaborRate = saleCode.LaborRate,
                     ShopSupplies =
                         saleCode.ShopSupplies is not null
-                        ?
-                        new()
+                        ? new()
                         {
                             IncludeLabor = saleCode.ShopSupplies.IncludeLabor,
                             IncludeParts = saleCode.ShopSupplies.IncludeParts,

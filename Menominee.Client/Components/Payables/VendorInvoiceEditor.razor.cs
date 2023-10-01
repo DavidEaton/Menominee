@@ -2,7 +2,6 @@
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Menominee.Shared.Models.Payables.Invoices;
-using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Components;
 using Telerik.Blazor;
 
@@ -33,6 +32,9 @@ namespace Menominee.Client.Components.Payables
 
         [CascadingParameter]
         public DialogFactory? Dialogs { get; set; }
+
+        [Inject]
+        ILogger<VendorInvoiceEditor> Logger { get; set; }
 
         private Dictionary<string, object> ReportParameters = new Dictionary<string, object>();
 
@@ -70,9 +72,17 @@ namespace Menominee.Client.Components.Payables
         private async Task OnCompleteAsync()
         {
             bool inBalance = InvoiceTotals.Total == InvoiceTotals.Payments;
-            VendorToRead? vendor = (Invoice?.Vendor is not null)
-                                ? await VendorDataService.GetVendorAsync(Invoice.Vendor.Id)
-                                : null;
+            var result = (Invoice?.Vendor is not null)
+                                ? await VendorDataService.GetAsync(Invoice.Vendor.Id)
+                                : new();
+
+            if (result.IsFailure)
+            {
+                Logger.LogError(result.Error);
+                return;
+            }
+
+            var vendor = result.Value;
 
             // TODO: Check to see if invoice # has already been used.  Or is there a better way?
             // DONE (DE): implement invoice number uniqueness in VendorInvoice: unique for the selected vendor.

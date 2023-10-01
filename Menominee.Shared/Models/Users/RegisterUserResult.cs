@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Menominee.Shared.Models
+namespace Menominee.Shared.Models.Users
 {
     public class RegisterUserResult
     {

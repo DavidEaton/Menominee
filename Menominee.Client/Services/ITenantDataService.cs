@@ -1,10 +1,10 @@
-﻿using Menominee.Common.Entities;
-using System.Threading.Tasks;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Entities;
 
 namespace Menominee.Client.Services
 {
     public interface ITenantDataService
     {
-        Task<Tenant> GetTenantAsync();
+        Task<Result<Tenant>> GetAsync();
     }
 }

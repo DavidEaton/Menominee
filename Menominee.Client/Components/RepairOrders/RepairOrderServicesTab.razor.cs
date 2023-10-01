@@ -290,7 +290,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         private async Task<(string saleCode, string name)> GetSaleCode(long id)
         {
-            SaleCodeToRead saleCodeToRead = await SaleCodeDataService.GetSaleCodeAsync(id);
+            SaleCodeToRead saleCodeToRead = await SaleCodeDataService.GetAsync(id);
             if (saleCodeToRead != null)
                 return (saleCodeToRead.Code, saleCodeToRead.Name);
 
@@ -307,7 +307,7 @@ namespace Menominee.Client.Components.RepairOrders
             RepairOrderServiceToWrite service = new RepairOrderServiceToWrite()
             {
                 ServiceName = name,
-                SaleCode = await SaleCodeDataService.GetSaleCodeAsync(saleCode),
+                SaleCode = await SaleCodeDataService.GetAsync(saleCode),
             };
 
             RepairOrder.Services.Add(service);

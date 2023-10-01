@@ -1,14 +1,14 @@
-﻿using Menominee.Shared.Models.RepairOrders;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Http;
+using Menominee.Shared.Models.RepairOrders;
 
 namespace Menominee.Client.Components.RepairOrders
 {
     public interface IRepairOrderDataService
     {
-        Task<IReadOnlyList<RepairOrderToReadInList>> GetAllRepairOrders();
-        Task<RepairOrderToRead> GetRepairOrder(long id);
-        Task<RepairOrderToRead> AddRepairOrder(RepairOrderToWrite repairOrder);
-        Task UpdateRepairOrder(RepairOrderToWrite repairOrder, long id);
+        Task<Result<IReadOnlyList<RepairOrderToReadInList>>> GetAllAsync();
+        Task<Result<RepairOrderToRead>> GetAsync(long id);
+        Task<Result<PostResponse>> AddAsync(RepairOrderToWrite repairOrder);
+        Task<Result> UpdateAsync(RepairOrderToWrite repairOrder);
     }
 }

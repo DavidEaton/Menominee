@@ -19,34 +19,18 @@ namespace Menominee.Api.Taxes
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddExciseFeeAsync(ExciseFee exciseFee)
+        public void Add(ExciseFee exciseFee)
         {
-            // TODO:
-            // The Id of a new ExciseFee will never == an existing
-            // Id because new domain objects don't get their Id
-            // value until context.SaveChanges.
-            //if (await ExciseFeeExistsAsync(exciseFee.Id))
-            //    throw new Exception("Excise Fee already exists");
-
-            // TODO:
-            // Is this a good use of "Use discard '_'"?
-            // Is this a good use of exceptions?
-            _ = exciseFee is not null
-                ? await context.AddAsync(exciseFee)
-                : throw new ArgumentNullException(nameof(context));
+            if (exciseFee is not null)
+                context.Attach(exciseFee);
         }
 
-        public void DeleteExciseFee(ExciseFee exciseFee)
+        public void Delete(ExciseFee exciseFee)
         {
             context.Remove(exciseFee);
         }
 
-        public async Task<bool> ExciseFeeExistsAsync(long id)
-        {
-            return await context.ExciseFees.AnyAsync(fee => fee.Id == id);
-        }
-
-        public async Task<ExciseFeeToRead> GetExciseFeeAsync(long id)
+        public async Task<ExciseFeeToRead> GetAsync(long id)
         {
             var feeFromContext = await context.ExciseFees
                                              .AsNoTracking()
@@ -57,12 +41,12 @@ namespace Menominee.Api.Taxes
                 : null;
         }
 
-        public async Task<ExciseFee> GetExciseFeeEntityAsync(long id)
+        public async Task<ExciseFee> GetEntityAsync(long id)
         {
             return await context.ExciseFees.FirstOrDefaultAsync(fee => fee.Id == id);
         }
 
-        public async Task<IReadOnlyList<ExciseFeeToReadInList>> GetExciseFeeListAsync()
+        public async Task<IReadOnlyList<ExciseFeeToReadInList>> GetListAsync()
         {
             IReadOnlyList<ExciseFee> exciseFees = await context.ExciseFees.ToListAsync();
 

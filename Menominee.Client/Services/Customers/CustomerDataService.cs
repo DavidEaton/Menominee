@@ -1,125 +1,111 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Extensions;
+using Menominee.Client.Services.Shared;
 using Menominee.Common.Http;
 using Menominee.Shared.Models.Customers;
 using System.Net.Http.Json;
 
 namespace Menominee.Client.Services.Customers
 {
-    public class CustomerDataService : ICustomerDataService
+    public class CustomerDataService : DataServiceBase<CustomerDataService>, ICustomerDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<CustomerDataService> logger;
         private const string UriSegment = "api/customers";
 
-        public CustomerDataService(HttpClient httpClient, ILogger<CustomerDataService> logger)
+        public CustomerDataService(HttpClient httpClient,
+            ILogger<CustomerDataService> logger,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        public async Task<Result<PostResponse>> AddCustomer(CustomerToWrite customer)
+
+        public async Task<Result<PostResponse>> AddAsync(CustomerToWrite fromCaller)
         {
-            var result = await PostCustomer(customer)
-                .Bind(HttpResponseMessageExtensions.CheckResponse)
-                .Bind(ReadPostResult);
-
-            if (result.IsFailure)
-                logger.LogError(result.Error);
-
-            return result;
-        }
-
-        private async Task<Result<HttpResponseMessage>> PostCustomer(CustomerToWrite customer)
-        {
+            var entityType = "Customer";
             try
             {
-                return Result.Success(await httpClient.PostAsJsonAsync(UriSegment, customer));
-            }
-            catch (Exception)
-            {
-                return Result.Failure<HttpResponseMessage>("Failed to add customer");
-            }
-        }
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
 
-        private async Task<Result<PostResponse>> ReadPostResult(HttpResponseMessage response)
-        {
-            try
-            {
-                var data = await response.Content.ReadFromJsonAsync<PostResponse>();
-                return data is not null
-                    ? Result.Success(data)
-                    : Result.Failure<PostResponse>("Empty result");
+                return result;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to read the post result.");
-                return Result.Failure<PostResponse>("Failed to read the post result.");
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
             }
         }
 
-        public async Task<Result<IReadOnlyList<CustomerToReadInList>>> GetAllCustomers()
+        public async Task<Result<IReadOnlyList<CustomerToReadInList>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get all customers";
+
             try
             {
                 var result = await httpClient.GetFromJsonAsync<IReadOnlyList<CustomerToReadInList>>($"{UriSegment}/list");
-                return Result.Success(result!);
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<CustomerToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                var errorMessage = $"Failed to get Customers";
-                logger.LogError(ex, errorMessage);
+                Logger.LogError(ex, errorMessage);
                 return Result.Failure<IReadOnlyList<CustomerToReadInList>>(errorMessage);
             }
         }
 
-        public async Task<Result<CustomerToRead>> GetCustomer(long id)
+        public async Task<Result<CustomerToRead>> GetAsync(long id)
         {
+            var errorMessage = $"Failed to get customer with id {id}";
+
             try
             {
                 var result = await httpClient.GetFromJsonAsync<CustomerToRead>(UriSegment + $"/{id}");
-                return Result.Success(result!);
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<CustomerToRead>(errorMessage);
             }
             catch (Exception ex)
             {
-                var errorMessage = $"Failed to get customer with id {id}";
-                logger.LogError(ex, errorMessage);
+                Logger.LogError(ex, errorMessage);
                 return Result.Failure<CustomerToRead>(errorMessage);
             }
         }
 
-        public async Task<Result> UpdateCustomer(CustomerToWrite customer)
+        public async Task<Result> UpdateAsync(CustomerToWrite customerFromCaller)
         {
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                customerFromCaller,
+                Logger,
+                customer => $"{customer.ToString}",
+                customer => customer.Id);
+        }
+
+        public async Task<Result> DeleteAsync(long id)
+        {
+            var failureMessage = "Failed to delete customer";
+
             try
             {
-                var response = await httpClient.PutAsJsonAsync($"{UriSegment}/{customer.Id}", customer);
+                var response = await httpClient.DeleteAsync($"{UriSegment}/{id}");
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var errorMessage = response.Content.ReadAsStringAsync().Result;
-                    logger.LogError(message: errorMessage);
-                    return Result.Failure<CustomerToRead>(errorMessage);
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    Logger.LogError(message: errorMessage);
+                    return Result.Failure(failureMessage);
                 }
 
                 return Result.Success();
             }
             catch (Exception ex)
             {
-                var errorMessage = "Failed to update customer with id {customer.Id}";
-                logger.LogError(ex, errorMessage);
-                return Result.Failure<CustomerToRead>(errorMessage);
-            }
-        }
-
-        public async Task DeleteCustomer(long id)
-        {
-            try
-            {
-                await httpClient.DeleteAsync($"{UriSegment}/{id}");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Failed to delete customer with id {id}", id);
+                Logger.LogError(ex, failureMessage);
+                return Result.Failure(failureMessage);
             }
         }
     }

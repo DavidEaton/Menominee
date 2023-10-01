@@ -1,15 +1,15 @@
-﻿using Menominee.Shared.Models.Inventory.InventoryItems;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Http;
+using Menominee.Shared.Models.Inventory.InventoryItems;
 
 namespace Menominee.Client.Services.Inventory
 {
     public interface IInventoryItemDataService
     {
-        Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItemsAsync();
-        Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItemsAsync(long mfrId);
-        Task<InventoryItemToRead> GetItemAsync(long id);
-        Task<InventoryItemToRead> AddItemAsync(InventoryItemToWrite item);
-        Task UpdateItemAsync(InventoryItemToWrite item, long id);
+        Task<Result<IReadOnlyList<InventoryItemToReadInList>>> GetAllAsync();
+        Task<Result<IReadOnlyList<InventoryItemToReadInList>>> GetByManufacturerAsync(long manufacturerId);
+        Task<Result<InventoryItemToRead>> GetAsync(long id);
+        Task<Result<PostResponse>> AddAsync(InventoryItemToWrite item);
+        Task<Result> UpdateAsync(InventoryItemToWrite item);
     }
 }

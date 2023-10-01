@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Menominee.Shared.Models
+namespace Menominee.Shared.Models.Users
 {
-    public class RegisterUser
+    public class RegisterUserRequest
     {
         public string Id { get; set; }
 

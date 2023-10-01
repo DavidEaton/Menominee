@@ -19,85 +19,53 @@ namespace Menominee.Api.CreditCards
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddCreditCardAsync(CreditCard creditCard)
+        public void Add(CreditCard creditCard)
         {
             if (creditCard is not null)
-            {
-                if (await CreditCardExistsAsync(creditCard.Id))
-                    throw new Exception("Credit Card already exists");
-
-                await context.AddAsync(creditCard);
-            }
+                context.Attach(creditCard);
         }
 
         public async Task<bool> CreditCardExistsAsync(long id)
         {
-            return await context.CreditCards.AnyAsync(cc => cc.Id == id);
+            return await context.CreditCards
+                .AnyAsync(creditCard => creditCard.Id == id);
         }
 
-        public async Task DeleteCreditCardAsync(long id)
+        public void Delete(CreditCard creditCard)
         {
-            var creditCard = await context.CreditCards
-                                  .AsNoTracking()
-                                  .FirstOrDefaultAsync(creditCard =>
-                                    creditCard.Id == id);
-
-            if (creditCard is not null)
-                context.Remove(creditCard);
+            context.Remove(creditCard);
         }
 
-        public async Task<CreditCardToRead> GetCreditCardAsync(long id)
+        public async Task<CreditCardToRead> GetAsync(long id)
         {
             var creditCardFromContext = await context.CreditCards
-                                             .AsNoTracking()
-                                             .FirstOrDefaultAsync(creditCard =>
-                                                creditCard.Id == id);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(creditCard =>
+                creditCard.Id == id);
 
             return creditCardFromContext is not null
                 ? CreditCardHelper.CreateCreditCard(creditCardFromContext)
                 : null;
         }
 
-        public async Task<CreditCard> GetCreditCardEntityAsync(long id)
+        public async Task<CreditCard> GetEntityAsync(long id)
         {
-            return await context.CreditCards.FirstOrDefaultAsync(cc => cc.Id == id);
+            return await context.CreditCards
+                .FirstOrDefaultAsync(creditCard => creditCard.Id == id);
         }
 
-        public async Task<IReadOnlyList<CreditCardToReadInList>> GetCreditCardListAsync()
+        public async Task<IReadOnlyList<CreditCardToReadInList>> GetListAsync()
         {
             IReadOnlyList<CreditCard> creditCards = await context.CreditCards.ToListAsync();
 
             return creditCards
-                //.Select(cc => CreditCardToReadInList.ConvertToDto(cc))
-                .Select(cc => CreditCardHelper.CreateCreditCardInList(cc))
+                .Select(creditCard => CreditCardHelper.CreateCreditCardInList(creditCard))
                 .ToList();
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await context.SaveChangesAsync() > 0;
-        }
-
-        public async Task<CreditCard> UpdateCreditCardAsync(CreditCard creditCard)
-        {
-            if (creditCard is not null)
-            {
-                // Tracking IS needed for commands for disconnected data collections
-                context.Entry(creditCard).State = EntityState.Modified;
-
-                try
-                {
-                    await context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await CreditCardExistsAsync(creditCard.Id))
-                        return null; // something that tells the controller to return NotFound();
-                    throw;
-                }
-            }
-
-            return null;
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Menominee.Shared.Models.SaleCodes;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Settings
 {

@@ -1,10 +1,8 @@
-﻿using Menominee.Shared.Models.Inventory.InventoryItems;
-using Menominee.Shared.Models.Inventory.MaintenanceItems;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Inventory;
+using Menominee.Shared.Models.Inventory.InventoryItems;
+using Menominee.Shared.Models.Inventory.MaintenanceItems;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 using Telerik.DataSource.Extensions;
 
@@ -19,7 +17,10 @@ namespace Menominee.Client.Components.Inventory.Pages
         public IMaintenanceItemDataService DataService { get; set; }
 
         [Inject]
-        public IInventoryItemDataService inventoryItemDataService { get; set; }
+        public ILogger<MaintenanceItemListPage> Logger { get; set; }
+
+        [Inject]
+        public IInventoryItemDataService InventoryItemDataService { get; set; }
 
         public IReadOnlyList<MaintenanceItemToReadInList> ItemsList;
         public IEnumerable<MaintenanceItemToReadInList> SelectedList { get; set; } = Enumerable.Empty<MaintenanceItemToReadInList>();
@@ -51,7 +52,7 @@ namespace Menominee.Client.Components.Inventory.Pages
 
         private async Task LoadItemsAsync()
         {
-            ItemsList = (await DataService.GetAllItemsAsync()).ToList();
+            ItemsList = (await DataService.GetAllAsync()).Value.ToList();
 
             if (ItemsList.Count > 0)
             {
@@ -68,13 +69,13 @@ namespace Menominee.Client.Components.Inventory.Pages
 
         private async Task OnDeleteAsync()
         {
-            await DataService.DeleteItemAsync(SelectedItem.Id);
+            await DataService.DeleteAsync(SelectedItem.Id);
             await LoadItemsAsync();
         }
 
         private async Task OnMoveUpAsync()
         {
-            if (SelectedItem != null)
+            if (SelectedItem is not null)
             {
                 await SwapItems(SelectedItem, -1);
             }
@@ -82,7 +83,7 @@ namespace Menominee.Client.Components.Inventory.Pages
 
         private async Task OnMoveDownAsync()
         {
-            if (SelectedItem != null)
+            if (SelectedItem is not null)
             {
                 await SwapItems(SelectedItem, 1);
             }
@@ -90,29 +91,52 @@ namespace Menominee.Client.Components.Inventory.Pages
 
         private async Task SwapItems(MaintenanceItemToReadInList item, int direction)
         {
-            int srcIndex = ItemsList.IndexOf(item);
-            if (direction < 0 && srcIndex == 0) // can't move up if it's the first item
-                return;
-            if (direction > 0 && srcIndex == ItemsList.Count - 1)   // can't move down if it's the last item
-                return;
+            var srcIndex = ItemsList.IndexOf(item);
+            if (CanMove(srcIndex, direction))
+            {
+                var dstId = ItemsList[srcIndex + direction].Id;
 
-            long dstId = ItemsList[srcIndex + direction].Id;
+                var sourceUpdateResult = await UpdateDisplayOrder(item.Id, direction);
+                var destinationUpdateResult = await UpdateDisplayOrder(dstId, -direction);
 
-            // Increase/decrease the display order on the selected item
-            var itemToRead = await DataService.GetItemAsync(item.Id);
+                if (sourceUpdateResult.IsSuccess && destinationUpdateResult.IsSuccess)
+                {
+                    await RefreshItemsList(srcIndex + direction);
+                }
+            }
+        }
+
+        private bool CanMove(int index, int direction)
+        {
+            return !(direction < 0 && index == 0) && !(direction > 0 && index == ItemsList.Count - 1);
+        }
+
+        private async Task<Result> UpdateDisplayOrder(long itemId, int direction)
+        {
+            var itemResult = await DataService.GetAsync(itemId);
+            if (itemResult.IsFailure)
+            {
+                Logger.LogError("Failed to get item with id {Id}", itemId);
+                return Result.Failure("Failed to get item.");
+            }
+
+            var itemToRead = itemResult.Value;
             itemToRead.DisplayOrder += direction;
             var itemToWrite = MaintenanceItemHelper.ConvertReadToWriteDto(itemToRead);
-            await DataService.UpdateItemAsync(itemToWrite, itemToWrite.Id);
 
-            // Increase/decrease the display order on the destination item
-            itemToRead = await DataService.GetItemAsync(dstId);
-            itemToRead.DisplayOrder -= direction;
-            itemToWrite = MaintenanceItemHelper.ConvertReadToWriteDto(itemToRead);
-            await DataService.UpdateItemAsync(itemToWrite, itemToWrite.Id);
+            var updateResult = await DataService.UpdateAsync(itemToWrite);
+            if (updateResult.IsFailure)
+            {
+                Logger.LogError("Failed to update item with id {Id}", itemId);
+            }
 
+            return updateResult;
+        }
+
+        private async Task RefreshItemsList(int newIndex)
+        {
             await LoadItemsAsync();
-
-            SelectedItem = ItemsList[srcIndex + direction];
+            SelectedItem = ItemsList[newIndex];
             SelectedList = new List<MaintenanceItemToReadInList> { SelectedItem };
         }
 
@@ -135,14 +159,28 @@ namespace Menominee.Client.Components.Inventory.Pages
 
         protected async Task SubmitAddItemHandlerAsync()
         {
-            if (SelectedInventoryItem != null)
+            if (SelectedInventoryItem is not null)
             {
-                var inventoryItem = await inventoryItemDataService.GetItemAsync(SelectedInventoryItem.Id);
-                MaintenanceItemToWrite ItemToAdd = new();
-                ItemToAdd.Item = InventoryItemHelper.ConvertReadToWriteDto(inventoryItem);
-                await DataService.AddItemAsync(ItemToAdd);
-                ShowItemSelector = false;
-                await LoadItemsAsync();
+                var result = await InventoryItemDataService.GetAsync(SelectedInventoryItem.Id);
+
+                if (result.IsFailure)
+                {
+                    Logger.LogError("Failed to get inventory item with id {Id}", SelectedInventoryItem.Id);
+                    //toastService.ShowError("Failed to add selected item", "Operation Failed");
+                    return;
+                }
+
+                if (result.IsSuccess)
+                {
+                    var inventoryItem = result.Value;
+                    var ItemToAdd = new MaintenanceItemToWrite
+                    {
+                        Item = InventoryItemHelper.ConvertReadToWriteDto(inventoryItem)
+                    };
+                    await DataService.AddAsync(ItemToAdd);
+                    ShowItemSelector = false;
+                    await LoadItemsAsync();
+                }
             }
         }
 

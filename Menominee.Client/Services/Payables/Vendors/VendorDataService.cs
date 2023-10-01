@@ -1,93 +1,96 @@
 ﻿using Blazored.Toast.Services;
+using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
 using Menominee.Common.Http;
 using Menominee.Shared.Models.Payables.Vendors;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Menominee.Client.Services.Payables.Vendors
 {
-    public class VendorDataService : IVendorDataService
+    public class VendorDataService : DataServiceBase<VendorDataService>, IVendorDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<VendorDataService> logger;
         private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/vendors";
 
-        public VendorDataService(HttpClient httpClient, ILogger<VendorDataService> logger, IToastService toastService)
+        public VendorDataService(HttpClient httpClient,
+            ILogger<VendorDataService> logger,
+            IToastService toastService,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<PostResponse> AddVendorAsync(VendorToWrite vendor)
+        public async Task<Result<PostResponse>> AddAsync(VendorToWrite fromCaller)
         {
-            var content = new StringContent(JsonSerializer.Serialize(vendor), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                toastService.ShowSuccess($"{vendor.Name} added successfully", "Added");
-
-                try
-                {
-                    return await response.Content.ReadFromJsonAsync<PostResponse>();
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Failed to add new vendor with vendor code {code}", vendor.VendorCode);
-                    Console.WriteLine(ex.Message);
-                    throw;
-                }
-            }
-
-            toastService.ShowError($"{vendor.Name} failed to add. {response.ReasonPhrase}.", "Add Failed");
-
-            return new() { Id = 0 };
-        }
-
-        public async Task<IReadOnlyList<VendorToRead>> GetAllVendorsAsync()
-        {
+            var entityType = "Vendor";
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorToRead>>($"{UriSegment}");
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
+
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
+
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.Name} failed to update", "Save Failed");
+
+                return result;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all vendors");
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
             }
-
-            return null;
         }
 
-        public async Task<VendorToRead> GetVendorAsync(long id)
+        public async Task<Result<IReadOnlyList<VendorToRead>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get all vendors";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<VendorToRead>($"{UriSegment}/{id}");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<VendorToRead>>($"{UriSegment}/list");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<VendorToRead>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.ToString());
-                Console.WriteLine($"Error getting vendor #{id}: {ex.Message}");
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<VendorToRead>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task UpdateVendorAsync(VendorToWrite vendor, long id)
+        public async Task<Result<VendorToRead>> GetAsync(long id)
         {
-            var content = new StringContent(JsonSerializer.Serialize(vendor), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);
-
-            if (response.IsSuccessStatusCode)
+            var errorMessage = $"Failed to get vendor with id {id}";
+            try
             {
-                toastService.ShowSuccess($"{vendor.Name} updated successfully", "Saved");
+                var result = await httpClient.GetFromJsonAsync<VendorToRead>(UriSegment + $"/{id}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<VendorToRead>(errorMessage);
             }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<VendorToRead>(errorMessage);
+            }
+        }
 
-            toastService.ShowError($"{vendor.Name} failed to update", "Save Failed");
+        public async Task<Result> UpdateAsync(VendorToWrite fromCaller)
+        {
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                business => $"{business.Name}",
+                business => business.Id);
         }
     }
 }

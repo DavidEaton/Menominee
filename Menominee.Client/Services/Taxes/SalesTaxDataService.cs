@@ -1,86 +1,97 @@
 ﻿using Blazored.Toast.Services;
+using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Taxes;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Menominee.Client.Services.Taxes
 {
-    public class SalesTaxDataService : ISalesTaxDataService
+    public class SalesTaxDataService : DataServiceBase<SalesTaxDataService>, ISalesTaxDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<SalesTaxDataService> logger;
         private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/salestaxes";
 
-        public SalesTaxDataService(HttpClient httpClient, ILogger<SalesTaxDataService> logger, IToastService toastService)
+        public SalesTaxDataService(HttpClient httpClient,
+            ILogger<SalesTaxDataService> logger,
+            IToastService toastService,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<SalesTaxToRead> AddSalesTaxAsync(SalesTaxToWrite salesTax)
+        public async Task<Result<PostResponse>> AddAsync(SalesTaxToWrite fromCaller)
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var content = new StringContent(JsonSerializer.Serialize(salesTax), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return await JsonSerializer.DeserializeAsync<SalesTaxToRead>(await response.Content.ReadAsStreamAsync(), options);
-            }
-
-            toastService.ShowError($"Failed to add Sales Tax. {response.ReasonPhrase}.", "Add Failed");
-
-            return null;
-        }
-
-        public async Task<IReadOnlyList<SalesTaxToReadInList>> GetAllSalesTaxesAsync()
-        {
+            var entityType = "Sales Tax";
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<SalesTaxToReadInList>>($"{UriSegment}/listing");
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
+
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
+
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.Description} failed to update", "Save Failed");
+
+                return result;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all sales taxes");
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
             }
-
-            return null;
         }
 
-        public async Task<SalesTaxToRead> GetSalesTaxAsync(long id)
+        public async Task<Result<IReadOnlyList<SalesTaxToReadInList>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get all Sales Taxes";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<SalesTaxToRead>($"{UriSegment}/{id}");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<SalesTaxToReadInList>>($"{UriSegment}/list");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<SalesTaxToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get sales tax with id {id}", id);
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<SalesTaxToReadInList>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task UpdateSalesTaxAsync(SalesTaxToWrite salesTax, long id)
+        public async Task<Result<SalesTaxToRead>> GetAsync(long id)
         {
-            var content = new StringContent(JsonSerializer.Serialize(salesTax), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);
+            var errorMessage = $"Failed to get Sales Tax with id {id}";
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                toastService.ShowSuccess("Sales Tax saved successfully", "Saved");
-                return;
+                var result = await httpClient.GetFromJsonAsync<SalesTaxToRead>(UriSegment + $"/{id}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<SalesTaxToRead>(errorMessage);
             }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<SalesTaxToRead>(errorMessage);
+            }
+        }
 
-            toastService.ShowError($"Sales Tax failed to update.  Id = {id}", "Save Failed");
+        public async Task<Result> UpdateAsync(SalesTaxToWrite fromCaller)
+        {
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                salesTax => $"{salesTax.ToString}",
+                salesTax => salesTax.Id);
         }
     }
 }

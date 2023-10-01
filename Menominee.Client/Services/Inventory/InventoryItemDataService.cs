@@ -1,100 +1,118 @@
 ﻿using Blazored.Toast.Services;
+using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Inventory.InventoryItems;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Menominee.Client.Services.Inventory
 {
-    public class InventoryItemDataService : IInventoryItemDataService
+    public class InventoryItemDataService : DataServiceBase<InventoryItemDataService>, IInventoryItemDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<InventoryItemDataService> logger;
         private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/inventoryitems";
 
-        public InventoryItemDataService(HttpClient httpClient, ILogger<InventoryItemDataService> logger, IToastService toastService)
+        public InventoryItemDataService(HttpClient httpClient,
+            ILogger<InventoryItemDataService> logger,
+                IToastService toastService,
+                UriBuilderFactory uriBuilderFactory)
+                : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<InventoryItemToRead> AddItemAsync(InventoryItemToWrite item)
+        public async Task<Result<PostResponse>> AddAsync(InventoryItemToWrite fromCaller)
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var content = new StringContent(JsonSerializer.Serialize(item), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return await JsonSerializer.DeserializeAsync<InventoryItemToRead>(await response.Content.ReadAsStreamAsync(), options);
-            }
-
-            toastService.ShowError($"Failed to add Inventory Item. {response.ReasonPhrase}.", "Add Failed");
-
-            return null;
-        }
-
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItemsAsync()
-        {
+            var entityType = "Inventory Item";
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<InventoryItemToReadInList>>($"{UriSegment}/listing");
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
+
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
+
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.ItemNumber} failed to update", "Save Failed");
+
+                return result;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all inventory items");
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
             }
-
-            return null;
         }
 
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItemsAsync(long mfrId)
+        public async Task<Result<IReadOnlyList<InventoryItemToReadInList>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get all inventory items";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<InventoryItemToReadInList>>($"{UriSegment}/listing?manufacturerId={mfrId}");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<InventoryItemToReadInList>>($"{UriSegment}/listing");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<InventoryItemToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all inventory items");
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<InventoryItemToReadInList>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task<InventoryItemToRead> GetItemAsync(long id)
+        public async Task<Result<IReadOnlyList<InventoryItemToReadInList>>> GetByManufacturerAsync(long manufacturerId)
         {
+            if (manufacturerId <= 0)
+                return Result.Failure<IReadOnlyList<InventoryItemToReadInList>>("Invalid manufacturer Id.");
+
+            var errorMessage = "Failed to get manufacturer";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<InventoryItemToRead>($"{UriSegment}/{id}");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<InventoryItemToReadInList>>($"{UriSegment}/listing?manufacturerId={manufacturerId}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<InventoryItemToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get inventory item with id {id}", id);
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<InventoryItemToReadInList>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task UpdateItemAsync(InventoryItemToWrite item, long id)
+        public async Task<Result<InventoryItemToRead>> GetAsync(long id)
         {
-            var content = new StringContent(JsonSerializer.Serialize(item), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);
+            var errorMessage = $"Failed to get item with id {id}";
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                toastService.ShowSuccess("Inventory Item saved successfully", "Saved");
-                return;
+                var result = await httpClient.GetFromJsonAsync<InventoryItemToRead>(UriSegment + $"/{id}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<InventoryItemToRead>(errorMessage);
             }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<InventoryItemToRead>(errorMessage);
+            }
+        }
 
-            toastService.ShowError($"Inventory Item failed to update:  Id = {id}", "Save Failed");
+        public async Task<Result> UpdateAsync(InventoryItemToWrite fromCaller)
+        {
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                item => $"{item.ItemNumber}",
+                item => item.Id);
         }
     }
 }

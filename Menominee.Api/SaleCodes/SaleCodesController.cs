@@ -1,4 +1,5 @@
 ﻿using Menominee.Api.Common;
+using Menominee.Common.Http;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.SaleCodes;
 using Microsoft.AspNetCore.Mvc;
@@ -13,72 +14,91 @@ namespace Menominee.Api.SaleCodes
     public class SaleCodesController : BaseApplicationController<SaleCodesController>
     {
         private readonly ISaleCodeRepository repository;
-        private readonly string BasePath = "/api/salecodes";
 
         public SaleCodesController(ISaleCodeRepository repository, ILogger<SaleCodesController> logger) : base(logger)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        // api/salecodes/listing
         [Route("listing")]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<SaleCodeToReadInList>>> GetSaleCodeListAsync()
+        public async Task<ActionResult<IReadOnlyList<SaleCodeToReadInList>>> GetListAsync()
         {
-            var results = await repository.GetSaleCodeListAsync();
-            return Ok(results);
+            var result = await repository.GetListAsync();
+
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/salecodes/shopsupplieslist
         [Route("shopsupplieslist")]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<SaleCodeShopSuppliesToReadInList>>> GetSaleCodeShopSuppliesListAsync()
+        public async Task<ActionResult<IReadOnlyList<SaleCodeShopSuppliesToReadInList>>> GetShopSuppliesListAsync()
         {
-            var results = await repository.GetSaleCodeShopSuppliesListAsync();
-            return Ok(results);
+            var result = await repository.GetShopSuppliesListAsync();
+
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/salecodes/1
         [HttpGet("{id:long}")]
-        public async Task<ActionResult<SaleCodeToRead>> GetSaleCodeAsync(long id)
+        public async Task<ActionResult<SaleCodeToRead>> GetAsync(long id)
         {
-            var result = await repository.GetSaleCodeAsync(id);
+            var result = await repository.GetAsync(id);
 
-            if (result == null)
-                return NotFound();
-
-            return result;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/salecodes/1
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateSaleCodeAsync(long id, SaleCodeToWrite saleCode)
+        public async Task<ActionResult<PostResponse>> UpdateAsync(SaleCodeToWrite saleCode)
         {
-            var notFoundMessage = $"Could not find Sale Code to update: {saleCode.Name}";
+            var saleCodeFromRepository = await repository.GetEntityAsync(saleCode.Id);
 
-            if (!await repository.SaleCodeExistsAsync(id))
-                return NotFound(notFoundMessage);
+            if (saleCodeFromRepository is null)
+                return NotFound($"Could not find Sale Code to update: {saleCode.Name}");
 
-            //1) Get domain entity from repository
-            var saleCodeFromRepository = await repository.GetSaleCodeEntityAsync(id);
-            var saleCodesFromRepository = (await repository.GetSaleCodeListAsync())
+            var saleCodesFromRepository = (await repository.GetListAsync())
                 .Select(saleCode => saleCode.Code)
                 .ToList();
 
-            // 2) Update domain entity with data in data transfer object(DTO)
-            var nameResult = saleCodeFromRepository.SetName(saleCode.Name);
-            if (nameResult.IsFailure) return BadRequest(nameResult.Error);
+            var errorMessages = new List<string>();
 
-            var codeResult = saleCodeFromRepository.SetCode(saleCode.Code, saleCodesFromRepository);
-            if (codeResult.IsFailure) return BadRequest(codeResult.Error);
+            if (saleCodeFromRepository.Name != saleCode.Name)
+            {
+                var nameResult = saleCodeFromRepository.SetName(saleCode.Name);
+                if (nameResult.IsFailure)
+                    errorMessages.Add(nameResult.Error);
+            }
 
-            var laborRateResult = saleCodeFromRepository.SetLaborRate(saleCode.LaborRate);
-            if (laborRateResult.IsFailure) return BadRequest(laborRateResult.Error);
+            if (saleCodeFromRepository.Code != saleCode.Code)
+            {
+                var codeResult = saleCodeFromRepository.SetCode(saleCode.Code, saleCodesFromRepository);
+                if (codeResult.IsFailure)
+                    errorMessages.Add(codeResult.Error);
+            }
 
-            var desiredMarginResult = saleCodeFromRepository.SetDesiredMargin(saleCode.DesiredMargin);
-            if (desiredMarginResult.IsFailure) return BadRequest(desiredMarginResult.Error);
+            if (saleCodeFromRepository.LaborRate != saleCode.LaborRate)
+            {
+                var laborRateResult = saleCodeFromRepository.SetLaborRate(saleCode.LaborRate);
+                if (laborRateResult.IsFailure)
+                    errorMessages.Add(laborRateResult.Error);
+            }
 
-            //saleCodeFromRepository.SetShopSupplies(saleCode.ShopSupplies);
+            if (saleCodeFromRepository.DesiredMargin != saleCode.DesiredMargin)
+            {
+                var desiredMarginResult = saleCodeFromRepository.SetDesiredMargin(saleCode.DesiredMargin);
+                if (desiredMarginResult.IsFailure)
+                    errorMessages.Add(desiredMarginResult.Error);
+            }
+
+            if (errorMessages.Any())
+            {
+                var aggregatedErrorMessages = string.Join(", ", errorMessages);
+                return BadRequest(aggregatedErrorMessages);
+            }
 
             await repository.SaveChangesAsync();
 
@@ -86,46 +106,37 @@ namespace Menominee.Api.SaleCodes
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddSaleCodeAsync(SaleCodeToWrite saleCodeToAdd)
+        public async Task<ActionResult<PostResponse>> AddAsync(SaleCodeToWrite saleCodeToAdd)
         {
-            SaleCode saleCode = null;
-            var saleCodesFromRepository = (await repository.GetSaleCodeListAsync())
+            var saleCodesFromRepository = (await repository.GetListAsync())
                 .Select(saleCode => saleCode.Code)
                 .ToList();
 
-            // 1. Convert dto to domain entity
-            var result = SaleCode.Create(
+            var saleCode = SaleCode.Create(
                     saleCodeToAdd.Name,
                     saleCodeToAdd.Code,
                     saleCodeToAdd.LaborRate,
                     saleCodeToAdd.DesiredMargin,
                     SaleCodeShopSuppliesHelper.ConvertWriteDtoToEntity(
                         saleCodeToAdd.ShopSupplies),
-                    saleCodesFromRepository);
+                    saleCodesFromRepository).Value;
 
-            if (result.IsFailure) return BadRequest(result.Error);
-
-            saleCode = result.Value;
-
-            // 2. Add domain entity to repository
-            await repository.AddSaleCodeAsync(saleCode);
-
-            // 3. Save changes on repository
+            repository.Add(saleCode);
             await repository.SaveChangesAsync();
 
-            // 4. Return new Code from database to consumer after save
-            return Created(new Uri($"{BasePath}/{saleCode.Id}", UriKind.Relative), new { id = saleCode.Id });
+            return Created(new Uri($"api/SaleCodesController/{saleCode.Id}",
+                UriKind.Relative),
+                new { saleCode.Id });
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<ActionResult> DeleteSaleCodeAsync(long id)
+        public async Task<ActionResult<PostResponse>> DeleteAsync(long id)
         {
-            var scFromRepository = await repository.GetSaleCodeAsync(id);
-            if (scFromRepository == null)
+            var saleCode = await repository.GetEntityAsync(id);
+            if (saleCode is not null)
                 return NotFound($"Could not find Sale Code in the database to delete with Id: {id}.");
 
-            await repository.DeleteSaleCodeAsync(id);
-
+            repository.Delete(saleCode);
             await repository.SaveChangesAsync();
 
             return NoContent();

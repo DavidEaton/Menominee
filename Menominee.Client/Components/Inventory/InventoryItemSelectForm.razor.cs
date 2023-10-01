@@ -1,13 +1,10 @@
-﻿using Menominee.Shared.Models.Inventory.InventoryItems;
-using Menominee.Shared.Models.Manufacturers;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Inventory.InventoryItems;
+using Menominee.Shared.Models.Manufacturers;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Inventory
@@ -18,7 +15,10 @@ namespace Menominee.Client.Components.Inventory
         public IInventoryItemDataService DataService { get; set; }
 
         [Inject]
-        public IManufacturerDataService MfrDataService { get; set; }
+        public IManufacturerDataService ManufacturerDataService { get; set; }
+
+        [Inject]
+        public ILogger<InventoryItemSelectForm> Logger { get; set; }
 
         [Parameter]
         public bool DialogVisible { get; set; }
@@ -67,19 +67,29 @@ namespace Menominee.Client.Components.Inventory
 
         protected override async Task OnParametersSetAsync()
         {
-            Manufacturers = (await MfrDataService.GetAllManufacturersAsync()).ToList();
+            await ManufacturerDataService.GetAllAsync()
+                .Match(
+                    success =>
+                    {
+                        Manufacturers = success;
+                    },
+                    failure => Logger.LogError(failure)
+                );
 
-            ManufacturerList = new();
-            ManufacturerList.Add(new ManufacturerX
+            ManufacturerList = new()
             {
-                Id = 0,
-                Prefix = "",
-                Name = "<< All >>"
-            });
+                new()
+                {
+                    Id = 0,
+                    Code = "",
+                    Prefix = "",
+                    Name = "<< All >>"
+                }
+            };
 
             foreach (var mfr in Manufacturers)
             {
-                if (mfr.Id != 0 && mfr.Prefix.Length > 0)       // FIX ME - need server to only return list of configured Mfrs
+                if (mfr.Id != 0 && mfr.Prefix?.Length > 0)       // FIX ME - need server to only return list of configured Mfrs
                 {
                     ManufacturerList.Add(new ManufacturerX
                     {
@@ -96,23 +106,23 @@ namespace Menominee.Client.Components.Inventory
             if (FilterPackagableItems)
             {
                 if (mfrId > 0)
-                    ItemsList = (await DataService.GetAllItemsAsync(mfrId)).Where(i => itemIsPackagable(i)).ToList();
+                    ItemsList = (await DataService.GetByManufacturerAsync(mfrId)).Value.Where(i => itemIsPackagable(i)).ToList();
                 else
-                    ItemsList = (await DataService.GetAllItemsAsync()).Where(i => itemIsPackagable(i)).ToList();
+                    ItemsList = (await DataService.GetAllAsync()).Value.Where(i => itemIsPackagable(i)).ToList();
             }
             else if (FilterInstallableItems)
             {
                 if (mfrId > 0)
-                    ItemsList = (await DataService.GetAllItemsAsync(mfrId)).Where(i => itemIsInstallable(i)).ToList();
+                    ItemsList = (await DataService.GetByManufacturerAsync(mfrId)).Value.Where(i => itemIsInstallable(i)).ToList();
                 else
-                    ItemsList = (await DataService.GetAllItemsAsync()).Where(i => itemIsInstallable(i)).ToList();
+                    ItemsList = (await DataService.GetAllAsync()).Value.Where(i => itemIsInstallable(i)).ToList();
             }
             else
             {
                 if (mfrId > 0)
-                    ItemsList = (await DataService.GetAllItemsAsync(mfrId)).ToList();
+                    ItemsList = (await DataService.GetByManufacturerAsync(mfrId)).Value.ToList();
                 else
-                    ItemsList = (await DataService.GetAllItemsAsync()).ToList();
+                    ItemsList = (await DataService.GetAllAsync()).Value.ToList();
             }
 
             if (ItemsList.Count > 0)

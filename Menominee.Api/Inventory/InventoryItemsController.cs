@@ -2,6 +2,7 @@
 using Menominee.Api.Common;
 using Menominee.Api.Manufacturers;
 using Menominee.Api.ProductCodes;
+using Menominee.Common.Http;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.Inventory.InventoryItems;
 using Menominee.Shared.Models.Inventory.InventoryItems.Part;
@@ -36,11 +37,11 @@ namespace Menominee.Api.Inventory
         }
 
         [HttpGet("listing")]
-        public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetItemsInListAsync([FromQuery] long? manufacturerId)
+        public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetListAsync([FromQuery] long? manufacturerId)
         {
             var result = manufacturerId.HasValue
-                ? await itemRepository.GetItemsInList(manufacturerId.Value)
-                : await itemRepository.GetItemsInList();
+                ? await itemRepository.GetListAsync(manufacturerId.Value)
+                : await itemRepository.GetListAsync();
 
             return Ok(result);
         }
@@ -48,7 +49,7 @@ namespace Menominee.Api.Inventory
         [HttpGet("{manufacturerId:long}/itemNumber/{itemNumber}")]
         public async Task<ActionResult<InventoryItemToRead>> GetAsync(long manufacturerId, string itemNumber)
         {
-            var result = await itemRepository.GetItem(manufacturerId, itemNumber);
+            var result = await itemRepository.GetAsync(manufacturerId, itemNumber);
 
             return result is null
                 ? NotFound()
@@ -58,7 +59,7 @@ namespace Menominee.Api.Inventory
         [HttpGet("{id:long}")]
         public async Task<ActionResult<InventoryItemToRead>> GetAsync(long id)
         {
-            var result = await itemRepository.GetItem(id);
+            var result = await itemRepository.GetAsync(id);
 
             return result is null
                 ? NotFound()
@@ -68,13 +69,11 @@ namespace Menominee.Api.Inventory
         [HttpPut("{id:long}")]
         public async Task<ActionResult> UpdateAsync(long id, InventoryItemToWrite itemFromCaller)
         {
-            var notFoundMessage = $"Could not find Inventory Item # {id} to update.";
-
             var (itemFromRepository, manufacturerFromRepository, productCodeFromRepository) =
-                await GetEntitiesForUpdate(id, itemFromCaller);
+                await GetEntitiesForUpdate(itemFromCaller.Id, itemFromCaller);
 
             if (itemFromRepository == null || manufacturerFromRepository == null || productCodeFromRepository == null)
-                return NotFound(notFoundMessage);
+                return NotFound($"Could not find Inventory Item # {itemFromCaller.Id} to update.");
 
             var result = await UpdateInventoryItemProperties(itemFromRepository, itemFromCaller,
                 manufacturerFromRepository, productCodeFromRepository);
@@ -82,21 +81,21 @@ namespace Menominee.Api.Inventory
             if (result.IsFailure)
                 return BadRequest(result.Error);
 
-            await itemRepository.SaveChanges();
+            await itemRepository.SaveChangesAsync();
 
             return NoContent();
         }
 
 
         [HttpPost]
-        public async Task<ActionResult> AddAsync(InventoryItemToWrite itemToAdd)
+        public async Task<ActionResult<PostResponse>> AddAsync(InventoryItemToWrite itemToAdd)
         {
             var failureMessage = $"Could not add new Inventory Item Number: {itemToAdd?.ItemNumber}.";
 
             var (manufacturerFromRepository, productCodeFromRepository, inventoryItems) =
                 await GetEntitiesForAdd(itemToAdd);
 
-            InventoryItemPart partFromRepository = await itemRepository.GetInventoryItemPartEntity(itemToAdd.Part.Id);
+            var partFromRepository = await itemRepository.GetPartEntityAsync(itemToAdd.Part.Id);
 
             if (manufacturerFromRepository == null || productCodeFromRepository == null/* || inventoryItems == null*/)
                 return NotFound(
@@ -105,61 +104,64 @@ namespace Menominee.Api.Inventory
                         Message = failureMessage
                     });
 
-            var inventoryItemEntity = InventoryItemHelper.ConvertWriteDtoToEntity(itemToAdd,
+            var inventoryItem = InventoryItemHelper.ConvertWriteDtoToEntity(itemToAdd,
                 manufacturerFromRepository, productCodeFromRepository, partFromRepository, null);
 
-            itemRepository.Add(inventoryItemEntity);
-            await itemRepository.SaveChanges();
+            itemRepository.Add(inventoryItem);
+            await itemRepository.SaveChangesAsync();
 
-            return CreatedAtAction(
-                nameof(GetAsync),
-                new { id = inventoryItemEntity.Id },
-                new { inventoryItemEntity.Id });
+            return Created(new Uri($"api/InventoryItems/{inventoryItem.Id}",
+                UriKind.Relative),
+                new { inventoryItem.Id });
         }
 
         [HttpDelete("{id:long}")]
         public async Task<ActionResult> DeleteAsync(long id)
         {
-            var notFoundMessage = $"Could not find Inventory Item in the database to delete with Id = {id}.";
-
-            var itemFromRepository = await itemRepository.GetItemEntity(id);
+            var itemFromRepository = await itemRepository.GetEntityAsync(id);
 
             if (itemFromRepository is null)
-                return NotFound(notFoundMessage);
+                return NotFound($"Could not find Inventory Item in the database to delete with Id = {id}.");
 
             itemRepository.Delete(itemFromRepository);
-
-            await itemRepository.SaveChanges();
+            await itemRepository.SaveChangesAsync();
 
             return NoContent();
         }
 
         private async Task<(InventoryItem itemFromRepository, Manufacturer manufacturerFromRepository, ProductCode productCodeFromRepository)> GetEntitiesForUpdate(long id, InventoryItemToWrite itemFromCaller)
         {
-            var itemFromRepository = await itemRepository.GetItemEntity(id);
+            var itemFromRepository = await itemRepository.GetEntityAsync(id);
 
             var manufacturerFromRepository = itemFromCaller.Manufacturer is not null
-                ? await manufacturerRepository.GetManufacturerEntityAsync(itemFromCaller.Manufacturer.Id)
+                ? await manufacturerRepository.GetEntityAsync(itemFromCaller.Manufacturer.Id)
                 : null;
 
             var productCodeFromRepository = itemFromCaller.ProductCode is not null
-                ? await productCodeRepository.GetProductCodeEntityAsync(itemFromCaller.ProductCode.Id)
+                ? await productCodeRepository.GetEntityAsync(itemFromCaller.ProductCode.Id)
                 : null;
 
             return (itemFromRepository, manufacturerFromRepository, productCodeFromRepository);
         }
 
-        private async Task<(Manufacturer manufacturerFromRepository, ProductCode productCodeFromRepository, IReadOnlyList<InventoryItem> inventoryItems)> GetEntitiesForAdd(InventoryItemToWrite itemToAdd)
+        private async Task<(Manufacturer manufacturerFromRepository,
+            ProductCode productCodeFromRepository,
+            IReadOnlyList<InventoryItem> inventoryItems
+            )> GetEntitiesForAdd(InventoryItemToWrite itemToAdd)
         {
-            var manufacturerFromRepository = itemToAdd.Manufacturer is not null ?
-                await manufacturerRepository.GetManufacturerEntityAsync(itemToAdd.Manufacturer.Id)
+            var manufacturerFromRepository =
+                itemToAdd.Manufacturer is not null
+                ? await manufacturerRepository.GetEntityAsync(itemToAdd.Manufacturer.Id)
                 : null;
 
-            var productCodeFromRepository = itemToAdd.ProductCode is not null
-                ? await productCodeRepository.GetProductCodeEntityAsync(itemToAdd.ProductCode.Id)
+            var productCodeFromRepository =
+                itemToAdd.ProductCode is not null
+                ? await productCodeRepository.GetEntityAsync(itemToAdd.ProductCode.Id)
                 : null;
 
-            return (manufacturerFromRepository, productCodeFromRepository, null);
+            var inventoryItems = await itemRepository.GetEntitiesAsync(GetItemIds(itemToAdd));
+
+            return (manufacturerFromRepository, productCodeFromRepository, inventoryItems);
         }
 
         private async Task<Result> UpdateInventoryItemProperties(InventoryItem itemFromRepository, InventoryItemToWrite itemFromCaller, Manufacturer manufacturerFromRepository, ProductCode productCodeFromRepository)
@@ -173,42 +175,46 @@ namespace Menominee.Api.Inventory
                     ? UpdateInventoryItemPart(itemFromCaller.Part).Result.Value
                     : null,
                 itemFromCaller.Labor is not null
-                    ? await itemRepository.GetInventoryItemLaborEntity(itemFromCaller.Labor.Id)
+                    ? await itemRepository.GetLaborEntityAsync(itemFromCaller.Labor.Id)
                     : null,
                 itemFromCaller.Tire is not null
-                    ? await itemRepository.GetInventoryItemTireEntity(itemFromCaller.Tire.Id)
+                    ? await itemRepository.GetTireEntityAsync(itemFromCaller.Tire.Id)
                     : null,
                 itemFromCaller.Package is not null
-                    ? await itemRepository.GetInventoryItemPackageEntity(itemFromCaller.Package.Id)
+                    ? await itemRepository.GetPackageEntityAsync(itemFromCaller.Package.Id)
                     : null,
                 itemFromCaller.Inspection is not null
-                    ? await itemRepository.GetInventoryItemInspectionEntity(itemFromCaller.Inspection.Id)
+                    ? await itemRepository.GetInspectionEntityAsync(itemFromCaller.Inspection.Id)
                     : null,
                 itemFromCaller.Warranty is not null
-                    ? await itemRepository.GetInventoryItemWarrantyEntity(itemFromCaller.Warranty.Id)
+                    ? await itemRepository.GetWarrantyEntityAsync(itemFromCaller.Warranty.Id)
                     : null);
         }
 
         private async Task<Result<InventoryItemPart>> UpdateInventoryItemPart(InventoryItemPartToWrite part)
         {
-            var partFromRepository = await itemRepository.GetInventoryItemPartEntity(part.Id);
+            var partFromRepository = await itemRepository.GetPartEntityAsync(part.Id);
 
-            var results = new Result[]
+            var results = new List<Result>
             {
                 partFromRepository.SetList(part.List),
                 partFromRepository.SetRetail(part.Retail),
                 partFromRepository.SetCost(part.Cost),
                 partFromRepository.SetCore(part.Core),
                 partFromRepository.SetTechAmount(TechAmount.Create(part.TechAmount.PayType, part.TechAmount.Amount, part.TechAmount.SkillLevel).Value),
-                partFromRepository.SetLineCode(part.LineCode),
-                partFromRepository.SetSubLineCode(part.SubLineCode),
                 partFromRepository.SetFractional(part.Fractional),
             };
+
+            if (part.LineCode is not null)
+                results.Add(partFromRepository.SetLineCode(part.LineCode));
+
+            if (part.SubLineCode is not null)
+                results.Add(partFromRepository.SetSubLineCode(part.SubLineCode));
 
             var exciseFeeResults = partFromRepository.ExciseFees.Select(fee =>
             {
                 var feeToWrite = part.ExciseFees.FirstOrDefault(f => f.Id == fee.Id);
-                if (feeToWrite != null)
+                if (feeToWrite is not null)
                 {
                     var descriptionResult = fee.SetDescription(feeToWrite.Description);
                     var feeTypeResult = fee.SetFeeType(feeToWrite.FeeType);

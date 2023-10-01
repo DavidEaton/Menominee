@@ -19,32 +19,13 @@ namespace Menominee.Api.Payables.Invoices
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task Add(VendorInvoice invoice)
+        public void Add(VendorInvoice invoice)
         {
             if (invoice is not null)
-            {
-                if (await Exists(invoice.Id))
-                    throw new Exception("Invoice already exists");
-
-                // Detach any existing tracked entity with the same key
-                var existingEntity = context.VendorInvoices.FirstOrDefault(i => i.Id == invoice.Id);
-                if (existingEntity != null)
-                {
-                    context.Entry(existingEntity).State = EntityState.Detached;
-                }
-
-                context.VendorInvoices.Attach(invoice);
-            }
+                context.Attach(invoice);
         }
 
-        public async Task DeleteInvoiceAsync(long id)
-        {
-            var invoiceFromContext = await context.VendorInvoices.FindAsync(id);
-            if (invoiceFromContext != null)
-                context.Remove(invoiceFromContext);
-        }
-
-        public async Task<VendorInvoiceToRead> Get(long id)
+        public async Task<VendorInvoiceToRead> GetAsync(long id)
         {
             var invoiceFromContext = context.VendorInvoices
                 .Include(invoice => invoice.Vendor)
@@ -65,16 +46,11 @@ namespace Menominee.Api.Payables.Invoices
                 .FirstOrDefaultAsync(invoice => invoice.Id == id);
 
             return await invoiceFromContext is null
-            ? null
+            ? new()
             : VendorInvoiceHelper.ConvertToReadDto(await invoiceFromContext);
         }
 
-        public async Task<Vendor> GetVendor(long id)
-        {
-            return await context.Vendors.FirstOrDefaultAsync(vendor => vendor.Id == id);
-        }
-
-        public async Task<VendorInvoice> GetEntity(long id)
+        public async Task<VendorInvoice> GetEntityAsync(long id)
         {
             var invoiceFromContext = context.VendorInvoices
                 .Include(invoice => invoice.Vendor)
@@ -98,10 +74,10 @@ namespace Menominee.Api.Payables.Invoices
             return await invoiceFromContext;
         }
 
-        public async Task<IReadOnlyList<VendorInvoiceToReadInList>> GetList(ResourceParameters resourceParameters)
+        public async Task<IReadOnlyList<VendorInvoiceToReadInList>> GetListByParametersAsync(ResourceParameters resourceParameters)
         {
             if (resourceParameters is null)
-                throw new ArgumentException(nameof(resourceParameters));
+                return null;
 
             var invoicesFromContext = context.VendorInvoices
                 .Include(invoice => invoice.Vendor.DefaultPaymentMethod.PaymentMethod)
@@ -126,21 +102,16 @@ namespace Menominee.Api.Payables.Invoices
             return result;
         }
 
-        public async Task<bool> Exists(long id)
-        {
-            return await context.VendorInvoices.AnyAsync(invoice => invoice.Id == id);
-        }
-
-        public async Task SaveChanges() =>
+        public async Task SaveChangesAsync() =>
             await context.SaveChangesAsync();
-
 
         public void Delete(VendorInvoice invoice)
         {
-            context.Remove(invoice);
+            if (invoice is not null)
+                context.Remove(invoice);
         }
 
-        public async Task<IReadOnlyList<string>> GetVendorInvoiceNumbers(long vendorId)
+        public async Task<IReadOnlyList<string>> GetVendorInvoiceNumbersAsync(long vendorId)
         {
             return await context.VendorInvoices
                 .Where(invoice => invoice.Vendor.Id == vendorId)
@@ -149,13 +120,13 @@ namespace Menominee.Api.Payables.Invoices
                 .ToListAsync();
         }
 
-        public async Task<IReadOnlyList<VendorInvoiceToRead>> GetInvoices(ResourceParameters resourceParameters)
+        public async Task<IReadOnlyList<VendorInvoiceToRead>> GetByParametersAsync(ResourceParameters resourceParameters)
         {
             if (resourceParameters is null)
-                throw new ArgumentException(nameof(resourceParameters));
+                return null;
 
             if (!resourceParameters.VendorId.HasValue && !resourceParameters.Status.HasValue)
-                return await GetInvoices();
+                return await GetInvoicesAsync();
 
             var invoicesFromContext = GetInvoicesFromContextAsNoTracking();
 
@@ -170,14 +141,7 @@ namespace Menominee.Api.Payables.Invoices
                     .ToListAsync();
         }
 
-        private async Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoiceList()
-        {
-            return await GetInvoicesFromContextAsNoTracking()?.Select(invoice =>
-                VendorInvoiceHelper.ConvertToReadInListDto(invoice))
-                    .ToListAsync();
-        }
-
-        private async Task<IReadOnlyList<VendorInvoiceToRead>> GetInvoices()
+        private async Task<IReadOnlyList<VendorInvoiceToRead>> GetInvoicesAsync()
         {
             return await GetInvoicesFromContextAsNoTracking()?.Select(invoice =>
                 VendorInvoiceHelper.ConvertToReadDto(invoice))

@@ -7,15 +7,13 @@ namespace Menominee.Api.Taxes
 {
     public interface ISalesTaxRepository
     {
-        Task AddSalesTaxAsync(SalesTax salesTax);
-        Task<SalesTax> GetSalesTaxEntityAsync(long id);
-        Task<SalesTaxToRead> GetSalesTaxAsync(long id);
-        Task<IReadOnlyList<SalesTaxToReadInList>> GetSalesTaxListAsync();
-        Task<IReadOnlyList<SalesTaxToRead>> GetSalesTaxesAsync();
-        Task<SalesTax> UpdateSalesTaxAsync(SalesTax salesTax);
-        Task DeleteSalesTaxAsync(long id);
-        Task<bool> SalesTaxExistsAsync(long id);
-        Task<bool> SaveChangesAsync();
-        Task<IReadOnlyList<SalesTax>> GetSalesTaxEntities();
+        void Add(SalesTax entity);
+        void Delete(SalesTax entity);
+        Task<SalesTax> GetEntityAsync(long id);
+        Task<SalesTaxToRead> GetAsync(long id);
+        Task<IReadOnlyList<SalesTaxToReadInList>> GetListAsync();
+        Task<IReadOnlyList<SalesTaxToRead>> GetAllAsync();
+        Task SaveChangesAsync();
+        Task<IReadOnlyList<SalesTax>> GetEntitiesAsync();
     }
 }

@@ -8,6 +8,7 @@ namespace Menominee.Domain.Entities
 {
     public class SaleCode : Entity
     {
+        // SaleCode belongs to ONE Manufacturer
         public static readonly int MinimumLength = 1;
         public static readonly int NameMaximumLength = 255;
         public static readonly int CodeMaximumLength = 4;
@@ -16,8 +17,8 @@ namespace Menominee.Domain.Entities
 
         public static string InvalidLengthMessage(int minLength, int maxLength) => $"Value must be between {minLength} and {maxLength} characters.";
         public static string InvalidValueMessage(double minValue, double maxValue) => $"Value must be between {minValue} and {maxValue}.";
-       
-        public static readonly string RequiredMessage = $"Please include all required items."; 
+
+        public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly string MinimumValueMessage = $"Value(s) cannot be negative.";
         public static readonly string NonuniqueMessage = $"Code is already in use and must be unique.";
 

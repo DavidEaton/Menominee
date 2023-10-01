@@ -1,93 +1,113 @@
-﻿using Menominee.Domain.Entities.Settings;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
+using Menominee.Domain.Entities.Settings;
 using Menominee.Shared.Models.Settings;
 using System.Net.Http.Json;
 
 namespace Menominee.Client.Services.Settings;
 
-public class SettingDataService : ISettingDataService
+public class SettingDataService : DataServiceBase<SettingDataService>, ISettingDataService
 {
     private readonly HttpClient httpClient;
-    private readonly ILogger<PersonDataService> logger;
-    private const string MediaType = "application/json";
     private const string UriSegment = "api/settings";
 
-    public SettingDataService(HttpClient httpClient, ILogger<PersonDataService> logger)
+    public SettingDataService(HttpClient httpClient,
+        ILogger<SettingDataService> logger,
+        UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
     {
         this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<SettingToRead?> GetSetting(SettingName name)
+    public async Task<Result<SettingToRead?>> GetAsync(SettingName name)
     {
+        var errorMessage = $"Failed to get excise fee with name {name}";
+
         try
         {
-            return await httpClient.GetFromJsonAsync<SettingToRead>($"{UriSegment}/{name}");
+            var result = await httpClient.GetFromJsonAsync<SettingToRead?>(UriSegment + $"/{name}");
+            return result is not null
+                ? Result.Success(result)
+                : Result.Failure<SettingToRead?>(errorMessage);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to get setting {name}", name);
+            Logger.LogError(ex, errorMessage);
+            return Result.Failure<SettingToRead?>(errorMessage);
         }
-
-        return null;
     }
 
-    public async Task<IReadOnlyList<SettingToRead>?> GetSettingsList()
+    public async Task<Result<IReadOnlyList<SettingToRead?>>> GetAllAsync()
     {
+        var errorMessage = "Failed to get all businesses";
+
         try
         {
-            return await httpClient.GetFromJsonAsync<IReadOnlyList<SettingToRead>>(UriSegment);
+            var result = await httpClient.GetFromJsonAsync<IReadOnlyList<SettingToRead?>>(UriSegment);
+            return result is not null
+                ? Result.Success(result)
+                : Result.Failure<IReadOnlyList<SettingToRead?>>(errorMessage);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to get all settings");
+            Logger.LogError(ex, errorMessage);
+            return Result.Failure<IReadOnlyList<SettingToRead?>>(errorMessage);
         }
-
-        return null;
     }
 
-    public async Task<IReadOnlyList<SettingToRead>?> GetSettingsList(SettingGroup group)
+    public async Task<Result<IReadOnlyList<SettingToRead?>>> GetByGroupAsync(SettingGroup group)
     {
         try
         {
-            return await httpClient.GetFromJsonAsync<IReadOnlyList<SettingToRead>>($"{UriSegment}/group/{group}");
+            var result = await httpClient.GetFromJsonAsync<IReadOnlyList<SettingToRead>>($"{UriSegment}/group/{group}");
+
+            if (result is not null)
+                return Result.Success(result);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to get settings for group {group}", group);
+            Logger.LogError(ex, "Failed to get settings for group {group}", group);
         }
 
-        return null;
+        return Result.Failure<IReadOnlyList<SettingToRead?>>($"Failed to get setting {group}");
     }
 
-    public async Task<SettingToRead?> SaveSetting(SettingToWrite setting)
+    public async Task<Result<PostResponse>> AddAsync(SettingToWrite fromCaller)
     {
+        var entityType = "Setting";
         try
         {
-            var response = await httpClient.PostAsJsonAsync(UriSegment, setting);
+            var result = await httpClient.AddAsync(
+                UriSegment,
+                fromCaller,
+                Logger);
 
-            return await response.Content.ReadFromJsonAsync<SettingToRead>();
+            return result;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to save setting {setting}", setting.SettingName);
+            Logger.LogError(ex, $"Failed to add {entityType}");
+            return Result.Failure<PostResponse>("An unexpected error occurred");
         }
-
-        return null;
     }
 
-    public async Task<IReadOnlyList<SettingToRead>?> SaveSettingsList(IReadOnlyList<SettingToWrite> settings)
+    public async Task<Result> AddMultipleAsync(IReadOnlyList<SettingToWrite> settings)
     {
         try
         {
             var response = await httpClient.PostAsJsonAsync($"{UriSegment}/settingList", settings);
 
-            return await response.Content.ReadFromJsonAsync<IReadOnlyList<SettingToRead>>();
+            if (response.IsSuccessStatusCode)
+                return Result.Success();
+
+            return Result.Failure("Failed to add settings");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to save settings");
+            Logger.LogError(ex, "Failed to save settings");
         }
 
-        return null;
+        return Result.Failure("Failed to add settings");
     }
 }

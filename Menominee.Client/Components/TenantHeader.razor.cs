@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
+﻿using Menominee.Client.Services;
 using Menominee.Common.Entities;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Menominee.Client.Services;
 
 namespace Menominee.Client.Components
 {
@@ -24,7 +21,12 @@ namespace Menominee.Client.Components
 
         protected override async Task OnInitializedAsync()
         {
-            Tenant = await TenantDataService.GetTenantAsync();
+            var result = await TenantDataService.GetAsync();
+
+            Tenant = result.IsSuccess
+                ? result.Value
+                : new Tenant { Name = "Error", LogoUrl = errorUrl };
+
             Logger.LogInformation("TenantHeader.OnInitializedAsync()");
             Tenant.LogoUrl = BuildTenantLogoPath(Tenant);
             errorUrl = $"{Configuration.GetValue<string>("Tenant:LogoImage:BaseUrl")}" +
@@ -33,8 +35,8 @@ namespace Menominee.Client.Components
 
         private string BuildTenantLogoPath(Tenant tenant)
         {
-            string basePath = Configuration.GetValue<string>("Tenant:LogoImage:BaseUrl");
-            string path = $"{basePath}{tenant.Name}/{tenant.Name}";
+            var basePath = Configuration.GetValue<string>("Tenant:LogoImage:BaseUrl");
+            var path = $"{basePath}{tenant.Name}/{tenant.Name}";
             return path;
         }
 

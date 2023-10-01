@@ -1,86 +1,97 @@
 ﻿using Blazored.Toast.Services;
+using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Taxes;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Menominee.Client.Services.Taxes
 {
-    public class ExciseFeeDataService : IExciseFeeDataService
+    public class ExciseFeeDataService : DataServiceBase<ExciseFeeDataService>, IExciseFeeDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<ExciseFeeDataService> logger;
         private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/excisefees";
 
-        public ExciseFeeDataService(HttpClient httpClient, ILogger<ExciseFeeDataService> logger, IToastService toastService)
+        public ExciseFeeDataService(HttpClient httpClient,
+            ILogger<ExciseFeeDataService> logger,
+            IToastService toastService,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<ExciseFeeToRead> AddExciseFeeAsync(ExciseFeeToWrite exciseFee)
+        public async Task<Result<PostResponse>> AddAsync(ExciseFeeToWrite fromCaller)
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var content = new StringContent(JsonSerializer.Serialize(exciseFee), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return await JsonSerializer.DeserializeAsync<ExciseFeeToRead>(await response.Content.ReadAsStreamAsync(), options);
-            }
-
-            toastService.ShowError($"Failed to add Excise Fee. {response.ReasonPhrase}.", "Add Failed");
-
-            return null;
-        }
-
-        public async Task<IReadOnlyList<ExciseFeeToReadInList>> GetAllExciseFeesAsync()
-        {
+            var entityType = "Excise Fee";
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<ExciseFeeToReadInList>>($"{UriSegment}/listing");
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
+
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
+
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.FeeType} failed to update", "Save Failed");
+
+                return result;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all excise fees");
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
             }
-
-            return null;
         }
 
-        public async Task<ExciseFeeToRead> GetExciseFeeAsync(long id)
+        public async Task<Result<IReadOnlyList<ExciseFeeToReadInList>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get all excise fees";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<ExciseFeeToRead>($"{UriSegment}/{id}");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<ExciseFeeToReadInList>>($"{UriSegment}/listing");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<ExciseFeeToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get excise fee with id {id}", id);
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<ExciseFeeToReadInList>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task UpdateExciseFeeAsync(ExciseFeeToWrite exciseFee, long id)
+        public async Task<Result<ExciseFeeToRead>> GetAsync(long id)
         {
-            var content = new StringContent(JsonSerializer.Serialize(exciseFee), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);
+            var errorMessage = $"Failed to get excise fee with id {id}";
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                toastService.ShowSuccess("Excise Fee saved successfully", "Saved");
-                return;
+                var result = await httpClient.GetFromJsonAsync<ExciseFeeToRead>(UriSegment + $"/{id}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<ExciseFeeToRead>(errorMessage);
             }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<ExciseFeeToRead>(errorMessage);
+            }
+        }
 
-            toastService.ShowError($"Excise Fee failed to update.  Id = {id}", "Save Failed");
+        public async Task<Result> UpdateAsync(ExciseFeeToWrite fromCaller)
+        {
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                exciseFee => $"{exciseFee.Description}",
+                exciseFee => exciseFee.Id);
         }
     }
 }

@@ -1,9 +1,9 @@
 using Blazored.Toast;
-using Menominee.Shared;
 using Menominee.Client;
 using Menominee.Client.Components.RepairOrders;
 using Menominee.Client.MessageHandlers;
 using Menominee.Client.Services;
+using Menominee.Client.Services.Businesses;
 using Menominee.Client.Services.CreditCards;
 using Menominee.Client.Services.Customers;
 using Menominee.Client.Services.Inventory;
@@ -13,18 +13,19 @@ using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;
+using Menominee.Client.Services.Settings;
+using Menominee.Client.Services.Shared;
 using Menominee.Client.Services.Taxes;
+using Menominee.Client.Services.Vehicles;
+using Menominee.Shared;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 using Syncfusion.Blazor;
 using Syncfusion.Licensing;
-using Menominee.Client.Services.Businesses;
-using Menominee.Client.Services.Settings;
-using Serilog;
-using Serilog.Events;
-using Serilog.Core;
-using Menominee.Client.Services.Vehicles;
 
 // Add your Syncfusion license key for Blazor platform with corresponding Syncfusion NuGet version referred in project. For more information about license key see https://help.syncfusion.com/common/essential-studio/licensing/license-key.
 //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTQ3MzAyQDMxMzkyZTMzMmUzMGF5MU1kSEI2RnZMQWMxR3dqSlM4T2MvVFBWTFdBbEhzckF2TVJwSVlJVTQ9");
@@ -63,6 +64,8 @@ builder.Services.AddLogging(builder => builder.AddSerilog(dispose: true));
 
 #endregion
 
+builder.Services.Configure<UriBuilderConfiguration>(builder.Configuration.GetSection("UriBuilderConfiguration"));
+builder.Services.AddSingleton<UriBuilderFactory>();
 builder.Services.AddHttpClient("Menominee.ServerAPI"
         , client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
@@ -121,7 +124,6 @@ builder.Services.AddAuthorizationCore(authorizationOptions =>
         Policies.TechnicianUserPolicy());
 });
 
-//var baseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl"));
 var baseAddress = new Uri(builder.HostEnvironment.BaseAddress);
 
 builder.Services.AddHttpClient<IUserDataService, UserDataService>(

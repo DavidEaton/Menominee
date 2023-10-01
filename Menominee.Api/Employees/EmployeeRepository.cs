@@ -17,14 +17,14 @@ namespace Menominee.Api.Employees
             this.context = context;
         }
 
-        public async Task<List<Employee>> GetEmployeeEntities()
+        public async Task<IReadOnlyList<Employee>> GetEntitiesAsync()
         {
             return await context.Employees
                 .AsNoTracking()
                 .ToListAsync();
         }
 
-        public async Task<List<EmployeeToRead>> GetEmployees()
+        public async Task<IReadOnlyList<EmployeeToRead>> GetAllAsync()
         {
             IReadOnlyList<Employee> employees = await context.Employees
                 .AsNoTracking()

@@ -1,4 +1,5 @@
 ﻿using Menominee.Api.Common;
+using Menominee.Common.Http;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.SellingPriceNames;
 using Microsoft.AspNetCore.Mvc;
@@ -13,18 +14,17 @@ namespace Menominee.Api.SellingPriceNames;
 public class SellingPriceNamesController : BaseApplicationController<SellingPriceNamesController>
 {
     private readonly ISellingPriceNameRepository repository;
-    private readonly string BasePath = "/api/sellingpricenames/";
 
     public SellingPriceNamesController(ISellingPriceNameRepository sellingPriceNameRepository, ILogger<SellingPriceNamesController> logger) : base(logger)
     {
-        this.repository = sellingPriceNameRepository ??
+        repository = sellingPriceNameRepository ??
             throw new ArgumentNullException(nameof(sellingPriceNameRepository));
     }
 
     [HttpGet("list")]
-    public async Task<ActionResult<IReadOnlyList<SellingPriceNameToRead>>> GetSellingPriceNamesList()
+    public async Task<ActionResult<IReadOnlyList<SellingPriceNameToRead>>> GetListAsync()
     {
-        var sellingPriceNames = await repository.GetAll();
+        var sellingPriceNames = await repository.GetAllAsync();
 
         return sellingPriceNames.Count == 0
             ? Ok(new List<SellingPriceNameToRead>())
@@ -34,9 +34,9 @@ public class SellingPriceNamesController : BaseApplicationController<SellingPric
     }
 
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<SellingPriceNameToRead>> GetSellingPriceName(long id)
+    public async Task<ActionResult<SellingPriceNameToRead>> GetAsync(long id)
     {
-        var sellingPriceName = await repository.GetEntity(id);
+        var sellingPriceName = await repository.GetEntityAsync(id);
 
         return sellingPriceName is not null
             ? Ok(SellingPriceNameHelper.ConvertToReadDto(sellingPriceName))
@@ -44,41 +44,45 @@ public class SellingPriceNamesController : BaseApplicationController<SellingPric
     }
 
     [HttpPost]
-    public async Task<ActionResult<SellingPriceNameToRead>> AddSellingPriceName(SellingPriceNameToWrite sellingPriceNameToAdd)
+    public async Task<ActionResult<PostResponse>> AddAsync(SellingPriceNameToWrite sellingPriceNameToAdd)
     {
+        // No need to validate it here again, just call .Value right away
         var sellingPriceName = SellingPriceName.Create(sellingPriceNameToAdd.Name).Value;
 
         repository.Add(sellingPriceName);
-        await repository.SaveChanges();
+        await repository.SaveChangesAsync();
 
-        return Created(new Uri($"{BasePath}/{sellingPriceName.Id}", UriKind.Relative), new { id = sellingPriceName.Id });
+        return Created(new Uri($"/api/SellingPriceNamesController/{sellingPriceName.Id}",
+            UriKind.Relative),
+            new { sellingPriceName.Id });
     }
 
     [HttpPut("{id:long}")]
-    public async Task<ActionResult> UpdateSellingPriceName(long id, SellingPriceNameToWrite updatedSellingPriceName)
+    public async Task<ActionResult> UpdateAsync(SellingPriceNameToWrite updatedSellingPriceName)
     {
-        var sellingPriceNameFromRepository = await repository.GetEntity(id);
+        var sellingPriceNameFromRepository = await repository.GetEntityAsync(updatedSellingPriceName.Id);
 
-        if (sellingPriceNameFromRepository is null) return NotFound();
+        if (sellingPriceNameFromRepository is null)
+            return NotFound($"Could not find Selling Price Name in the database to delete with Id: {updatedSellingPriceName.Id}.");
 
         var nameResult = sellingPriceNameFromRepository.SetName(updatedSellingPriceName.Name);
 
         if (nameResult.IsFailure) return BadRequest(nameResult.Error);
 
-        await repository.SaveChanges();
+        await repository.SaveChangesAsync();
 
         return NoContent();
     }
 
     [HttpDelete("{id:long}")]
-    public async Task<ActionResult> DeleteSellingPriceName(long id)
+    public async Task<ActionResult> DeleteAsync(long id)
     {
-        var sellingPriceNameFromRepository = await repository.GetEntity(id);
+        var sellingPriceNameFromRepository = await repository.GetEntityAsync(id);
 
         if (sellingPriceNameFromRepository is null) return NotFound();
 
         repository.Delete(sellingPriceNameFromRepository);
-        await repository.SaveChanges();
+        await repository.SaveChangesAsync();
 
         return NoContent();
     }

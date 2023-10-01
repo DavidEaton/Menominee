@@ -1,7 +1,8 @@
-﻿using Menominee.Shared.Models.SaleCodes;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
+using Menominee.Shared.Models.SaleCodes;
 using System.Net.Http.Json;
-using System.Text.Json;
-using CSharpFunctionalExtensions;
 
 namespace Menominee.Client.Services.SaleCodes
 {
@@ -13,27 +14,24 @@ namespace Menominee.Client.Services.SaleCodes
 
         public SaleCodeDataService(HttpClient httpClient, ILogger<SaleCodeDataService> logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<Result<SaleCodeToRead>> AddSaleCodeAsync(SaleCodeToWrite saleCode)
+        public async Task<Result<PostResponse>> AddAsync(SaleCodeToWrite saleCode)
         {
-            var response = await httpClient.PostAsJsonAsync(UriSegment, saleCode);
+            var result = await httpClient.AddAsync(
+            UriSegment,
+            saleCode,
+            logger);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorMessage = response.Content.ReadAsStringAsync().Result;
-                logger.LogError(message: errorMessage);
-                return Result.Failure<SaleCodeToRead>(errorMessage);
-            }
+            if (result.IsFailure)
+                logger.LogError(result.Error);
 
-            var data = await JsonSerializer.DeserializeAsync<SaleCodeToRead>(await response.Content.ReadAsStreamAsync());
-
-            return Result.Success(data!);
+            return result;
         }
 
-        public async Task<IReadOnlyList<SaleCodeToReadInList>> GetAllSaleCodesAsync()
+        public async Task<IReadOnlyList<SaleCodeToReadInList>> GetAllAsync()
         {
             try
             {
@@ -47,7 +45,7 @@ namespace Menominee.Client.Services.SaleCodes
             return null;
         }
 
-        public async Task<IReadOnlyList<SaleCodeShopSuppliesToReadInList>> GetAllSaleCodeShopSuppliesAsync()
+        public async Task<IReadOnlyList<SaleCodeShopSuppliesToReadInList>> GetAllShopSuppliesAsync()
         {
             try
             {
@@ -61,7 +59,7 @@ namespace Menominee.Client.Services.SaleCodes
             return null;
         }
 
-        public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
+        public async Task<SaleCodeToRead> GetAsync(long id)
         {
             try
             {
@@ -75,18 +73,14 @@ namespace Menominee.Client.Services.SaleCodes
             return null;
         }
 
-        public async Task<Result> UpdateSaleCodeAsync(SaleCodeToWrite saleCode, long id)
+        public async Task<Result> UpdateAsync(SaleCodeToWrite fromCaller)
         {
-            var response = await httpClient.PutAsJsonAsync($"{UriSegment}/{id}", saleCode);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorMessage = response.Content.ReadAsStringAsync().Result;
-                logger.LogError(message: errorMessage);
-                return Result.Failure(errorMessage);
-            }
-
-            return Result.Success();
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                logger,
+                saleCode => $"{saleCode.ToString}",
+                saleCode => saleCode.Id);
         }
     }
 }

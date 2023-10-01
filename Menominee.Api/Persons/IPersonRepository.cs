@@ -7,15 +7,14 @@ namespace Menominee.Api.Persons
 {
     public interface IPersonRepository
     {
-        Task AddPersonAsync(Person entity);
-        void DeletePerson(Person entity);
-        Task<bool> PersonExistsAsync(long id);
-        Task<IReadOnlyList<PersonToRead>> GetPersonsAsync();
-        Task<IReadOnlyList<PersonToReadInList>> GetPersonsListAsync();
-        Task<PersonToRead> GetPersonAsync(long id);
-        Task<Person> GetPersonEntityAsync(long id);
+        void Add(Person entity);
+        void Delete(Person entity);
+        Task<IReadOnlyList<PersonToRead>> GetAllAsync();
+        Task<IReadOnlyList<PersonToReadInList>> GetListAsync();
+        Task<PersonToRead> GetAsync(long id);
+        Task<Person> GetEntityAsync(long id);
         Task SaveChangesAsync();
-        void DeletePhone(Phone phone);
-        void DeleteEmail(Email email);
+        void DeletePhone(Phone entity);
+        void DeleteEmail(Email entity);
     }
 }

@@ -1,69 +1,97 @@
 ﻿using Blazored.Toast.Services;
+using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Persons;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Menominee.Client.Services
 {
-    public class PersonDataService : IPersonDataService
+    public class PersonDataService : DataServiceBase<PersonDataService>, IPersonDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<PersonDataService> logger;
         private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/persons";
 
-        public PersonDataService(HttpClient httpClient, ILogger<PersonDataService> logger, IToastService toastService)
+        public PersonDataService(HttpClient httpClient,
+            ILogger<PersonDataService> logger,
+            IToastService toastService,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<PersonToRead> AddPerson(PersonToWrite person)
+        public async Task<Result<PostResponse>> AddAsync(PersonToWrite fromCaller)
         {
-            var content = new StringContent(JsonSerializer.Serialize(person), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
-            var result = response.Content.ReadAsStringAsync().Result;
-
-            if (response.IsSuccessStatusCode)
-            {
-                toastService.ShowSuccess($"{person.Name.LastName}, {person.Name.FirstName} added successfully", "Added");
-                return await JsonSerializer.DeserializeAsync<PersonToRead>(await response.Content.ReadAsStreamAsync());
-            }
-
-            toastService.ShowError($"{person.Name.LastName}, {person.Name.FirstName} failed to add. {response.ReasonPhrase}.", "Add Failed");
-
-            return null;
-        }
-
-        public async Task<IReadOnlyList<PersonToReadInList>> GetAllPersons()
-        {
+            var entityType = "Person";
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<PersonToReadInList>>($"{UriSegment}/list");
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
+
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
+
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.Name} failed to update", "Save Failed");
+
+                return result;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all persons");
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
             }
-
-            return null;
         }
 
-        public async Task<PersonToRead> GetPersonDetails(long id)
+        public async Task<Result<IReadOnlyList<PersonToReadInList>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get Persons";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<PersonToRead>(UriSegment + $"/{id}");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<PersonToReadInList>>($"{UriSegment}/list");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<PersonToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get person details with id {id}", id);
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<PersonToReadInList>>(errorMessage);
             }
+        }
 
-            return null;
+        public async Task<Result<PersonToRead>> GetAsync(long id)
+        {
+            var errorMessage = $"Failed to get person with id {id}";
+
+            try
+            {
+                var result = await httpClient.GetFromJsonAsync<PersonToRead>(UriSegment + $"/{id}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<PersonToRead>(errorMessage);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<PersonToRead>(errorMessage);
+            }
+        }
+
+        public async Task<Result> UpdateAsync(PersonToWrite fromCaller)
+        {
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                person => $"{fromCaller.Name.FirstName} {fromCaller.Name.LastName}",
+                person => person.Id);
         }
 
         public async Task DeletePerson(long id)
@@ -74,37 +102,8 @@ namespace Menominee.Client.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to delete person with id {id}", id);
+                Logger.LogError(ex, "Failed to delete person with id {id}", id);
             }
-        }
-
-        public async Task UpdatePerson(PersonToWrite person, long id)
-        {
-            var content = new StringContent(JsonSerializer.Serialize(person), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync(UriSegment + $"/{id}", content);
-            var result = response.Content.ReadAsStringAsync().Result;
-
-            if (response.IsSuccessStatusCode)
-            {
-                toastService.ShowSuccess($"{person.Name.LastName}, {person.Name.FirstName} updated successfully", "Saved");
-                return;
-            }
-
-            toastService.ShowError($"{person.Name.LastName}, {person.Name.FirstName} failed to update", "Save Failed");
-        }
-
-        public async Task<PersonToRead> GetPerson(long id)
-        {
-            try
-            {
-                return await httpClient.GetFromJsonAsync<PersonToRead>(UriSegment + $"/{id}");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Failed to get person with id {id}", id);
-            }
-
-            return null;
         }
     }
 }

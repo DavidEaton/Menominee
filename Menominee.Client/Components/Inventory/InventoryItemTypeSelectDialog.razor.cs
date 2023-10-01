@@ -1,8 +1,5 @@
 ﻿using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Inventory
 {

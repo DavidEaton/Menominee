@@ -1,6 +1,6 @@
-﻿@using Telerik.Blazor.Components
+﻿@inherits InventoryEditorBase
+@using Telerik.Blazor.Components
 @using Syncfusion.Blazor.DropDowns
-
 <div class="m-form">
     <Card Title="@Title">
         <Content>
@@ -9,12 +9,12 @@
                     @if (ProductCodes != null)
                     {
                         <label class="m-label" for="productCode">Product Code</label>
-                        <TelerikDropDownList @bind-Value="@productCodeId"
+                        <TelerikDropDownList @bind-Value="@ProductCodeId"
                                          Width="100%"
                                          Data="@ProductCodes"
                                          TextField="DisplayText"
                                          ValueField="Id"
-                                         OnChange="OnProductCodeChangeAsync"
+                                         OnChange="OnProductCodeChangedAsync"
                                          Id="productCode">
                         </TelerikDropDownList>
                     }
@@ -41,12 +41,12 @@
                 <div class="form-row">
                     <div class="form-group col col-12 col-md-3">
                         <label class="m-label" for="inspectionType">Inspection Type</label>
-                        @if (inspectionTypeList != null && inspectionTypeList.Count > 0)
+                        @if (InspectionTypeList != null && InspectionTypeList.Count > 0)
                         {
                             <SfDropDownList TValue="InventoryItemInspectionType"
                                     TItem="InspectionTypeListItem"
                                     PopupHeight="230px"
-                                    DataSource="@inspectionTypeList"
+                                    DataSource="@InspectionTypeList"
                                     @bind-Value="@Item.Inspection.Type">
                                 <DropDownListFieldSettings Text="Text" Value="Value" />
                             </SfDropDownList>
@@ -58,13 +58,13 @@
                 {
                     <div class="form-row">
                         <div class="form-group col col-12 col-md-3">
-                            @if (laborTypeList != null && laborTypeList.Count > 0)
+                            @if (LaborTypeList != null && LaborTypeList.Count > 0)
                             {
                                 <label class="m-label" for="laborType">Labor Type</label>
                                 <SfDropDownList TValue="ItemLaborType"
                                     TItem="LaborTypeListItem"
                                     PopupHeight="230px"
-                                    DataSource="@laborTypeList"
+                                    DataSource="@LaborTypeList"
                                     @bind-Value="@Item.Inspection.TechAmount.PayType">
                                     <DropDownListFieldSettings Text="Text" Value="Value" />
                                 </SfDropDownList>
@@ -97,13 +97,13 @@
 
                 <div class="form-row">
                     <div class="form-group col col-12 col-md-3">
-                        @if (laborTypeList != null && laborTypeList.Count > 0)
+                        @if (LaborTypeList != null && LaborTypeList.Count > 0)
                         {
                             <label class="m-label" for="techPayType">Tech Pay Type</label>
                             <SfDropDownList TValue="ItemLaborType"
                                     TItem="LaborTypeListItem"
                                     PopupHeight="230px"
-                                    DataSource="@laborTypeList"
+                                    DataSource="@LaborTypeList"
                                     @bind-Value="@Item.Inspection.TechAmount.PayType">
                                 <DropDownListFieldSettings Text="Text" Value="Value" />
                             </SfDropDownList>

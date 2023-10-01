@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Menominee.Shared.Models;
+using Menominee.Shared.Models.Tenants;
+using Menominee.Shared.Models.Users;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 
@@ -13,23 +14,23 @@ namespace Menominee.Api.Users
     public class MSGraphUserService : IMSGraphUserService
     {
         private readonly GraphServiceClient _graphClient;
-        private readonly GraphConfig _graphConfig;
+        private readonly GraphConfiguration _graphConfig;
         private readonly ILogger<MSGraphUserService> _logger;
         public string ShopRoleAttributeName => CustomAttributeName("shopRole");
         public string ShopIdAttributeName => CustomAttributeName("shopId");
         public string ShopNameAttributeName => CustomAttributeName("shopName");
 
-        public MSGraphUserService(GraphServiceClient graphClient, GraphConfig graphConfig, ILogger<MSGraphUserService> logger)
+        public MSGraphUserService(GraphServiceClient graphClient, GraphConfiguration graphConfig, ILogger<MSGraphUserService> logger)
         {
             _graphClient = graphClient;
             _graphConfig = graphConfig;
             _logger = logger;
         }
 
-        public async Task<List<UserToRead>> GetUsers()
+        public async Task<List<UserResponse>> GetAllAsync()
         {
             _logger.LogTrace("GetUsers");
-            var users = new List<UserToRead>();
+            var users = new List<UserResponse>();
             try
             {
                 var result = await _graphClient.Users
@@ -50,7 +51,7 @@ namespace Menominee.Api.Users
                     
                     if (!string.IsNullOrEmpty(email))
                     {
-                        users.Add(new UserToRead
+                        users.Add(new UserResponse
                         {
                             Id = user.Id,
                             Username = email,
@@ -70,7 +71,7 @@ namespace Menominee.Api.Users
             return users;
         }
 
-        public async Task<RegisterUserResult> CreateUser(RegisterUser user)
+        public async Task<RegisterUserResult> RegisterAsync(RegisterUserRequest user)
         {
             _logger.LogTrace("CreateUser");
             var result = new RegisterUserResult { Successful = false };

@@ -1,100 +1,107 @@
 ﻿using Blazored.Toast.Services;
+using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Manufacturers;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Menominee.Client.Services.Manufacturers
 {
-    public class ManufacturerDataService : IManufacturerDataService
+    public class ManufacturerDataService : DataServiceBase<ManufacturerDataService>, IManufacturerDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<ManufacturerDataService> logger;
         private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/manufacturers";
 
-        public ManufacturerDataService(HttpClient httpClient, ILogger<ManufacturerDataService> logger, IToastService toastService)
+        public ManufacturerDataService(HttpClient httpClient,
+            ILogger<ManufacturerDataService> logger,
+            IToastService toastService,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<ManufacturerToRead> AddManufacturerAsync(ManufacturerToWrite manufacturer)
+        public async Task<Result<PostResponse>> AddAsync(ManufacturerToWrite fromCaller)
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var content = new StringContent(JsonSerializer.Serialize(manufacturer), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return await JsonSerializer.DeserializeAsync<ManufacturerToRead>(await response.Content.ReadAsStreamAsync(), options);
-            }
-
-            toastService.ShowError($"Failed to add Manufacturer. {response.ReasonPhrase}.", "Add Failed");
-
-            return null;
-        }
-
-        public async Task<IReadOnlyList<ManufacturerToReadInList>> GetAllManufacturersAsync()
-        {
+            var entityType = "Manufacturer";
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<ManufacturerToReadInList>>($"{UriSegment}/list");
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
+
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
+
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.Name} failed to update", "Save Failed");
+
+                return result;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all manufacturers");
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
             }
-
-            return null;
         }
 
-        public async Task<ManufacturerToRead> GetManufacturerAsync(long id)
+        public async Task<Result<IReadOnlyList<ManufacturerToReadInList>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get all manufacturers";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<ManufacturerToRead>($"{UriSegment}/{id}");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<ManufacturerToReadInList>>($"{UriSegment}/list");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<ManufacturerToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get manufacturer with id {id}", id);
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<ManufacturerToReadInList>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task<ManufacturerToRead> GetManufacturerAsync(string code)
+        public async Task<Result<ManufacturerToRead>> GetAsync(long id)
         {
+            return await GetManufacturerFromUrlAsync($"{UriSegment}/{id}");
+        }
+
+        public async Task<Result<ManufacturerToRead>> GetAsync(string code)
+        {
+            return await GetManufacturerFromUrlAsync($"{UriSegment}/code/{code}");
+        }
+
+        private async Task<Result<ManufacturerToRead>> GetManufacturerFromUrlAsync(string url)
+        {
+            var errorMessage = $"Failed to get Manufacturer from URL: {url}";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<ManufacturerToRead>($"{UriSegment}/code/{code}");
+                var result = await httpClient.GetFromJsonAsync<ManufacturerToRead>(url);
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<ManufacturerToRead>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get manufacturer with code {code}", code);
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<ManufacturerToRead>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task UpdateManufacturerAsync(ManufacturerToWrite manufacturer, long id)
+        public async Task<Result> UpdateAsync(ManufacturerToWrite fromCaller)
         {
-            var content = new StringContent(JsonSerializer.Serialize(manufacturer), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                toastService.ShowSuccess("Manufacturer saved successfully", "Saved");
-                return;
-            }
-
-            toastService.ShowError($"Manufacturer failed to update:  Id = {id}", "Save Failed");
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                manufacturer => $"{manufacturer.Name}",
+                manufacturer => manufacturer.Id);
         }
     }
 }

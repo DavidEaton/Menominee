@@ -88,7 +88,7 @@ namespace Menominee.Tests.Entities
         public void SetSettingName()
         {
             var setting = CreateConfigurationSetting();
-            
+
             setting.SettingName.Should().Be(SettingName.DeclineParts);
             setting.SetSettingName(SettingName.MonthsToRetain);
 
@@ -196,7 +196,7 @@ namespace Menominee.Tests.Entities
             var value = "true";
             var setting = ConfigurationSetting.Create(name, group, type, value).Value;
 
-            setting.UpdateSettingProperties(name, group, type, "false");
+            setting.SetProperties(name, group, type, "false");
 
             setting.Value.Should().Be("false");
         }

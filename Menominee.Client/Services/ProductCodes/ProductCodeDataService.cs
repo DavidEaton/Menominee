@@ -1,134 +1,146 @@
-﻿using Menominee.Shared.Models.ProductCodes;
+﻿using Blazored.Toast.Services;
+using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
+using Menominee.Shared.Models.ProductCodes;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
-using Blazored.Toast.Services;
-using System.Web;
 
 namespace Menominee.Client.Services.ProductCodes
 {
-    public class ProductCodeDataService : IProductCodeDataService
+    public class ProductCodeDataService : DataServiceBase<ProductCodeDataService>, IProductCodeDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<ProductCodeDataService> logger;
         private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/productcodes";
 
-        public ProductCodeDataService(HttpClient httpClient, ILogger<ProductCodeDataService> logger, IToastService toastService)
+        public ProductCodeDataService(HttpClient httpClient,
+            ILogger<ProductCodeDataService> logger,
+            IToastService toastService,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<ProductCodeToRead> AddProductCodeAsync(ProductCodeToWrite productCode)
+        public async Task<Result<PostResponse>> AddAsync(ProductCodeToWrite fromCaller)
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var content = new StringContent(JsonSerializer.Serialize(productCode), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return await JsonSerializer.DeserializeAsync<ProductCodeToRead>(await response.Content.ReadAsStreamAsync(), options);
-            }
-
-            toastService.ShowError($"Failed to add Product Code. {response.ReasonPhrase}.", "Add Failed");
-
-            return null;
-        }
-
-        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetAllProductCodesAsync()
-        {
+            var entityType = "Product Code";
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>($"{UriSegment}/listing");
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
+
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
+
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.Name} failed to update", "Save Failed");
+
+                return result;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all product codes");
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
             }
-
-            return null;
         }
 
-        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetAllProductCodesAsync(long mfrId)
+        public async Task<Result<IReadOnlyList<ProductCodeToReadInList>>> GetAllAsync()
         {
+            var errorMessage = "Failed to get product codes";
+
             try
             {
-                var uriBuilder = new UriBuilder(
-                    "https",
-                    httpClient.BaseAddress.Host,
-                    (int)httpClient.BaseAddress.Port,
-                    UriSegment + "/listing");
-                var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-                query["manufacturerId"] = mfrId.ToString();
-                uriBuilder.Query = query.ToString();
-
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>(uriBuilder.Uri);
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>($"{UriSegment}/list");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<ProductCodeToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get product codes with manufacturer id {mfrId}", mfrId);
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<ProductCodeToReadInList>>(errorMessage);
             }
 
-            return null;
         }
 
-        public async Task<ProductCodeToRead> GetProductCodeAsync(long id)
+        public async Task<Result<IReadOnlyList<ProductCodeToReadInList>>> GetByManufacturerAsync(long manufacturerId)
         {
+            var errorMessage = $"Failed to get product codes with manufacturer id {manufacturerId}";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<ProductCodeToRead>($"{UriSegment}/{id}");
+                var uri = BuildUriWithQueryParams(UriSegment + "/listing", new Dictionary<string, long> { { "manufacturerId", manufacturerId } });
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>(uri);
+                return result is not null
+                                    ? Result.Success(result)
+                                    : Result.Failure<IReadOnlyList<ProductCodeToReadInList>>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get product code with id {id}", id);
+                Logger.LogError(ex, errorMessage, manufacturerId);
+                return Result.Failure<IReadOnlyList<ProductCodeToReadInList>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task UpdateProductCodeAsync(ProductCodeToWrite productCode, long id)
+        public async Task<Result<ProductCodeToRead>> GetAsync(long id)
         {
-            var content = new StringContent(JsonSerializer.Serialize(productCode), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);
+            var errorMessage = $"Failed to get product code with id {id}";
 
-            if (response.IsSuccessStatusCode)
-            {
-                toastService.ShowSuccess("Product Code saved successfully", "Saved");
-                return;
-            }
-
-            toastService.ShowError($"Product Code failed to update.  Id = {id}", "Save Failed");
-        }
-
-        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetAllProductCodesAsync(long mfrId, long saleCodeId)
-        {
             try
             {
-                var uriBuilder = new UriBuilder(
-                    "https",
-                    httpClient.BaseAddress.Host,
-                    (int)httpClient.BaseAddress.Port,
-                    UriSegment + "/listing");
-                var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-                query["manufacturerId"] = mfrId.ToString();
-                query["saleCodeId"] = saleCodeId.ToString();
-                uriBuilder.Query = query.ToString();
-
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>(uriBuilder.Uri);
+                var result = await httpClient.GetFromJsonAsync<ProductCodeToRead>(UriSegment + $"/{id}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<ProductCodeToRead>(errorMessage);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get product codes with manufacturer id {mfrId} and sale code id {saleCodeId}", mfrId, saleCodeId);
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<ProductCodeToRead>(errorMessage);
             }
+        }
 
-            return null;
+        public async Task<Result> UpdateAsync(ProductCodeToWrite fromCaller)
+        {
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                productCode => $"{productCode.ToString}",
+                productCode => productCode.Id);
+        }
+
+        public async Task<Result<IReadOnlyList<ProductCodeToReadInList>>> GetByManufacturerAndSaleCodeAsync(long manufacturerId, long saleCodeId)
+        {
+            return await GetProductCodesAsync(new Dictionary<string, long>
+            {
+                {"manufacturerId", manufacturerId},
+                {"saleCodeId", saleCodeId}
+            });
+        }
+
+        private async Task<Result<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodesAsync(Dictionary<string, long> queryParams)
+        {
+            var errorMessage = "Failed to get Product Codes";
+
+            try
+            {
+                var uri = BuildUriWithQueryParams(UriSegment, queryParams);
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>(uri);
+
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<ProductCodeToReadInList>>(errorMessage);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<ProductCodeToReadInList>>(errorMessage);
+            }
         }
     }
 }

@@ -3,7 +3,6 @@ using Menominee.Domain.Entities.Inventory;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Menominee.Api.SellingPriceNames;
@@ -18,7 +17,7 @@ public class SellingPriceNameRepository : ISellingPriceNameRepository
             throw new ArgumentNullException(nameof(context));
     }
 
-    public async Task<IReadOnlyList<SellingPriceName>> GetAll()
+    public async Task<IReadOnlyList<SellingPriceName>> GetAllAsync()
     {
         return await context.SellingPriceNames
             .AsNoTracking()
@@ -26,32 +25,26 @@ public class SellingPriceNameRepository : ISellingPriceNameRepository
             .ToListAsync();
     }
 
-    public async Task<SellingPriceName> GetEntity(long id)
+    public async Task<SellingPriceName> GetEntityAsync(long id)
     {
         return await context.SellingPriceNames
             .AsSplitQuery()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public void Add(SellingPriceName entity)
+    public void Add(SellingPriceName sellingPriceName)
     {
-        var existingEntity = context.SellingPriceNames.Local
-            .FirstOrDefault(sellingPriceName => sellingPriceName.Id.Equals(entity.Id));
-
-        if (existingEntity is not null)
-        {
-            context.Entry(existingEntity).State = EntityState.Detached;
-        }
-
-        context.SellingPriceNames.Attach(entity);
+        if (sellingPriceName is not null)
+            context.Attach(sellingPriceName);
     }
 
-    public void Delete(SellingPriceName entity)
+    public void Delete(SellingPriceName sellingPriceName)
     {
-        context.Remove(entity);
+        if (sellingPriceName is not null)
+            context.Remove(sellingPriceName);
     }
 
-    public async Task SaveChanges()
+    public async Task SaveChangesAsync()
     {
         await context.SaveChangesAsync();
     }

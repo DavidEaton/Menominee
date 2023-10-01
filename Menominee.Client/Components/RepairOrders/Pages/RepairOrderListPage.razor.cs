@@ -1,10 +1,6 @@
-﻿using Menominee.Shared.Models.RepairOrders;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Shared.Models.RepairOrders;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Menominee.Shared;
-using Microsoft.AspNetCore.Authorization;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.RepairOrders.Pages
@@ -22,8 +18,10 @@ namespace Menominee.Client.Components.RepairOrders.Pages
 
         //[CascadingParameter]
         //MainLayout mainLayout { get; set; }
+        [Inject]
+        ILogger<RepairOrderListPage> Logger { get; set; }
 
-        public IReadOnlyList<RepairOrderToReadInList> ROList;
+        public IReadOnlyList<RepairOrderToReadInList> ROList { get; set; } = new List<RepairOrderToReadInList>();
         public IEnumerable<RepairOrderToReadInList> SelectedList { get; set; } = Enumerable.Empty<RepairOrderToReadInList>();
         public RepairOrderToReadInList SelectedItem { get; set; }
 
@@ -47,8 +45,13 @@ namespace Menominee.Client.Components.RepairOrders.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            ROList = (await DataService.GetAllRepairOrders())?.ToList();
+            await DataService.GetAllAsync()
+            .Match(
+                success => ROList = success,
+                failure => Logger.LogError(failure));
+
             Loading = false;
+
             if (ROList?.Any() == true)
             {
                 if (ROToSelect == 0)

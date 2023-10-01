@@ -21,7 +21,7 @@ using Menominee.Api.Taxes;
 using Menominee.Api.Users;
 using Menominee.Api.Vehicles;
 using Menominee.Shared;
-using Menominee.Shared.Models;
+using Menominee.Shared.Models.Tenants;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -77,7 +77,7 @@ try
         .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
 
     services.ConfigureMSGraphComponent(builder.Configuration);
-    var graphConfig = new GraphConfig();
+    var graphConfig = new GraphConfiguration();
     builder.Configuration.Bind("MSGraphConfig", graphConfig);
     services.AddSingleton(graphConfig);
 

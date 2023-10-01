@@ -1,14 +1,11 @@
-﻿using Menominee.Shared.Models.Payables.Invoices;
-using Menominee.Shared.Models.Payables.Invoices.Taxes;
-using Menominee.Shared.Models.Taxes;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Taxes;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Payables.Invoices;
+using Menominee.Shared.Models.Payables.Invoices.Taxes;
+using Menominee.Shared.Models.Taxes;
 using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Payables
@@ -41,28 +38,55 @@ namespace Menominee.Client.Components.Payables
 
         protected override async Task OnInitializedAsync()
         {
-            SalesTaxes = (await SalesTaxDataService.GetAllSalesTaxesAsync()).ToList();
-            SalesTaxes.OrderByDescending(tax => tax.Order);
+            var result = await SalesTaxDataService.GetAllAsync();
+
+            if (result.IsSuccess)
+                SalesTaxes = (IReadOnlyList<SalesTaxToReadInList>)result.Value.OrderByDescending(tax => tax.Order);
         }
 
         protected override async Task OnParametersSetAsync()
         {
-            CanEdit = FormMode == FormMode.Add || FormMode == FormMode.Edit;
+            CanEdit = FormMode is FormMode.Add or FormMode.Edit;
+            await AddMissingTaxesToInvoice();
+            SortAndSelectTaxes();
+        }
 
+        private async Task AddMissingTaxesToInvoice()
+        {
             foreach (var salesTax in SalesTaxes)
             {
-                var invoiceTax = Taxes.FirstOrDefault(tax => tax.SalesTax?.Id == salesTax.Id);
-                if (invoiceTax is null)
+                if (TaxIsMissing(salesTax.Id))
                 {
-                    var tax = (await SalesTaxDataService.GetSalesTaxAsync(salesTax.Id));
-                    Taxes.Add(new VendorInvoiceTaxToWrite()
+                    var result = await GetSalesTax(salesTax.Id);
+                    if (result.IsSuccess)
                     {
-                        SalesTax = tax
-                    });
+                        Taxes.Add(CreateVendorInvoiceTax(result.Value));
+                    }
                 }
             }
+        }
 
-            Taxes.OrderByDescending(tax => tax.SalesTax.Order);
+        private bool TaxIsMissing(long salesTaxId)
+        {
+            return !Taxes.Any(tax => tax.SalesTax?.Id == salesTaxId);
+        }
+
+        private async Task<Result<SalesTaxToRead>> GetSalesTax(long salesTaxId)
+        {
+            return await SalesTaxDataService.GetAsync(salesTaxId);
+        }
+
+        private VendorInvoiceTaxToWrite CreateVendorInvoiceTax(SalesTaxToRead salesTax)
+        {
+            return new VendorInvoiceTaxToWrite
+            {
+                SalesTax = salesTax
+            };
+        }
+
+        private void SortAndSelectTaxes()
+        {
+            Taxes = Taxes.OrderByDescending(tax => tax.SalesTax.Order).ToList();
             SelectTax(Taxes.FirstOrDefault());
             Grid?.Rebind();
         }

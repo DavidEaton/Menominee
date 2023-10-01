@@ -6,14 +6,14 @@
         <div>
             <ContentHeader Header="Vendors" />
 
-            @if (VendorsList == null)
+            @if (Vendors == null)
             {
                 <p><em>Loading...</em></p>
             }
 
-            @if (VendorsList != null)
+            @if (Vendors != null)
             {
-                <TelerikGrid Data="VendorsList"
+                <TelerikGrid Data="Vendors"
                          OnRowClick="@OnRowSelected"
                          OnRowDoubleClick="@OnEdit"
                          Sortable="true"

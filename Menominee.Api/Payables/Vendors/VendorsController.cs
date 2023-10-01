@@ -1,5 +1,6 @@
 ﻿using Menominee.Api.Common;
 using Menominee.Api.Payables.PaymentMethods;
+using Menominee.Common.Http;
 using Menominee.Domain.Entities.Payables;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Shared.Models.Payables.Vendors;
@@ -15,48 +16,117 @@ namespace Menominee.Api.Payables.Vendors
     {
         private readonly IVendorRepository repository;
         private readonly IVendorInvoicePaymentMethodRepository paymentMethodRepository;
-        private readonly string BasePath = "/api/vendors";
 
         public VendorsController(
-            IVendorRepository repository
-            , IVendorInvoicePaymentMethodRepository paymentMethodRepository
-            , ILogger<VendorsController> logger) : base(logger)
+            IVendorRepository repository,
+            IVendorInvoicePaymentMethodRepository paymentMethodRepository,
+            ILogger<VendorsController> logger) : base(logger)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
             this.paymentMethodRepository = paymentMethodRepository ?? throw new ArgumentNullException(nameof(paymentMethodRepository));
         }
 
-        // api/vendors
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<VendorToRead>>> GetVendorsAsync()
+        public async Task<ActionResult<IReadOnlyList<VendorToRead>>> GetAsync()
         {
-            var result = await repository.GetVendorsAsync();
-            return Ok(result);
+            var result = await repository.GetAllAsync();
+
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/vendors/1
         [HttpGet("{id:long}")]
-        public async Task<ActionResult<VendorToRead>> GetVendorAsync(long id)
+        public async Task<ActionResult<VendorToRead>> GetAsync(long id)
         {
-            var result = await repository.GetVendorAsync(id);
+            var result = await repository.GetAsync(id);
 
-            if (result == null)
-                return NotFound();
-
-            return result;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/vendors/1
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateVendorAsync(long id, VendorToWrite vendorFromCaller)
+        public async Task<ActionResult> UpdateVendorAsync(VendorToWrite vendorFromCaller)
         {
-            var notFoundMessage = $"Could not find Vendor to update: {vendorFromCaller.Name}";
+            var result = await repository.GetEntityAsync(vendorFromCaller.Id);
 
-            if (!await repository.VendorExistsAsync(id))
-                return NotFound(notFoundMessage);
+            if (result.IsFailure)
+                return NotFound($"Could not find Vendor to update: {vendorFromCaller.Name}");
 
-            var vendorFromRepository = await repository.GetVendorEntityAsync(id);
+            var vendorFromRepository = result.Value;
 
+            await UpdateVendor(vendorFromCaller, vendorFromRepository);
+
+            UpdateContactDetails(vendorFromCaller, vendorFromRepository);
+
+            await repository.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<PostResponse>> AddAsync(VendorToWrite vendorToAdd)
+        {
+            // no need to validate it here again, just call .Value right away
+            var vendor = Vendor.Create(
+                vendorToAdd.Name,
+                vendorToAdd.VendorCode.ToUpper(),
+                vendorToAdd.VendorRole,
+                vendorToAdd.Notes).Value;
+
+            if (vendorToAdd?.DefaultPaymentMethod?.PaymentMethod is not null)
+            {
+                var paymentMethod = await paymentMethodRepository.GetEntityAsync(
+                    vendorToAdd.DefaultPaymentMethod.PaymentMethod.Id);
+
+                if (paymentMethod is null)
+                    return NotFound($"Could not add new Vendor '{vendorToAdd.Name}'. Vendor default payment method {vendorToAdd.DefaultPaymentMethod.PaymentMethod.Name} was not found.");
+
+                var setDefaultPaymentMethodResult = vendor.SetDefaultPaymentMethod(DefaultPaymentMethod.Create(paymentMethod, vendorToAdd.DefaultPaymentMethod.AutoCompleteDocuments).Value);
+
+                if (setDefaultPaymentMethodResult.IsFailure)
+                    return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {setDefaultPaymentMethodResult.Error}");
+            }
+
+            vendor.UpdateContactDetails(ContactDetailsFactory.Create(
+                vendorToAdd.Phones, vendorToAdd.Emails, vendorToAdd.Address).Value);
+
+            repository.Add(vendor);
+            await repository.SaveChangesAsync();
+
+            return Created(new Uri($"/api/vendorsController/{vendor.Id}",
+                UriKind.Relative),
+                new { vendor.Id });
+        }
+
+        [HttpDelete("{id:long}")]
+        public async Task<ActionResult> DeleteVendorAsync(long id)
+        {
+            var result = await repository.GetEntityAsync(id);
+
+            if (result.IsFailure)
+                return NotFound($"Failed to delete Vendor with Id: {id}.");
+
+            var vendorFromRepository = result.Value;
+
+            repository.Delete(vendorFromRepository);
+            await repository.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // TODO: move this to a common location and reuse in Person, Business, and Vendor
+        private static void UpdateContactDetails(VendorToWrite vendorFromCaller, Vendor vendorFromRepository)
+        {
+            var contactDetails = ContactDetailsFactory.Create(
+                vendorFromCaller.Phones, vendorFromCaller.Emails, vendorFromCaller.Address).Value;
+
+            vendorFromRepository.UpdateContactDetails(contactDetails);
+        }
+
+        private async Task UpdateVendor(VendorToWrite vendorFromCaller, Vendor vendorFromRepository)
+        {
             if (vendorFromRepository.VendorCode != vendorFromCaller.VendorCode)
                 vendorFromRepository.SetVendorCode(vendorFromCaller.VendorCode);
 
@@ -83,22 +153,13 @@ namespace Menominee.Api.Payables.Vendors
                 {
                     vendorFromRepository.SetDefaultPaymentMethod(
                         DefaultPaymentMethod.Create(
-                        await paymentMethodRepository.GetPaymentMethodEntityAsync(
+                        await paymentMethodRepository.GetEntityAsync(
                             vendorFromCaller.DefaultPaymentMethod.PaymentMethod.Id),
                             vendorFromCaller.DefaultPaymentMethod.AutoCompleteDocuments).Value);
                 }
 
             if (vendorFromCaller?.DefaultPaymentMethod is null)
                 vendorFromRepository.ClearDefaultPaymentMethod();
-
-            var contactDetails = ContactDetailsFactory.Create(
-                vendorFromCaller.Phones, vendorFromCaller.Emails, vendorFromCaller.Address).Value;
-
-            vendorFromRepository.UpdateContactDetails(contactDetails);
-
-            await repository.SaveChangesAsync();
-
-            return NoContent();
         }
 
         private static bool DefaultPaymentMethodHasEdits(DefaultPaymentMethod defaultPaymentMethodFromRepository, DefaultPaymentMethodToRead defaultPaymentMethodToUpdate)
@@ -113,56 +174,6 @@ namespace Menominee.Api.Payables.Vendors
             var hasAutoCompleteDocumentsEdits = defaultPaymentMethodFromRepository.AutoCompleteDocuments != defaultPaymentMethodToUpdate.AutoCompleteDocuments;
 
             return hasPaymentMethodEdits || hasAutoCompleteDocumentsEdits;
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> AddVendorAsync(VendorToWrite vendorToAdd)
-        {
-            // VK Im.2: no need to validate it here again, just call .Value right away
-            var vendor = Vendor.Create(
-                vendorToAdd.Name,
-                vendorToAdd.VendorCode.ToUpper(),
-                vendorToAdd.VendorRole,
-                vendorToAdd.Notes).Value;
-
-            if (vendorToAdd?.DefaultPaymentMethod?.PaymentMethod is not null)
-            {
-                var paymentMethod = await paymentMethodRepository.GetPaymentMethodEntityAsync(
-                    vendorToAdd.DefaultPaymentMethod.PaymentMethod.Id);
-
-                if (paymentMethod is null)
-                    return NotFound($"Could not add new Vendor '{vendorToAdd.Name}'. Vendor default payment method {vendorToAdd.DefaultPaymentMethod.PaymentMethod.Name} was not found.");
-
-                var setDefaultPaymentMethodResult = vendor.SetDefaultPaymentMethod(DefaultPaymentMethod.Create(paymentMethod, vendorToAdd.DefaultPaymentMethod.AutoCompleteDocuments).Value);
-
-                if (setDefaultPaymentMethodResult.IsFailure)
-                    return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {setDefaultPaymentMethodResult.Error}");
-            }
-
-            vendor.UpdateContactDetails(ContactDetailsFactory.Create(
-                vendorToAdd.Phones, vendorToAdd.Emails, vendorToAdd.Address).Value);
-
-            await repository.AddVendorAsync(vendor);
-            await repository.SaveChangesAsync();
-
-            return Created(new Uri($"{BasePath}/{vendor.Id}",
-                               UriKind.Relative),
-                               new { vendor.Id });
-        }
-
-        [HttpDelete("{id:long}")]
-        public async Task<ActionResult> DeleteVendorAsync(long id)
-        {
-            var vendorFromRepository = await repository.GetVendorEntityAsync(id);
-
-            if (vendorFromRepository is null)
-                return NotFound($"Could not find Vendor in the database to delete with Id: {id}.");
-
-            repository.DeleteVendor(vendorFromRepository);
-
-            await repository.SaveChangesAsync();
-
-            return NoContent();
         }
     }
 }

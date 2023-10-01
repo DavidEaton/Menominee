@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Menominee.Shared.Models
+namespace Menominee.Shared.Models.Users
 {
-    public class LoginModel
+    public class LoginRequest
     {
         [Required]
         public string Email { get; set; }

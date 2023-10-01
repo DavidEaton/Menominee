@@ -1,29 +1,12 @@
-﻿using Menominee.Shared.Models.Inventory.InventoryItems;
-using Menominee.Shared.Models.ProductCodes;
-using Menominee.Client.Services.Manufacturers;
-using Menominee.Client.Services.ProductCodes;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Inventory
 {
-    public partial class InventoryInspectionEditor
+    public partial class InventoryInspectionEditor : InventoryEditorBase
     {
         [Inject]
-        public IManufacturerDataService manufacturerDataService { get; set; }
-
-        [Inject]
-        public IProductCodeDataService productCodeDataService { get; set; }
-
-        [Parameter]
-        public InventoryItemToWrite Item { get; set; }
-
-        [Parameter]
-        public string Title { get; set; } = String.Empty;
+        public Logger<InventoryDonationEditor> Logger { get; set; }
 
         [Parameter]
         public EventCallback OnValidSubmit { get; set; }
@@ -31,82 +14,41 @@ namespace Menominee.Client.Components.Inventory
         [Parameter]
         public EventCallback OnDiscard { get; set; }
 
-        private IReadOnlyList<ProductCodeToReadInList> ProductCodes = null;
-        private string SaleCode = string.Empty;
-        private bool parametersSet = false;
-        private long productCodeId = 0;
-        private long manufacturerId = 0;
-        private List<LaborTypeListItem> laborTypeList { get; set; } = new List<LaborTypeListItem>();
-        private List<SkillLevelListItem> skillLevelList { get; set; } = new List<SkillLevelListItem>();
-        private List<InspectionTypeListItem> inspectionTypeList { get; set; } = new List<InspectionTypeListItem>();
+        private List<LaborTypeListItem> LaborTypeList { get; set; } = new List<LaborTypeListItem>();
+        private List<SkillLevelListItem> SkillLevelList { get; set; } = new List<SkillLevelListItem>();
+        private List<InspectionTypeListItem> InspectionTypeList { get; set; } = new List<InspectionTypeListItem>();
 
         protected override async Task OnInitializedAsync()
         {
-            manufacturerId = (await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous)).Id;
-
-            ProductCodes = (await productCodeDataService
-                .GetAllProductCodesAsync(manufacturerId))
-                .OrderBy(pc => pc.Code)
-                .ToList();
+            await LoadItemManufacturerByMiscellaneousStaticManufacturerCode();
+            await LoadProductCodesByManufacturer();
 
             foreach (ItemLaborType item in Enum.GetValues(typeof(ItemLaborType)))
             {
-                laborTypeList.Add(new LaborTypeListItem { Text = EnumExtensions.GetDisplayName(item), Value = item });
+                LaborTypeList.Add(new LaborTypeListItem { Text = EnumExtensions.GetDisplayName(item), Value = item });
             }
 
             foreach (SkillLevel item in Enum.GetValues(typeof(SkillLevel)))
             {
-                skillLevelList.Add(new SkillLevelListItem { Text = EnumExtensions.GetDisplayName(item), Value = item });
+                SkillLevelList.Add(new SkillLevelListItem { Text = EnumExtensions.GetDisplayName(item), Value = item });
             }
 
             foreach (InventoryItemInspectionType item in Enum.GetValues(typeof(InventoryItemInspectionType)))
             {
-                inspectionTypeList.Add(new InspectionTypeListItem { Text = EnumExtensions.GetDisplayName(item), Value = item });
+                InspectionTypeList.Add(new InspectionTypeListItem { Text = EnumExtensions.GetDisplayName(item), Value = item });
             }
-
-            base.OnInitialized();
         }
 
         protected override async Task OnParametersSetAsync()
         {
-            if (parametersSet)
-                return;
-            parametersSet = true;
+            await OnParametersSetCommonAsync(InventoryItemType.Inspection, "Add Inspection", "Edit Inspection");
 
-            if (Item?.ProductCode != null)
+            if (Item.Inspection is null)
             {
-                productCodeId = Item.ProductCode.Id;
-            }
-
-            await OnProductCodeChangeAsync();
-            if (Item.Inspection == null)
-            {
-                productCodeId = 0;
-                //Item.ManufacturerId = manufacturerId;
-                Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous);
-                Item.ProductCode = new();
+                ResetItemProductCode();
+                await LoadItemManufacturerByMiscellaneousStaticManufacturerCode();
                 Item.Inspection = new();
-                Item.ItemType = InventoryItemType.Inspection;
-
-                Title = "Add Inspection";
             }
-            else
-            {
-                Title = "Edit Inspection";
-            }
-
-            StateHasChanged();
-        }
-
-        private async Task OnProductCodeChangeAsync()
-        {
-            if (productCodeId > 0 && Item.ProductCode?.Id != productCodeId)
-                Item.ProductCode = await productCodeDataService.GetProductCodeAsync(productCodeId);
-
-            if (Item != null && Item.ProductCode != null)
-                SaleCode = Item.ProductCode.SaleCode.Code + " - " + Item.ProductCode.SaleCode.Name;
-            else
-                SaleCode = string.Empty;
         }
 
         public class LaborTypeListItem

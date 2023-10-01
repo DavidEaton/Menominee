@@ -1,9 +1,6 @@
-﻿using Menominee.Shared.Models.Inventory.InventoryItems.Package;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
+using Menominee.Shared.Models.Inventory.InventoryItems.Package;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
 

@@ -1,169 +1,135 @@
 ﻿using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
 using Menominee.Common.Enums;
-using Menominee.Common.Extensions;
 using Menominee.Common.Http;
 using Menominee.Shared.Models.Vehicles;
-using Microsoft.AspNetCore.Http.Extensions;
 using System.Net.Http.Json;
-using System.Text.Json;
 
 namespace Menominee.Client.Services.Vehicles;
 
-public class VehicleDataService : IVehicleDataService
+public class VehicleDataService : DataServiceBase<VehicleDataService>, IVehicleDataService
 {
     private readonly HttpClient httpClient;
-    private readonly ILogger<VehicleDataService> logger;
     private const string UriSegment = "api/vehicles";
 
-    public VehicleDataService(HttpClient httpClient, ILogger<VehicleDataService> logger)
+    public VehicleDataService(HttpClient httpClient,
+        ILogger<VehicleDataService> logger,
+        UriBuilderFactory uriBuilderFactory)
+        : base(uriBuilderFactory, logger)
     {
         this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<Result<PostResponse>> AddVehicle(VehicleToWrite vehicle)
+    public async Task<Result<PostResponse>> AddAsync(VehicleToWrite fromCaller)
     {
-        var result = await PostVehicle(vehicle)
-            .Bind(HttpResponseMessageExtensions.CheckResponse)
-            .Bind(ReadPostResult);
-
-        if (result.IsFailure)
-            logger.LogError(result.Error);
-
-        return result;
-    }
-
-    private async Task<Result<HttpResponseMessage>> PostVehicle(VehicleToWrite vehicle)
-    {
+        var entityType = "Vehicle";
         try
         {
-            return Result.Success(await httpClient.PostAsJsonAsync(UriSegment, vehicle));
-        }
-        catch (Exception)
-        {
-            return Result.Failure<HttpResponseMessage>("Failed to add vehicle");
-        }
-    }
+            var result = await httpClient.AddAsync(
+                UriSegment,
+                fromCaller,
+                Logger);
 
-    private async Task<Result<PostResponse>> ReadPostResult(HttpResponseMessage response)
-    {
-        try
-        {
-            var data = await response.Content.ReadFromJsonAsync<PostResponse>();
-            return data is not null
-                ? Result.Success(data)
-                : Result.Failure<PostResponse>("Empty result");
+            return result;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to read the post result.");
-            return Result.Failure<PostResponse>("Failed to read the post result.");
+            Logger.LogError(ex, $"Failed to add {entityType}");
+            return Result.Failure<PostResponse>("An unexpected error occurred");
         }
     }
 
-    public async Task<Result> DeleteVehicle(long id)
+    public async Task<Result> DeleteAsync(long id)
     {
+        var failureMessage = "Failed to delete vehicle";
+
         try
         {
             var response = await httpClient.DeleteAsync($"{UriSegment}/{id}");
 
             if (!response.IsSuccessStatusCode)
             {
-                var errorMessage = response.Content.ReadAsStringAsync().Result;
-                logger.LogError(message: errorMessage);
-                return Result.Failure<VehicleToRead>(errorMessage);
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Logger.LogError(message: errorMessage);
+                return Result.Failure(failureMessage);
             }
 
             return Result.Success();
         }
         catch (Exception ex)
         {
-            var errorMessage = "Failed to delete vehicle";
-            logger.LogError(ex, errorMessage);
-            return Result.Failure<VehicleToRead>(errorMessage);
+            Logger.LogError(ex, failureMessage);
+            return Result.Failure(failureMessage);
         }
     }
 
-    public async Task<Result<VehicleToRead>> GetVehicle(long id)
+    public async Task<Result<VehicleToRead>> GetAsync(long id)
     {
+        var errorMessage = $"Failed to get vehicle with id {id}";
+
         try
         {
-            var response = await httpClient.GetAsync($"{UriSegment}/{id}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorMessage = response.Content.ReadAsStringAsync().Result;
-                logger.LogError(message: errorMessage);
-                return Result.Failure<VehicleToRead>(errorMessage);
-            }
-
-            var data = await JsonSerializer.DeserializeAsync<VehicleToRead>(await response.Content.ReadAsStreamAsync());
-            return Result.Success(data!);
+            var result = await httpClient.GetFromJsonAsync<VehicleToRead>(UriSegment + $"/{id}");
+            return result is not null
+                ? Result.Success(result)
+                : Result.Failure<VehicleToRead>(errorMessage);
         }
         catch (Exception ex)
         {
-            var errorMessage = "Failed to get vehicle";
-            logger.LogError(ex, errorMessage);
+            Logger.LogError(ex, errorMessage);
             return Result.Failure<VehicleToRead>(errorMessage);
         }
     }
 
-    public async Task<Result<IReadOnlyList<VehicleToRead>>> GetVehicles(long customerId, SortOrder sortOrder, VehicleSortColumn sortColumn, bool includeInactive, string searchTerm)
+    public async Task<Result<IReadOnlyList<VehicleToRead>>> GetByParametersAsync(long customerId, SortOrder sortOrder, VehicleSortColumn sortColumn, bool includeInactive, string searchTerm)
     {
+        var queryParams = new Dictionary<string, long>
+        {
+            {"customerId", customerId},
+        };
+
+        return await GetVehiclesAsync(queryParams, sortOrder, sortColumn, includeInactive, searchTerm);
+    }
+
+    private async Task<Result<IReadOnlyList<VehicleToRead>>> GetVehiclesAsync(Dictionary<string, long> queryParams, SortOrder sortOrder, VehicleSortColumn sortColumn, bool includeInactive, string searchTerm)
+    {
+        var errorMessage = "Failed to get Vehicles";
+
         try
         {
-            var uriBuilder = new UriBuilder(
-                "https",
-                httpClient.BaseAddress!.Host,
-                httpClient.BaseAddress.Port,
-                $"{UriSegment}/list/{customerId}");
+            var uriBuilder = CreateBaseUriBuilder($"{UriSegment}/list/{queryParams["customerId"]}");
 
-            var queryBuilder = new QueryBuilder
-            {
-                { "sortOrder", sortOrder.ToString() },
-                { "sortColumn", sortColumn.ToString() },
-                { "includeInactive", includeInactive.ToString() }
-            };
+            queryParams.Add("sortOrder", (long)sortOrder);
+            queryParams.Add("sortColumn", (long)sortColumn);
+            queryParams.Add("includeInactive", includeInactive ? 1 : 0);
+
+            searchTerm = (searchTerm ?? string.Empty).Trim();
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
-            {
-                queryBuilder.Add("searchTerm", searchTerm);
-            }
+                queryParams.Add("searchTerm", long.Parse(searchTerm));
 
-            uriBuilder.Query = queryBuilder.ToString();
+            uriBuilder = uriBuilder.CreateUriBuilderWithQueryParams(queryParams);
 
-            var data = await httpClient.GetFromJsonAsync<IReadOnlyList<VehicleToRead>>(uriBuilder.Uri);
+            var result = await httpClient.GetFromJsonAsync<IReadOnlyList<VehicleToRead>>(uriBuilder.ToString());
 
-            return Result.Success(data!);
+            return result is not null
+                ? Result.Success(result)
+                : Result.Failure<IReadOnlyList<VehicleToRead>>(errorMessage);
         }
         catch (Exception ex)
         {
-            var errorMessage = "Failed to get vehicles";
-            logger.LogError(ex, errorMessage);
+            Logger.LogError(ex, errorMessage);
             return Result.Failure<IReadOnlyList<VehicleToRead>>(errorMessage);
         }
     }
 
-    public async Task<Result> UpdateVehicle(VehicleToWrite vehicle)
+    public async Task<Result> UpdateAsync(VehicleToWrite fromCaller)
     {
-        try
-        {
-            var response = await httpClient.PutAsJsonAsync($"{UriSegment}/{vehicle.Id}", vehicle);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorMessage = response.Content.ReadAsStringAsync().Result;
-                logger.LogError(message: errorMessage);
-                return Result.Failure<VehicleToRead>(errorMessage);
-            }
-
-            return Result.Success();
-        }
-        catch (Exception ex)
-        {
-            var errorMessage = "Failed to update vehicle";
-            logger.LogError(ex, errorMessage);
-            return Result.Failure<VehicleToRead>(errorMessage);
-        }
+        return await httpClient.UpdateAsync(
+            UriSegment,
+            fromCaller,
+            Logger,
+            vehicle => $"{vehicle.ToString}",
+            vehicle => vehicle.Id);
     }
 }

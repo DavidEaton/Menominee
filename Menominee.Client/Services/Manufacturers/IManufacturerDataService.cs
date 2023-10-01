@@ -1,15 +1,15 @@
-﻿using Menominee.Shared.Models.Manufacturers;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Http;
+using Menominee.Shared.Models.Manufacturers;
 
 namespace Menominee.Client.Services.Manufacturers
 {
     public interface IManufacturerDataService
     {
-        Task<IReadOnlyList<ManufacturerToReadInList>> GetAllManufacturersAsync();
-        Task<ManufacturerToRead> GetManufacturerAsync(long id);
-        Task<ManufacturerToRead> GetManufacturerAsync(string code);
-        Task<ManufacturerToRead> AddManufacturerAsync(ManufacturerToWrite manufacturer);
-        Task UpdateManufacturerAsync(ManufacturerToWrite manufacturer, long id);
+        Task<Result<IReadOnlyList<ManufacturerToReadInList>>> GetAllAsync();
+        Task<Result<ManufacturerToRead>> GetAsync(long id);
+        Task<Result<ManufacturerToRead>> GetAsync(string code);
+        Task<Result<PostResponse>> AddAsync(ManufacturerToWrite manufacturer);
+        Task<Result> UpdateAsync(ManufacturerToWrite manufacturer);
     }
 }

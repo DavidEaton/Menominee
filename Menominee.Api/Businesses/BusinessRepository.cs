@@ -19,18 +19,18 @@ namespace Menominee.Api.Businesses
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddBusinessAsync(Business business)
+        public void Add(Business business)
         {
             if (business is not null)
-                await context.AddAsync(business);
+                context.Attach(business);
         }
 
-        public void DeleteBusiness(Business business)
+        public void Delete(Business business)
         {
             context.Remove(business);
         }
 
-        public async Task<BusinessToRead> GetBusinessAsync(long id)
+        public async Task<BusinessToRead> GetAsync(long id)
         {
             var businessFromContext = await context.Businesses
                 .Include(business => business.Phones)
@@ -47,7 +47,7 @@ namespace Menominee.Api.Businesses
             return BusinessHelper.ConvertToReadDto(businessFromContext);
         }
 
-        public async Task<IReadOnlyList<BusinessToRead>> GetBusinessesAsync()
+        public async Task<IReadOnlyList<BusinessToRead>> GetAllAsync()
         {
             IReadOnlyList<Business> businessesFromContext = await context.Businesses
                 .Include(business => business.Phones
@@ -69,7 +69,7 @@ namespace Menominee.Api.Businesses
                 .ToList();
         }
 
-        public async Task<IReadOnlyList<BusinessToReadInList>> GetBusinessesListAsync()
+        public async Task<IReadOnlyList<BusinessToReadInList>> GetListAsync()
         {
             IReadOnlyList<Business> businessesFromContext = await context.Businesses
                 .Include(business => business.Phones
@@ -93,7 +93,7 @@ namespace Menominee.Api.Businesses
                 .ToList();
         }
 
-        public async Task<Business> GetBusinessEntityAsync(long id)
+        public async Task<Business> GetEntityAsync(long id)
         {
             // Prefer FindAsync() over Single() or First() for single objects (non-collections);
             // FindAsync() checks the Identity Map Cache before making a trip to the database.
@@ -108,12 +108,6 @@ namespace Menominee.Api.Businesses
                 .FirstOrDefaultAsync(business => business.Id == id);
 
             return await businessFromContext;
-        }
-
-        public async Task<bool> BusinessExistsAsync(long id)
-        {
-            return await context.Businesses
-                .AnyAsync(business => business.Id == id);
         }
 
         public async Task SaveChangesAsync()

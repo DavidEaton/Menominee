@@ -37,7 +37,7 @@ namespace Menominee.Client.Components.Customers
 
         private async Task GetCustomers()
         {
-            await CustomerDataService.GetAllCustomers()
+            await CustomerDataService.GetAllAsync()
                 .Match(
                     success => Customers = success,
                     failure => Logger.LogError(failure)
@@ -50,7 +50,7 @@ namespace Menominee.Client.Components.Customers
             FormMode = FormMode.Edit;
             Customers = null;
 
-            var customerResult = await CustomerDataService.GetCustomer(Id)
+            var customerResult = await CustomerDataService.GetAsync(Id)
                 .OnFailure(error =>
                 {
                     Logger.LogError(error);
@@ -111,13 +111,13 @@ namespace Menominee.Client.Components.Customers
 
         protected async Task AddSubmit()
         {
-            await CustomerDataService.AddCustomer(Customer);
+            await CustomerDataService.AddAsync(Customer);
             await Close();
         }
 
         protected async Task EditSubmit()
         {
-            await CustomerDataService.UpdateCustomer(Customer);
+            await CustomerDataService.UpdateAsync(Customer);
             await EndEditAsync();
         }
 

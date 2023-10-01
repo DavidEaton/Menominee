@@ -1,19 +1,18 @@
-﻿using Menominee.Shared.Models.Payables.Vendors;
-using Menominee.Shared.Models.RepairOrders.Purchases;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Client.Components.Settings;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Payables.Vendors;
+using Menominee.Shared.Models.RepairOrders.Purchases;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
 {
     public partial class RepairOrderPurchaseEditor : ComponentBase
     {
         [Inject]
-        public IVendorDataService vendorDataService { get; set; }
+        public IVendorDataService VendorDataService { get; set; }
 
         [Parameter]
         public PurchaseListItem Purchase { get; set; }
@@ -38,6 +37,9 @@ namespace Menominee.Client.Components.RepairOrders
         [Parameter]
         public EventCallback OnCancel { get; set; }
 
+        [Inject]
+        ILogger<VendorInvoicePaymentMethodEditor> Logger { get; set; }
+
         private IReadOnlyList<VendorToRead> Vendors = null;
         private FormMode formMode;
         private string Title { get; set; }
@@ -45,7 +47,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override async Task OnParametersSetAsync()
         {
-            Vendors = (await vendorDataService.GetAllVendorsAsync()).ToList();
+            await GetVendorsAsync();
 
             VendorList = new();
             foreach (var vendor in Vendors)
@@ -56,6 +58,23 @@ namespace Menominee.Client.Components.RepairOrders
                     Code = vendor.VendorCode,
                     Name = vendor.Name
                 });
+            }
+        }
+
+        private async Task GetVendorsAsync()
+        {
+            if (VendorDataService is not null)
+            {
+                await VendorDataService.GetAllAsync()
+                .Match(
+                    success => Vendors = success
+                        .Where(vendor =>
+                               vendor.IsActive == true
+                            && vendor.VendorRole == VendorRole.PaymentReconciler)
+                        .OrderBy(vendor => vendor.VendorCode)
+                        .ToList(),
+
+                    failure => Logger.LogError(failure));
             }
         }
 

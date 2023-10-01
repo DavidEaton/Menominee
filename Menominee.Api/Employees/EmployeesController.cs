@@ -17,7 +17,7 @@ namespace Menominee.Api.Employees
         public EmployeesController(ILogger<EmployeesController> logger) : base(logger) { }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<EmployeeToRead>>> GetUsersAsync()
+        public async Task<ActionResult<IReadOnlyList<EmployeeToRead>>> GetAsync()
         {
             var list = new List<EmployeeToRead>()
             {

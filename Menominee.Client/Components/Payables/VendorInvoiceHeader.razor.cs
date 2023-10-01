@@ -1,14 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Shared.Models.Payables.Invoices;
-using Menominee.Shared.Models.Payables.Vendors;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared.Models;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Payables.Invoices;
+using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Payables
 {
@@ -23,6 +19,9 @@ namespace Menominee.Client.Components.Payables
         [CascadingParameter]
         public FormMode FormMode { get; set; }
 
+        [Inject]
+        ILogger<VendorInvoiceHeader> Logger { get; set; }
+
         private bool CanEdit { get; set; } = false;
 
         public IReadOnlyList<VendorToRead> Vendors;
@@ -36,12 +35,23 @@ namespace Menominee.Client.Components.Payables
             foreach (VendorInvoiceStatus status in Enum.GetValues(typeof(VendorInvoiceStatus)))
                 VendorInvoiceStatusEnumData.Add(new VendorInvoiceStatusEnumModel { DisplayText = status.ToString(), Value = status });
 
-            Vendors = (await VendorDataService.GetAllVendorsAsync())
-                                              .Where(vendor => vendor.IsActive == true)
-                                              .OrderBy(vendor => vendor.VendorCode)
-                                              .ToList();
+            await GetVendorsAsync();
         }
 
+        private async Task GetVendorsAsync()
+        {
+            if (VendorDataService is not null)
+            {
+                await VendorDataService.GetAllAsync()
+                .Match(
+                    success => Vendors = success
+                        .Where(vendor => vendor.IsActive == true)
+                        .OrderBy(vendor => vendor.VendorCode)
+                        .ToList(),
+
+                    failure => Logger.LogError(failure));
+            }
+        }
         protected override void OnParametersSet()
         {
             CanEdit = FormMode == FormMode.Add || FormMode == FormMode.Edit;

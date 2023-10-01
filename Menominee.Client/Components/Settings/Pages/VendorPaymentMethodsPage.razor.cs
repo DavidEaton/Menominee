@@ -1,6 +1,7 @@
-﻿using Menominee.Shared.Models.Payables.Invoices.Payments;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Microsoft.AspNetCore.Components;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
@@ -21,7 +22,10 @@ namespace Menominee.Client.Components.Settings.Pages
         [CascadingParameter]
         public DialogFactory Dialogs { get; set; }
 
-        public IReadOnlyList<VendorInvoicePaymentMethodToReadInList> PayMethods = null;
+        [Inject]
+        ILogger<VendorPaymentMethodsPage> Logger { get; set; }
+
+        public IReadOnlyList<VendorInvoicePaymentMethodToReadInList> PayMethods = new List<VendorInvoicePaymentMethodToReadInList>();
         public IEnumerable<VendorInvoicePaymentMethodToReadInList> SelectedList { get; set; } = Enumerable.Empty<VendorInvoicePaymentMethodToReadInList>();
         public VendorInvoicePaymentMethodToReadInList SelectedItem { get; set; }
 
@@ -53,7 +57,10 @@ namespace Menominee.Client.Components.Settings.Pages
 
         private async Task LoadPaymentMethodsAsync()
         {
-            PayMethods = (await PaymentMethodDataService.GetAllPaymentMethodsAsync()).ToList();
+            await PaymentMethodDataService.GetAllAsync()
+            .Match(
+                success => PayMethods = success,
+                failure => Logger.LogError(failure));
 
             if (PayMethods?.Count > 0)
             {
@@ -79,13 +86,20 @@ namespace Menominee.Client.Components.Settings.Pages
         {
             if (SelectedId > 0)
             {
-                var readDto = await PaymentMethodDataService.GetPaymentMethodAsync(SelectedId);
+                var result = await PaymentMethodDataService.GetAsync(SelectedId);
+
+                if (result.IsFailure)
+                {
+                    Logger.LogError(result.Error);
+                    return;
+                }
+
                 PayMethod = new VendorInvoicePaymentMethodToWrite
                 {
-                    Name = readDto.Name,
-                    IsActive = readDto.IsActive,
-                    PaymentType = readDto.PaymentType,
-                    ReconcilingVendor = readDto.ReconcilingVendor
+                    Name = result.Value.Name,
+                    IsActive = result.Value.IsActive,
+                    PaymentType = result.Value.PaymentType,
+                    ReconcilingVendor = result.Value.ReconcilingVendor
                 };
 
                 PayMethodFormMode = FormMode.Edit;
@@ -98,7 +112,7 @@ namespace Menominee.Client.Components.Settings.Pages
             if (SelectedItem != null
             && await Dialogs.ConfirmAsync($"Are you sure you want to delete the \"{SelectedItem.Name}\" payment method?", "Remove Payment Method?"))
             {
-                await PaymentMethodDataService.DeletePaymentMethodAsync(SelectedId);
+                await PaymentMethodDataService.DeleteAsync(SelectedId);
             }
 
             await LoadPaymentMethodsAsync();
@@ -107,14 +121,14 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected async Task HandleAddSubmitAsync()
         {
-            SelectedId = (await PaymentMethodDataService.AddPaymentMethodAsync(PayMethod)).Id;
+            SelectedId = (await PaymentMethodDataService.AddAsync(PayMethod)).Value.Id;
             await EndAddEditAsync();
             Grid.Rebind();
         }
 
         protected async Task HandleEditSubmitAsync()
         {
-            await PaymentMethodDataService.UpdatePaymentMethodAsync(PayMethod, SelectedId);
+            await PaymentMethodDataService.UpdateAsync(PayMethod);
             await EndAddEditAsync();
         }
 
@@ -129,7 +143,12 @@ namespace Menominee.Client.Components.Settings.Pages
         protected async Task EndAddEditAsync()
         {
             PayMethodFormMode = FormMode.Unknown;
-            PayMethods = (await PaymentMethodDataService.GetAllPaymentMethodsAsync()).ToList();
+
+            await PaymentMethodDataService.GetAllAsync()
+            .Match(
+                success => PayMethods = success,
+                failure => Logger.LogError(failure));
+
             SelectedItem = PayMethods.Where(x => x.Id == SelectedId).FirstOrDefault();
             SelectedList = new List<VendorInvoicePaymentMethodToReadInList> { SelectedItem };
         }

@@ -1,7 +1,6 @@
 ﻿using Menominee.Api.Data;
 using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
-using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.Pagination;
 using Microsoft.EntityFrameworkCore;
@@ -22,28 +21,24 @@ namespace Menominee.Api.Customers
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddCustomerAsync(Customer customer)
+        public void Add(Customer customer)
         {
-            if (customer is null)
-                throw new ArgumentOutOfRangeException(nameof(customer), "customer");
-
-            if (await CustomerExistsAsync(customer.Id))
-                throw new Exception("Customer already exists");
-
-            await context.AddAsync(customer);
+            if (customer is not null)
+                context.Attach(customer);
         }
 
-        public void DeleteCustomer(Customer customer)
+        public void Delete(Customer customer)
         {
-            context.Remove(customer);
+            if (customer is not null)
+                context.Remove(customer);
         }
 
-        public async Task<CustomerToRead> GetCustomerAsync(long id)
+        public async Task<CustomerToRead> GetAsync(long id)
         {
-            return CustomerHelper.ConvertToReadDto(await GetCustomerEntityAsync(id));
+            return CustomerHelper.ConvertToReadDto(await GetEntityAsync(id));
         }
 
-        public async Task<IReadOnlyList<CustomerToRead>> GetCustomersAsync()
+        public async Task<IReadOnlyList<CustomerToRead>> GetAllAsync()
         {
             var customers = new List<CustomerToRead>();
 
@@ -61,7 +56,7 @@ namespace Menominee.Api.Customers
             return customers;
         }
 
-        public async Task<PagedList<CustomerToRead>> GetCustomersAsync(string code, Pagination pagination)
+        public async Task<PagedList<CustomerToRead>> GetByCodeAsync(string code, Pagination pagination)
         {
             var query = await context.Customers
                 .Where(customer => customer.Code.Equals(code))
@@ -90,96 +85,38 @@ namespace Menominee.Api.Customers
             };
         }
 
-        public async Task<bool> CustomerExistsAsync(long id)
-        {
-            return await context.Customers
-                .AnyAsync(customer => customer.Id == id);
-        }
-
         public async Task SaveChangesAsync()
         {
-            using (var transaction = await context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    await context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                }
-                catch (Exception)
-                {
-                    await transaction.RollbackAsync();
-                    throw;
-                }
-            }
+            await context.SaveChangesAsync();
         }
 
-        public async Task<Customer> UpdateCustomerAsync(Customer customer)
-        {
-            if (customer == null)
-                throw new NullReferenceException("Customer is missing.");
-
-            // Tracking IS needed for commands for disconnected data collections
-            context.Entry(customer).State = EntityState.Modified;
-
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await CustomerExistsAsync(customer.Id))
-                    return null;
-                throw;
-            }
-
-            return null;
-        }
-
-        public async Task<IReadOnlyList<CustomerToReadInList>> GetCustomersInListAsync()
+        public async Task<IReadOnlyList<CustomerToReadInList>> GetListAsync()
         {
             var customersFromContext = await context.Customers
                 // Person
                 .Include(customer =>
                     customer.Person.Phones
-                        .Where(phone => phone.IsPrimary == true))
+                        .Where(phone => phone.IsPrimary))
                 .Include(customer =>
                     customer.Person.Emails
-                        .Where(email => email.IsPrimary == true))
+                        .Where(email => email.IsPrimary))
                 // Business and Business.Contact
                 .Include(customer =>
                     customer.Business.Contact.Phones
-                        .Where(phone => phone.IsPrimary == true))
+                        .Where(phone => phone.IsPrimary))
                 .Include(customer =>
                     customer.Business.Contact.Emails
-                        .Where(email => email.IsPrimary == true))
+                        .Where(email => email.IsPrimary))
                 .AsNoTracking()
                 .AsSplitQuery()
                 .ToArrayAsync();
 
             return customersFromContext
-                .Select(customer => ConvertToReadInListDto(customer))
+                .Select(customer => CustomerHelper.ConvertToReadInListDto(customer))
                 .ToList();
         }
 
-        private static CustomerToReadInList ConvertToReadInListDto(Customer customer)
-        {
-            if (customer is not null)
-            {
-                return new CustomerToReadInList()
-                {
-                    Id = customer.Id,
-                    EntityType = customer.EntityType,
-                    CustomerType = customer.CustomerType,
-                    Name = customer.Name,
-                    AddressFull = customer?.Address?.AddressFull,
-                    PrimaryPhone = PhoneHelper.GetPrimaryPhone(customer?.Contact),
-                    PrimaryEmail = EmailHelper.GetPrimaryEmail(customer?.Contact)
-                };
-            }
-            return null;
-        }
-
-        public async Task<Customer> GetCustomerEntityAsync(long id)
+        public async Task<Customer> GetEntityAsync(long id)
         {
             var customerFromContext = await context.Customers
                 // Person

@@ -17,7 +17,7 @@ namespace Menominee.Domain.Entities.Settings
         public string SettingValueType { get; private set; }
         public string Value { get; private set; }
 
-        private ConfigurationSetting(SettingName settingName, SettingGroup settingGroup, string type, string value) 
+        private ConfigurationSetting(SettingName settingName, SettingGroup settingGroup, string type, string value)
         {
             SettingName = settingName;
             SettingGroup = settingGroup;
@@ -32,7 +32,7 @@ namespace Menominee.Domain.Entities.Settings
             if (!Enum.IsDefined(typeof(SettingName), settingName))
                 return Result.Failure<ConfigurationSetting>(SettingNameInvalidMessage);
 
-            if(!Enum.IsDefined(typeof(SettingGroup), settingGroup))
+            if (!Enum.IsDefined(typeof(SettingGroup), settingGroup))
                 return Result.Failure<ConfigurationSetting>(SettingGroupInvalidMessage);
 
             if (string.IsNullOrWhiteSpace(value))
@@ -44,7 +44,7 @@ namespace Menominee.Domain.Entities.Settings
             return Result.Success(new ConfigurationSetting(settingName, settingGroup, type, value));
         }
 
-        public Result UpdateSettingProperties(SettingName settingName, SettingGroup settingGroup, string type, string value)
+        public Result SetProperties(SettingName settingName, SettingGroup settingGroup, string type, string value)
         {
             return Result.Combine(
                 (settingName != SettingName)
@@ -71,7 +71,7 @@ namespace Menominee.Domain.Entities.Settings
 
         public Result<string> SetSettingValue(string value)
         {
-            if(string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value))
                 return Result.Failure<string>(RequiredMessage);
 
             value = (value ?? string.Empty).Trim();
@@ -91,9 +91,9 @@ namespace Menominee.Domain.Entities.Settings
 
         public Result<SettingGroup> SetSettingGroup(SettingGroup settingGroup)
         {
-            return 
+            return
                 !Enum.IsDefined(typeof(SettingGroup), settingGroup)
-                ? Result.Failure<SettingGroup>(SettingGroupInvalidMessage) 
+                ? Result.Failure<SettingGroup>(SettingGroupInvalidMessage)
                 : Result.Success(SettingGroup = settingGroup);
         }
 

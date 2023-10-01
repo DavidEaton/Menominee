@@ -8,15 +8,13 @@ namespace Menominee.Api.Customers
 {
     public interface ICustomerRepository
     {
-        Task AddCustomerAsync(Customer entity);
-        void DeleteCustomer(Customer entity);
-        Task<bool> CustomerExistsAsync(long id);
-        Task<Customer> UpdateCustomerAsync(Customer entity);
-        Task<IReadOnlyList<CustomerToRead>> GetCustomersAsync();
-        Task<PagedList<CustomerToRead>> GetCustomersAsync(string code, Pagination pagination);
-        Task<IReadOnlyList<CustomerToReadInList>> GetCustomersInListAsync();
-        Task<CustomerToRead> GetCustomerAsync(long id);
+        void Add(Customer entity);
+        void Delete(Customer entity);
+        Task<IReadOnlyList<CustomerToRead>> GetAllAsync();
+        Task<PagedList<CustomerToRead>> GetByCodeAsync(string code, Pagination pagination);
+        Task<IReadOnlyList<CustomerToReadInList>> GetListAsync();
+        Task<CustomerToRead> GetAsync(long id);
         Task SaveChangesAsync();
-        Task<Customer> GetCustomerEntityAsync(long id);
+        Task<Customer> GetEntityAsync(long id);
     }
 }

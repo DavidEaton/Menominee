@@ -101,7 +101,7 @@ public partial class VehicleLookup
 
     private async Task SearchVehicles()
     {
-        var result = await VehicleDataService.GetVehicles(CustomerId, LookupModel.SortOrder, LookupModel.SortColumn, LookupModel.IncludeInactive, LookupModel.SearchTerm);
+        var result = await VehicleDataService.GetByParametersAsync(CustomerId, LookupModel.SortOrder, LookupModel.SortColumn, LookupModel.IncludeInactive, LookupModel.SearchTerm);
 
         if (result.IsFailure) return;
 

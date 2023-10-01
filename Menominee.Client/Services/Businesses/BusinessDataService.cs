@@ -1,113 +1,97 @@
 ﻿using Blazored.Toast.Services;
 using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Shared;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Businesses;
-using Menominee.Shared.Models.Vehicles;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Menominee.Client.Services.Businesses
 {
-    public class BusinessDataService : IBusinessDataService
+    public class BusinessDataService : DataServiceBase<BusinessDataService>, IBusinessDataService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger<BusinessDataService> logger;
         private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/businesses";
 
-        public BusinessDataService(HttpClient httpClient, ILogger<BusinessDataService> logger, IToastService toastService)
+        public BusinessDataService(HttpClient httpClient,
+            ILogger<BusinessDataService> logger,
+            IToastService toastService,
+            UriBuilderFactory uriBuilderFactory)
+            : base(uriBuilderFactory, logger)
         {
-            this.httpClient = httpClient;
-            this.logger = logger;
-            this.toastService = toastService;
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
         }
 
-        public async Task<Result<BusinessToRead>> AddBusiness(BusinessToWrite business)
+        public async Task<Result<PostResponse>> AddAsync(BusinessToWrite fromCaller)
         {
-            var content = new StringContent(JsonSerializer.Serialize(business), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                toastService.ShowSuccess($"{business.Name} added successfully", "Added");
-                return await JsonSerializer.DeserializeAsync<BusinessToRead>(await response.Content.ReadAsStreamAsync());
-            }
-
-            var errorMessage = await response.Content.ReadAsStringAsync();
-            logger.LogError(errorMessage, errorMessage);
-            toastService.ShowError($"{business.Name} failed to add. {response.ReasonPhrase}.", "Add Failed");
-
-            return Result.Failure<BusinessToRead>(errorMessage);
-        }
-
-        public async Task<Result<IReadOnlyList<BusinessToReadInList>>> GetAllBusinesses()
-        {
+            var entityType = "Business";
             try
             {
-                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<BusinessToReadInList>>($"{UriSegment}/list");
-                return Result.Success(result!);
+                var result = await httpClient.AddAsync(
+                    UriSegment,
+                    fromCaller,
+                    Logger);
+
+                if (result.IsSuccess)
+                    toastService.ShowSuccess($"{entityType} added successfully", "Saved");
+
+                if (result.IsFailure)
+                    toastService.ShowError($"{fromCaller.Name} failed to update", "Save Failed");
+
+                return result;
             }
             catch (Exception ex)
             {
-                var errorMessage = "Failed to get Businesses";
-                logger.LogError(ex, errorMessage);
+                Logger.LogError(ex, $"Failed to add {entityType}");
+                return Result.Failure<PostResponse>("An unexpected error occurred");
+            }
+        }
+
+        public async Task<Result<IReadOnlyList<BusinessToReadInList>>> GetAllAsync()
+        {
+            var errorMessage = "Failed to get all businesses";
+
+            try
+            {
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<BusinessToReadInList>>($"{UriSegment}/list");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<IReadOnlyList<BusinessToReadInList>>(errorMessage);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, errorMessage);
                 return Result.Failure<IReadOnlyList<BusinessToReadInList>>(errorMessage);
             }
         }
 
-        public async Task<Result<BusinessToRead>> GetBusiness(long id)
+        public async Task<Result<BusinessToRead>> GetAsync(long id)
         {
+            var errorMessage = $"Failed to get business with id {id}";
+
             try
             {
-                var response = await httpClient.GetAsync($"{UriSegment}/{id}");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorMessage = response.Content.ReadAsStringAsync().Result;
-                    logger.LogError(message: errorMessage);
-                    return Result.Failure<BusinessToRead>(errorMessage);
-                }
-
-                var content = await response.Content.ReadAsStreamAsync();
-                var business = await JsonSerializer.DeserializeAsync<BusinessToRead>(content);
-                return Result.Success(business!);
-
+                var result = await httpClient.GetFromJsonAsync<BusinessToRead>(UriSegment + $"/{id}");
+                return result is not null
+                    ? Result.Success(result)
+                    : Result.Failure<BusinessToRead>(errorMessage);
             }
             catch (Exception ex)
             {
-                var errorMessage = ex.Message;
-                // This LogError invocation does NOT produce compiler warning
-                // TODO: fix the LogError invocations that DO produce compiler warnings
-                logger.LogError(ex, "Failed to get business with id {id}", id);
+                Logger.LogError(ex, errorMessage);
                 return Result.Failure<BusinessToRead>(errorMessage);
             }
         }
 
-        public async Task<Result> UpdateBusiness(BusinessToWrite business)
+        public async Task<Result> UpdateAsync(BusinessToWrite fromCaller)
         {
-            try
-            {
-                var content = new StringContent(JsonSerializer.Serialize(business), Encoding.UTF8, MediaType);
-                var response = await httpClient.PutAsync(UriSegment + $"/{business.Id}", content);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorMessage = response.Content.ReadAsStringAsync().Result;
-                    logger.LogError(message: errorMessage);
-                    return Result.Failure<VehicleToRead>(errorMessage);
-                }
-
-                toastService.ShowSuccess($"{business.Name} updated successfully", "Saved");
-                return Result.Success();
-            }
-            catch (Exception ex)
-            {
-                var errorMessage = "Failed to update business";
-                logger.LogError(ex, errorMessage);
-                toastService.ShowError($"{business.Name} failed to update", "Save Failed");
-                return Result.Failure<VehicleToRead>(errorMessage);
-            }
+            return await httpClient.UpdateAsync(
+                UriSegment,
+                fromCaller,
+                Logger,
+                business => $"{business.Name}",
+                business => business.Id);
         }
     }
 }

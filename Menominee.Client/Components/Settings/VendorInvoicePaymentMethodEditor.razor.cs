@@ -1,8 +1,9 @@
-﻿using Menominee.Shared.Models.Payables.Invoices.Payments;
-using Menominee.Shared.Models.Payables.Vendors;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Payables.Invoices.Payments;
+using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -36,6 +37,9 @@ namespace Menominee.Client.Components.Settings
             }
         }
 
+        [Inject]
+        ILogger<VendorInvoicePaymentMethodEditor> Logger { get; set; }
+
         private string? Title { get; set; }
         private FormMode formMode;
         private IReadOnlyList<VendorToRead>? Vendors = null;
@@ -45,15 +49,28 @@ namespace Menominee.Client.Components.Settings
 
         protected override async Task OnInitializedAsync()
         {
-            Vendors = (await VendorDataService.GetAllVendorsAsync())
-                                                          .Where(vendor => vendor.IsActive == true 
-                                                                        && vendor.VendorRole == VendorRole.PaymentReconciler)
-                                                          .OrderBy(vendor => vendor.VendorCode)
-                                                          .ToList();
+            await GetVendorsAsync();
 
             foreach (VendorInvoicePaymentMethodType payType in Enum.GetValues(typeof(VendorInvoicePaymentMethodType)))
             {
                 PaymentTypes.Add(new VendorPaymentType { Text = EnumExtensions.GetDisplayName(payType), Value = payType });
+            }
+        }
+
+        private async Task GetVendorsAsync()
+        {
+            if (VendorDataService is not null)
+            {
+                await VendorDataService.GetAllAsync()
+                .Match(
+                    success => Vendors = success
+                        .Where(vendor =>
+                               vendor.IsActive == true
+                            && vendor.VendorRole == VendorRole.PaymentReconciler)
+                        .OrderBy(vendor => vendor.VendorCode)
+                        .ToList(),
+
+                    failure => Logger.LogError(failure));
             }
         }
 
@@ -79,7 +96,16 @@ namespace Menominee.Client.Components.Settings
             }
             else if (PaymentMethod?.ReconcilingVendor?.Id != vendorId)
             {
-                PaymentMethod!.ReconcilingVendor = await VendorDataService.GetVendorAsync(vendorId ?? 0);
+                var result = await VendorDataService.GetAsync(vendorId ?? 0);
+                if (result.IsSuccess)
+                {
+                    PaymentMethod.ReconcilingVendor = result.Value;
+                }
+                if (result.IsFailure)
+                {
+                    Logger.LogError(result.Error);
+                    PaymentMethod.ReconcilingVendor = new();
+                }
             }
         }
 

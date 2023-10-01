@@ -1,16 +1,12 @@
-﻿using Menominee.Shared.Models.ProductCodes;
-using Menominee.Shared.Models.RepairOrders.LineItems;
-using Menominee.Shared.Models.RepairOrders.LineItems.Item;
-using Menominee.Shared.Models.SaleCodes;
-using Menominee.Client.Services.ProductCodes;
+﻿using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.ProductCodes;
+using Menominee.Shared.Models.RepairOrders.LineItems;
+using Menominee.Shared.Models.RepairOrders.LineItems.Item;
+using Menominee.Shared.Models.SaleCodes;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
 {
@@ -60,8 +56,8 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override async Task OnParametersSetAsync()
         {
-            SaleCodes = (await saleCodeDataService.GetAllSaleCodesAsync()).ToList();
-            ProductCodes = (await productCodeDataService.GetAllProductCodesAsync()).ToList();
+            SaleCodes = (await saleCodeDataService.GetAllAsync()).ToList();
+            ProductCodes = (await productCodeDataService.GetAllAsync()).Value.ToList();
 
             SaleCodeList = new();
             foreach (var saleCode in SaleCodes)

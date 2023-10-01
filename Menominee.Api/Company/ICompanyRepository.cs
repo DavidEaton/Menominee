@@ -6,9 +6,10 @@ namespace Menominee.Api.Company
 {
     public interface ICompanyRepository
     {
-        Task Add(Entities.Company entity);
-        Task<Entities.Company> GetEntity(long id);
-        Task<CompanyToRead> Get(long id);
-        Task<long> GetNextInvoiceNumberOrSeed();
+        void Add(Entities.Company entity);
+        void Delete(Entities.Company entity);
+        Task<Entities.Company> GetEntityAsync(long id);
+        Task<CompanyToRead> GetAsync(long id);
+        Task<long> GetNextInvoiceNumberOrSeedAsync();
     }
 }

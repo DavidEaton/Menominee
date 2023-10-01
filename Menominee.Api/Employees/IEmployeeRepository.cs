@@ -7,7 +7,7 @@ namespace Menominee.Api.Employees
 {
     public interface IEmployeeRepository
     {
-        Task<List<Employee>> GetEmployeeEntities();
-        Task<List<EmployeeToRead>> GetEmployees();
+        Task<IReadOnlyList<Employee>> GetEntitiesAsync();
+        Task<IReadOnlyList<EmployeeToRead>> GetAllAsync();
     }
 }

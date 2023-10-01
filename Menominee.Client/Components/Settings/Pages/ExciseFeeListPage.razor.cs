@@ -1,10 +1,7 @@
-﻿using Menominee.Shared.Models.Taxes;
-using Menominee.Client.Services.Taxes;
+﻿using Menominee.Client.Services.Taxes;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Taxes;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Settings.Pages
@@ -34,7 +31,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            ExciseFees = (await ExciseFeeDataService.GetAllExciseFeesAsync()).ToList();
+            ExciseFees = (await ExciseFeeDataService.GetAllAsync()).Value.ToList();
 
             if (ExciseFees?.Count > 0)
             {
@@ -78,13 +75,19 @@ namespace Menominee.Client.Components.Settings.Pages
         {
             if (Id != 0)
             {
-                ExciseFeeToRead fee = await ExciseFeeDataService.GetExciseFeeAsync(Id);
-                if (fee != null)
+                var result = await ExciseFeeDataService.GetAsync(Id);
+
+                if (result.IsSuccess)
+                    ExciseFee = ExciseFeeHelper.CovertReadToWriteDto(result.Value);
+
+                if (result.IsFailure)
                 {
-                    ExciseFee = ExciseFeeHelper.CovertReadToWriteDto(fee);
+                    // TODO: Al, do we just create a new empty ExiceFeeToRead dto?
+                    // Do we need to log this?, Let user know?
+                    ExciseFee = new();
                 }
+
                 EditFormMode = FormMode.Edit;
-                //ExciseFees = null;
             }
         }
 
@@ -112,14 +115,14 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected async Task HandleAddSubmitAsync()
         {
-            Id = (await ExciseFeeDataService.AddExciseFeeAsync(ExciseFee)).Id;
+            Id = (await ExciseFeeDataService.AddAsync(ExciseFee)).Value.Id;
             await EndAddEditAsync();
             Grid.Rebind();
         }
 
         protected async Task HandleEditSubmitAsync()
         {
-            await ExciseFeeDataService.UpdateExciseFeeAsync(ExciseFee, Id);
+            await ExciseFeeDataService.UpdateAsync(ExciseFee);
             await EndAddEditAsync();
         }
 
@@ -134,7 +137,7 @@ namespace Menominee.Client.Components.Settings.Pages
         protected async Task EndAddEditAsync()
         {
             EditFormMode = FormMode.Unknown;
-            ExciseFees = (await ExciseFeeDataService.GetAllExciseFeesAsync()).ToList();
+            ExciseFees = (await ExciseFeeDataService.GetAllAsync()).Value.ToList();
             SelectedExciseFee = ExciseFees.Where(x => x.Id == Id).FirstOrDefault();
             SelectedExciseFees = new List<ExciseFeeToReadInList> { SelectedExciseFee };
         }

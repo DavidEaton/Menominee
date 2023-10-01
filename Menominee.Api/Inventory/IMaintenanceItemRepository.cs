@@ -7,14 +7,11 @@ namespace Menominee.Api.Inventory
 {
     public interface IMaintenanceItemRepository
     {
-        Task AddItemAsync(MaintenanceItem item);
-        Task DeleteItemAsync(long id);
-        Task<bool> ItemExistsAsync(long id);
-        Task<MaintenanceItem> UpdateItemAsync(MaintenanceItem item);
-        Task<IReadOnlyList<MaintenanceItemToReadInList>> GetItemsInListAsync();
-        Task<MaintenanceItemToRead> GetItemAsync(long id);
-        Task<MaintenanceItem> GetItemEntityAsync(long id);
-        Task<bool> SaveChangesAsync();
-        void DeleteItem(MaintenanceItem entity);
+        void Add(MaintenanceItem entity);
+        void Delete(MaintenanceItem entity);
+        Task<IReadOnlyList<MaintenanceItemToReadInList>> GetListAsync();
+        Task<MaintenanceItemToRead> GetAsync(long id);
+        Task<MaintenanceItem> GetEntityAsync(long id);
+        Task SaveChangesAsync();
     }
 }

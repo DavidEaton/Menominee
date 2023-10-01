@@ -4,6 +4,7 @@ using Menominee.Api.Common;
 using Menominee.Api.Persons;
 using Menominee.Api.Vehicles;
 using Menominee.Common.Enums;
+using Menominee.Common.Http;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Customers;
@@ -54,21 +55,21 @@ namespace Menominee.Api.Customers
         [HttpGet("list")]
         public async Task<ActionResult<IReadOnlyList<CustomerToReadInList>>> GetListAsync()
         {
-            var customers = await customerRepository.GetCustomersInListAsync();
+            var result = await customerRepository.GetListAsync();
 
-            return customers is not null
-                ? Ok(customers)
-                : Ok();
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<CustomerToRead>>> GetAsync()
         {
-            var customers = await customerRepository.GetCustomersAsync();
+            var result = await customerRepository.GetAllAsync();
 
-            return customers is not null
-                ? Ok(customers)
-                : Ok();
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         [HttpGet("{id:long}")]
@@ -86,7 +87,7 @@ namespace Menominee.Api.Customers
             if (id == 0)
                 return Maybe<CustomerToRead>.None;
 
-            var customer = await customerRepository.GetCustomerAsync(id);
+            var customer = await customerRepository.GetAsync(id);
 
             return customer is null
                 ? Maybe<CustomerToRead>.None
@@ -101,11 +102,11 @@ namespace Menominee.Api.Customers
 
             ValidatePagination(ref pagination);
 
-            var customers = await customerRepository.GetCustomersAsync(code, pagination);
+            var result = await customerRepository.GetByCodeAsync(code, pagination);
 
-            return customers is not null
-                ? Ok(customers)
-                : Ok();
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         private static void ValidatePagination(ref Pagination pagination)
@@ -117,17 +118,19 @@ namespace Menominee.Api.Customers
         [HttpPut("{id:long}")]
         public async Task<ActionResult> UpdateAsync(long id, CustomerToWrite customerToWrite)
         {
-            var customerFromRepository = await customerRepository.GetCustomerEntityAsync(id);
+            var customerFromRepository = await customerRepository.GetEntityAsync(id);
 
             if (customerFromRepository == null || customerFromRepository?.EntityType == null)
                 return NotFound($"Could not find Customer in the database to update.");
 
-
             if (customerFromRepository.EntityType == EntityType.Business)
-                await businessesController.UpdateAsync(customerFromRepository.Business.Id, customerToWrite.Business);
+            {
+                //await businessesController.UpdateAsync(customerToWrite.Business);
+                var businessFromRepository = customerFromRepository.Business;
+            }
 
             if (customerFromRepository.EntityType == EntityType.Person)
-                await personsController.UpdateAsync(customerFromRepository.Person.Id, customerToWrite.Person);
+                await personsController.UpdateAsync(customerToWrite.Person);
 
             AddNewVehicles(customerFromRepository, customerToWrite);
             UpdateExistingVehicles(customerFromRepository, customerToWrite);
@@ -214,43 +217,40 @@ namespace Menominee.Api.Customers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddAsync(CustomerToWrite customerToAdd)
+        public async Task<ActionResult<PostResponse>> AddAsync(CustomerToWrite customerToAdd)
         {
-            Customer customer = null;
-
-            if (customerToAdd.EntityType == EntityType.Person)
-            {
-                var person = PersonHelper.ConvertWriteDtoToEntity(customerToAdd.Person);
-                var result = Customer.Create(person, customerToAdd.CustomerType, customerToAdd.Code);
-
-                if (result.IsFailure)
-                    return NotFound($"Could not create Customer.");
-
-                customer = result.Value;
-            }
-
-            if (customerToAdd.EntityType == EntityType.Business)
-            {
-                var business = BusinessHelper.ConvertWriteDtoToEntity(customerToAdd.Business);
-                var result = Customer.Create(business, customerToAdd.CustomerType, customerToAdd.Code);
-
-                if (result.IsFailure)
-                    return NotFound($"Could not create Customer.");
-            }
-
+            // All requests are routed thru dto validators using FluentValidation
+            // in ASP.NET request pipeline, so we can assume that the request is valid
+            // no need to validate request here again, just call .Value right away
+            var customer = CreateCustomer(customerToAdd);
             AddVehiclesToCustomer(customer, customerToAdd.Vehicles.ToList());
 
-            await customerRepository.AddCustomerAsync(customer);
+            customerRepository.Add(customer);
             await customerRepository.SaveChangesAsync();
-            //        return Created(
-            //          new Uri($"api/customerscontroller/{customer.Id}", UriKind.Relative),
-            //          new { customer.Id });
 
-            return CreatedAtAction(
-                nameof(GetAsync),
-                new { id = customer.Id },
-                new { customer.Id });
+            return Created(
+              new Uri($"api/Customers/{customer.Id}",
+              UriKind.Relative),
+              new { customer.Id });
         }
+
+        private Customer CreateCustomer(CustomerToWrite customerToAdd) =>
+            customerToAdd.EntityType switch
+            {
+                EntityType.Person => Customer.Create(
+                    PersonHelper.ConvertWriteDtoToEntity(customerToAdd.Person),
+                    customerToAdd.CustomerType,
+                    customerToAdd.Code
+                ).Value,
+
+                EntityType.Business => Customer.Create(
+                    BusinessHelper.ConvertWriteDtoToEntity(customerToAdd.Business),
+                    customerToAdd.CustomerType,
+                    customerToAdd.Code
+                ).Value,
+
+                _ => throw new InvalidOperationException("Invalid entity type")
+            };
 
         private static void AddVehiclesToCustomer(Customer customer, List<VehicleToWrite> vehicles)
         {
@@ -280,20 +280,12 @@ namespace Menominee.Api.Customers
         [HttpDelete("{id:long}")]
         public async Task<ActionResult> DeleteAsync(long id)
         {
-            var notFoundMessage = $"Could not find Customer in the database to delete with Id: {id}.";
+            var customerFromRepository = await customerRepository.GetEntityAsync(id);
 
-            if (!await customerRepository.CustomerExistsAsync(id))
-            {
-                return NotFound(notFoundMessage);
-            }
-
-            var customerFromRepository = await customerRepository.GetCustomerEntityAsync(id);
             if (customerFromRepository is null)
-            {
-                return NotFound(notFoundMessage);
-            }
+                return NotFound($"Could not find Customer in the database to delete with Id: {id}.");
 
-            customerRepository.DeleteCustomer(customerFromRepository);
+            customerRepository.Delete(customerFromRepository);
             await customerRepository.SaveChangesAsync();
 
             return NoContent();

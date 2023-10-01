@@ -1,4 +1,5 @@
-﻿using Menominee.Api.Data;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Api.Data;
 using Menominee.Domain.Entities.Payables;
 using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.EntityFrameworkCore;
@@ -19,29 +20,35 @@ namespace Menominee.Api.Payables.Vendors
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<Vendor> GetVendorEntityAsync(long id)
+        public async Task<Result<Vendor>> GetEntityAsync(long id)
         {
-            return await context.Vendors
-                .Include(vendor => vendor.Phones)
-                .Include(vendor => vendor.Emails)
-                .Include(vendor => vendor.DefaultPaymentMethod.PaymentMethod)
-                .FirstOrDefaultAsync(vendor => vendor.Id == id);
+            var vendor = await context.Vendors
+                .Include(v => v.Phones)
+                .Include(v => v.Emails)
+                .Include(v => v.DefaultPaymentMethod.PaymentMethod)
+                .FirstOrDefaultAsync(v => v.Id == id);
+
+            if (vendor is null)
+                return Result.Failure<Vendor>($"No vendor found with Id = {id}");
+
+            return Result.Success(vendor);
         }
 
-        public async Task<IReadOnlyList<Vendor>> GetVendorEntitiesAsync(List<long> ids)
+
+        public async Task<IReadOnlyList<Vendor>> GetEntitiesAsync(List<long> ids)
         {
             return await context.Vendors
                 .Where(vendor => ids.Contains(vendor.Id))
                 .ToListAsync();
         }
 
-        public async Task AddVendorAsync(Vendor vendor)
+        public void Add(Vendor vendor)
         {
             if (vendor is not null)
-                await context.AddAsync(vendor);
+                context.Attach(vendor);
         }
 
-        public async Task<VendorToRead> GetVendorAsync(long id)
+        public async Task<VendorToRead> GetAsync(long id)
         {
             var vendorFromContext = await context.Vendors
                 .Include(vendor => vendor.Phones)
@@ -58,7 +65,7 @@ namespace Menominee.Api.Payables.Vendors
                 : null;
         }
 
-        public async Task<IReadOnlyList<VendorToRead>> GetVendorsAsync()
+        public async Task<IReadOnlyList<VendorToRead>> GetAllAsync()
         {
             IReadOnlyList<Vendor> vendorsFromContext = await context.Vendors
                 .Include(vendor => vendor.DefaultPaymentMethod)
@@ -87,14 +94,10 @@ namespace Menominee.Api.Payables.Vendors
             }).ToList();
         }
 
-        public void DeleteVendor(Vendor vendor)
+        public void Delete(Vendor vendor)
         {
-            context.Remove(vendor);
-        }
-
-        public async Task<bool> VendorExistsAsync(long id)
-        {
-            return await context.Vendors.AnyAsync(vendor => vendor.Id == id);
+            if (vendor is not null)
+                context.Remove(vendor);
         }
 
         public async Task SaveChangesAsync()

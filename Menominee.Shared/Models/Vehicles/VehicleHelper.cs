@@ -45,22 +45,6 @@ namespace Menominee.Shared.Models.Vehicles
                 };
         }
 
-        public static Vehicle ConvertWriteDtoToEntity(VehicleToWrite vehicle)
-        {
-            return vehicle is null
-                ? null
-                : Vehicle.Create(
-                    vehicle.VIN,
-                    vehicle.Year,
-                    vehicle.Make,
-                    vehicle.Model,
-                    vehicle.Plate,
-                    vehicle.PlateStateProvince,
-                    vehicle.UnitNumber,
-                    vehicle.Color,
-                    vehicle.Active).Value;
-        }
-
         public static List<VehicleToRead> ConvertToReadDtos(IReadOnlyList<Vehicle> vehicles)
         {
             return vehicles?
