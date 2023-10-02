@@ -1,8 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Api.Businesses;
 using Menominee.Api.Common;
 using Menominee.Api.Persons;
-using Menominee.Api.Vehicles;
 using Menominee.Common.Enums;
 using Menominee.Common.Http;
 using Menominee.Domain.Entities;
@@ -24,32 +22,16 @@ namespace Menominee.Api.Customers
     {
         private readonly ICustomerRepository customerRepository;
         private readonly IPersonRepository personRepository;
-        private readonly IBusinessRepository businessRepository;
-        private readonly IVehicleRepository vehicleRepository;
-        private readonly PersonsController personsController;
-        private readonly BusinessesController businessesController;
 
         public CustomersController(
             ICustomerRepository customerRepository,
             IPersonRepository personRepository,
-            IBusinessRepository businessRepository,
-            IVehicleRepository vehicleRepository,
-            PersonsController personsController,
-            BusinessesController businessesController,
             ILogger<CustomersController> logger) : base(logger)
         {
             this.customerRepository = customerRepository ??
                 throw new ArgumentNullException(nameof(customerRepository));
             this.personRepository = personRepository ??
                 throw new ArgumentNullException(nameof(personRepository));
-            this.businessRepository = businessRepository ??
-                throw new ArgumentNullException(nameof(businessRepository));
-            this.vehicleRepository = vehicleRepository ??
-                throw new ArgumentNullException(nameof(vehicleRepository));
-            this.personsController = personsController ??
-                throw new ArgumentNullException(nameof(personsController));
-            this.businessesController = businessesController ??
-                throw new ArgumentNullException(nameof(businessesController));
         }
 
         [HttpGet("list")]
@@ -125,12 +107,17 @@ namespace Menominee.Api.Customers
 
             if (customerFromRepository.EntityType == EntityType.Business)
             {
-                //await businessesController.UpdateAsync(customerToWrite.Business);
                 var businessFromRepository = customerFromRepository.Business;
+                Updaters.UpdateBusiness(customerToWrite.Business, businessFromRepository);
+                await customerRepository.SaveChangesAsync();
             }
 
             if (customerFromRepository.EntityType == EntityType.Person)
-                await personsController.UpdateAsync(customerToWrite.Person);
+            {
+                var personFromRepository = customerFromRepository.Person;
+                Updaters.UpdatePerson(customerToWrite.Person, personFromRepository, personRepository);
+                await customerRepository.SaveChangesAsync();
+            }
 
             AddNewVehicles(customerFromRepository, customerToWrite);
             UpdateExistingVehicles(customerFromRepository, customerToWrite);

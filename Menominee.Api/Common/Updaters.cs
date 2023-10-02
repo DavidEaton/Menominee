@@ -1,6 +1,8 @@
-﻿using Menominee.Common.ValueObjects;
+﻿using Menominee.Api.Persons;
+using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Businesses;
+using Menominee.Shared.Models.Persons;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -84,5 +86,63 @@ namespace Menominee.Api.Common
             }
         }
 
+        internal static void UpdatePerson(PersonToWrite personFromCaller, Person personFromRepository, IPersonRepository repository)
+        {
+            UpdateName(personFromCaller, personFromRepository);
+            var contactDetails = ContactDetailsFactory
+                .Create(personFromCaller.Phones.ToList(), personFromCaller.Emails.ToList(), personFromCaller.Address).Value;
+
+            var phonesToDelete = personFromRepository.Phones
+                .Where(phone => !contactDetails.Phones.Any(phoneToKeep => phoneToKeep.Id == phone.Id))
+                .ToList();
+
+            if (phonesToDelete.Any())
+            {
+                phonesToDelete.ForEach(phone => repository.DeletePhone(phone));
+            }
+
+            var emailsToDelete = personFromRepository.Emails
+                .Where(email => !contactDetails.Emails.Any(emailToKeep => emailToKeep.Id == email.Id))
+                .ToList();
+
+            if (emailsToDelete.Any())
+            {
+                emailsToDelete.ForEach(email => repository.DeleteEmail(email));
+            }
+
+            personFromRepository.UpdateContactDetails(contactDetails);
+
+            personFromRepository.SetGender(personFromCaller.Gender);
+            personFromRepository.SetBirthday(personFromCaller.Birthday);
+
+            if (personFromCaller?.DriversLicense is not null)
+            {
+                personFromRepository.SetDriversLicense(DriversLicense.Create(personFromCaller.DriversLicense.Number,
+                    personFromCaller.DriversLicense.State,
+                    DateTimeRange.Create(
+                    personFromCaller.DriversLicense.Issued,
+                    personFromCaller.DriversLicense.Expiry).Value).Value);
+            }
+
+        }
+
+
+        internal static void UpdateName(PersonToWrite personFromCaller, Person personFromRepository)
+        {
+            // Data Transfer Objects have been validated in ASP.NET request pipeline
+            if (NamesAreNotEqual(personFromRepository.Name, personFromCaller.Name))
+            {
+                personFromRepository.SetName(PersonName.Create(
+                    personFromCaller.Name.LastName,
+                    personFromCaller.Name.FirstName,
+                    personFromCaller.Name.MiddleName)
+                    .Value);
+            }
+        }
+
+        internal static bool NamesAreNotEqual(PersonName name, PersonNameToWrite nameDto) =>
+            !string.Equals(name.FirstName, nameDto?.FirstName) ||
+            !string.Equals(name.MiddleName, nameDto?.MiddleName) ||
+            !string.Equals(name.LastName, nameDto?.LastName);
     }
 }
