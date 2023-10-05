@@ -8,6 +8,11 @@ namespace Menominee.Shared.Models.Customers;
 
 public class CustomerToWrite
 {
+    // TODO: This dto is somewhat unusual in that most ToWrite dtos
+    // contain refernces to other entiites as ToRead dto properties.
+    // This one contains references to other ToWrite dtos.  This is
+    // to accomodat saving a new customer with a new person or business
+    // in one go.
     public long Id { get; set; }
     public string Name => GetFullName();
     public EntityType EntityType { get; set; }

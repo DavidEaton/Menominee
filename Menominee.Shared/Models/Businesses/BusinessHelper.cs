@@ -52,7 +52,7 @@ namespace Menominee.Shared.Models.Businesses
         public static BusinessToWrite CovertReadToWriteDto(BusinessToRead business)
         {
             return business is not null
-                ? new BusinessToWrite()
+                ? new()
                 {
                     Name = business.Name,
                     Notes = business?.Notes,
@@ -67,7 +67,7 @@ namespace Menominee.Shared.Models.Businesses
         public static BusinessToRead ConvertToReadDto(Business business)
         {
             return business is not null
-                ? new BusinessToRead()
+                ? new()
                 {
                     Id = business.Id,
                     Name = business.Name.Name,
@@ -83,7 +83,7 @@ namespace Menominee.Shared.Models.Businesses
         public static BusinessToReadInList ConvertToReadInListDto(Business business)
         {
             return business is not null
-                ? new BusinessToReadInList
+                ? new()
                 {
                     Id = business.Id,
                     Name = business.Name.Name,
@@ -132,6 +132,22 @@ namespace Menominee.Shared.Models.Businesses
                     Address = AddressHelper.ConvertReadToWriteDto(business?.Address),
                     Phones = PhoneHelper.ConvertReadToWriteDtos(business.Phones),
                     Emails = EmailHelper.ConvertReadToWriteDtos(business.Emails)
+                }
+                : new();
+        }
+
+        internal static BusinessToRead CovertWriteToReadDto(BusinessToWrite business)
+        {
+            return business is not null
+                ? new()
+                {
+                    Id = business.Id,
+                    Name = business.Name,
+                    Notes = business.Notes,
+                    Contact = PersonHelper.ConvertWriteToReadDto(business?.Contact),
+                    Address = AddressHelper.ConvertWriteToReadDto(business?.Address),
+                    Phones = PhoneHelper.ConvertWriteToReadDtos(business.Phones),
+                    Emails = EmailHelper.ConvertWriteToReadDtos(business.Emails)
                 }
                 : new();
         }

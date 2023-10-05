@@ -11,6 +11,27 @@ namespace Menominee.Shared.Models.Customers;
 
 public class CustomerHelper
 {
+    public static CustomerToRead ConvertWriteToReadDto(CustomerToWrite customer)
+    {
+        return customer is null
+            ? null
+            : new CustomerToRead
+            {
+                Id = customer.Id,
+                EntityType = customer.EntityType,
+                CustomerType = customer.CustomerType,
+                Person =
+                    customer.Person is not null
+                    ? PersonHelper.ConvertWriteToReadDto(customer.Person)
+                    : new(),
+                Business =
+                    customer.Business is not null
+                    ? BusinessHelper.CovertWriteToReadDto(customer.Business)
+                    : new(),
+                Code = customer.Code,
+            };
+    }
+
     public static CustomerToWrite ConvertReadToWriteDto(CustomerToRead customer)
     {
         return customer is null
@@ -20,14 +41,14 @@ public class CustomerHelper
                 Id = customer.Id,
                 EntityType = customer.EntityType,
                 CustomerType = customer.CustomerType,
-                Person
-                    = customer.Person is not null
+                Person =
+                    customer.Person is not null
                     ? PersonHelper.ConvertReadToWriteDto(customer.Person)
-                    : null,
-                Business
-                    = customer.Business is not null
+                    : new(),
+                Business =
+                    customer.Business is not null
                     ? BusinessHelper.CovertReadToWriteDto(customer.Business)
-                    : null,
+                    : new(),
                 Code = customer.Code,
             };
     }
@@ -35,8 +56,8 @@ public class CustomerHelper
     public static CustomerToRead ConvertToReadDto(Customer customer)
     {
         return customer is null
-            ? new CustomerToRead()
-            : new CustomerToRead
+            ? new()
+            : new()
             {
                 Id = customer.Id,
                 CustomerType = customer.CustomerType,
@@ -77,8 +98,8 @@ public class CustomerHelper
                 Id = customer.Id,
                 CustomerType = customer.CustomerType,
                 EntityType = customer.EntityType,
-                Person = customer.Person is not null ? PersonHelper.ConvertToWriteDto(customer.Person) : null,
-                Business = customer.Business is not null ? BusinessHelper.CovertToWriteDto(customer.Business) : null,
+                Person = customer.Person is not null ? PersonHelper.ConvertToWriteDto(customer.Person) : new(),
+                Business = customer.Business is not null ? BusinessHelper.CovertToWriteDto(customer.Business) : new(),
                 Vehicles = ConvertVehiclesToWrite(customer)
             };
     }
@@ -90,32 +111,21 @@ public class CustomerHelper
 
     public static CustomerToWrite ConvertToWriteDto(CustomerToRead customer)
     {
-        if (customer is null)
+        return customer is null
+        ? new()
+        : new()
         {
-            return new();
-        }
-        else
-        {
-            var convertedCustomer = new CustomerToWrite
-            {
-                Id = customer.Id,
-                CustomerType = customer.CustomerType,
-                EntityType = customer.EntityType,
-                Code = customer.Code
-            };
+            Id = customer.Id,
+            CustomerType = customer.CustomerType,
+            EntityType = customer.EntityType,
+            Person = customer.Person is not null ? PersonHelper.ConvertToWriteDto(customer.Person) : new(),
+            Business = customer.Business is not null ? BusinessHelper.ConvertReadToWriteDto(customer.Business) : new(),
+            Vehicles = ConvertVehiclesToWrite(customer)
+        };
+    }
 
-            if (customer.Person is not null)
-                convertedCustomer.Person = PersonHelper.ConvertToWriteDto(customer.Person);
-
-            if (customer.Business is not null)
-                convertedCustomer.Business = BusinessHelper.CovertReadToWriteDto(customer.Business);
-
-            if (customer.Vehicles.Count > 0)
-                foreach (var vehicle in customer.Vehicles)
-                    convertedCustomer.Vehicles.Add(VehicleHelper.ConvertReadToWriteDto(vehicle));
-
-            return convertedCustomer;
-
-        }
+    private static IList<VehicleToWrite> ConvertVehiclesToWrite(CustomerToRead customer)
+    {
+        return customer.Vehicles.Select(vehicle => VehicleHelper.ConvertReadToWriteDto(vehicle)).ToList();
     }
 }

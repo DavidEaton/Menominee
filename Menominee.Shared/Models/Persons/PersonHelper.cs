@@ -45,8 +45,10 @@ namespace Menominee.Shared.Models.Persons
                     Id = person.Id,
                     Name = PersonNameHelper.ConvertToWriteDto(person.Name),
                     Gender = person.Gender,
-                    DriversLicense = DriversLicenseHelper
-                        .ConvertToWriteDto(person.DriversLicense),
+                    DriversLicense = person.DriversLicense is not null
+                        ? DriversLicenseHelper
+                        .ConvertToWriteDto(person.DriversLicense)
+                        : null,
                     Address = person.Address is not null
                         ? AddressHelper.ConvertToWriteDto(person.Address)
                         : null,
@@ -210,6 +212,32 @@ namespace Menominee.Shared.Models.Persons
                         IsPrimary = phone.IsPrimary
                     }),
                     Emails = (List<EmailToWrite>)person.Emails.Select(email => new EmailToWrite()
+                    {
+                        Address = email.Address,
+                        IsPrimary = email.IsPrimary
+                    }),
+                };
+        }
+
+        internal static PersonToRead ConvertWriteToReadDto(PersonToWrite person)
+        {
+            return person is null
+                ? null
+                : new()
+                {
+                    Id = person.Id,
+                    Address = AddressHelper.ConvertWriteToReadDto(person.Address),
+                    DriversLicense = DriversLicenseHelper.ConvertWriteToReadDto(person.DriversLicense),
+                    Birthday = person?.Birthday,
+                    Name = PersonNameHelper.ConvertWriteToReadDto(person.Name),
+
+                    Phones = (List<PhoneToRead>)person.Phones.Select(phone => new PhoneToRead()
+                    {
+                        Number = phone.Number,
+                        PhoneType = phone.PhoneType,
+                        IsPrimary = phone.IsPrimary
+                    }),
+                    Emails = (List<EmailToRead>)person.Emails.Select(email => new EmailToRead()
                     {
                         Address = email.Address,
                         IsPrimary = email.IsPrimary

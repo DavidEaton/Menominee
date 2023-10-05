@@ -7,7 +7,7 @@ namespace Menominee.Shared.Models.Persons.PersonNames
         public static PersonNameToRead ConvertToReadDto(PersonName name)
         {
             return name is not null
-                ? new PersonNameToRead()
+                ? new()
                 {
                     FirstName = name.FirstName,
                     MiddleName = name.MiddleName,
@@ -20,7 +20,7 @@ namespace Menominee.Shared.Models.Persons.PersonNames
         {
             return name is null
                 ? new()
-                : new PersonNameToWrite()
+                : new()
                 {
                     FirstName = name.FirstName,
                     MiddleName = name.MiddleName,
@@ -32,7 +32,19 @@ namespace Menominee.Shared.Models.Persons.PersonNames
         {
             return name is null
                 ? new()
-                : new PersonNameToWrite()
+                : new()
+                {
+                    FirstName = name.FirstName,
+                    MiddleName = name.MiddleName,
+                    LastName = name.LastName
+                };
+        }
+
+        internal static PersonNameToRead ConvertWriteToReadDto(PersonNameToWrite name)
+        {
+            return name is null
+                ? new()
+                : new()
                 {
                     FirstName = name.FirstName,
                     MiddleName = name.MiddleName,

@@ -100,5 +100,25 @@ namespace Menominee.Shared.Models.Contactable
                 }
                 : null;
         }
+
+        internal static List<EmailToRead> ConvertWriteToReadDtos(List<EmailToWrite> emails)
+        {
+            return emails
+                .Select(email =>
+                    ConvertWriteToReadDto(email))
+                .ToList();
+        }
+
+        private static EmailToRead ConvertWriteToReadDto(EmailToWrite email)
+        {
+            return (email is not null)
+                ? new()
+                {
+                    Id = email.Id,
+                    Address = email.Address,
+                    IsPrimary = email.IsPrimary
+                }
+                : new();
+        }
     }
 }

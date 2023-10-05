@@ -1,8 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
+using Menominee.Api.Businesses;
 using Menominee.Api.Common;
 using Menominee.Api.Persons;
 using Menominee.Common.Enums;
 using Menominee.Common.Http;
+using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Customers;
@@ -22,16 +24,20 @@ namespace Menominee.Api.Customers
     {
         private readonly ICustomerRepository customerRepository;
         private readonly IPersonRepository personRepository;
+        private readonly IBusinessRepository businessRepository;
 
         public CustomersController(
             ICustomerRepository customerRepository,
             IPersonRepository personRepository,
+            IBusinessRepository businessRepository,
             ILogger<CustomersController> logger) : base(logger)
         {
             this.customerRepository = customerRepository ??
                 throw new ArgumentNullException(nameof(customerRepository));
             this.personRepository = personRepository ??
                 throw new ArgumentNullException(nameof(personRepository));
+            this.businessRepository = businessRepository ??
+                throw new ArgumentNullException(nameof(businessRepository));
         }
 
         [HttpGet("list")]
@@ -209,7 +215,7 @@ namespace Menominee.Api.Customers
             // All requests are routed thru dto validators using FluentValidation
             // in ASP.NET request pipeline, so we can assume that the request is valid
             // no need to validate request here again, just call .Value right away
-            var customer = CreateCustomer(customerToAdd);
+            var customer = await CreateCustomerAsync(customerToAdd);
             AddVehiclesToCustomer(customer, customerToAdd.Vehicles.ToList());
 
             customerRepository.Add(customer);
@@ -221,23 +227,56 @@ namespace Menominee.Api.Customers
               new { customer.Id });
         }
 
-        private Customer CreateCustomer(CustomerToWrite customerToAdd) =>
-            customerToAdd.EntityType switch
+        private async Task<Customer> CreateCustomerAsync(CustomerToWrite customerToAdd)
+        {
+            return customerToAdd.EntityType switch
             {
-                EntityType.Person => Customer.Create(
-                    PersonHelper.ConvertWriteDtoToEntity(customerToAdd.Person),
-                    customerToAdd.CustomerType,
-                    customerToAdd.Code
-                ).Value,
-
-                EntityType.Business => Customer.Create(
-                    BusinessHelper.ConvertWriteDtoToEntity(customerToAdd.Business),
-                    customerToAdd.CustomerType,
-                    customerToAdd.Code
-                ).Value,
-
-                _ => throw new InvalidOperationException("Invalid entity type")
+                EntityType.Person => await CreatePersonCustomerAsync(customerToAdd),
+                EntityType.Business => await CreateBusinessCustomerAsync(customerToAdd),
+                _ => throw new InvalidOperationException("Invalid entity type"),
             };
+        }
+
+        private async Task<Customer> CreatePersonCustomerAsync(CustomerToWrite customerToAdd)
+        {
+            var person = customerToAdd.Person.Id > 0
+                ? await personRepository.GetEntityAsync(customerToAdd.Person.Id)
+                : CreateNewPerson(customerToAdd.Person);
+            return CreateCustomer(person, customerToAdd.CustomerType, customerToAdd.Code);
+        }
+
+        private async Task<Customer> CreateBusinessCustomerAsync(CustomerToWrite customerToAdd)
+        {
+            var business = customerToAdd.Business.Id > 0
+                ? await businessRepository.GetEntityAsync(customerToAdd.Business.Id)
+                : CreateNewBusiness(customerToAdd.Business);
+            return CreateCustomer(business, customerToAdd.CustomerType, customerToAdd.Code);
+        }
+
+        private static Person CreateNewPerson(PersonToWrite personToWrite)
+        {
+            return Person.Create(
+                PersonName.Create(personToWrite.Name.LastName, personToWrite.Name.FirstName, personToWrite.Name.MiddleName).Value,
+                personToWrite.Gender,
+                personToWrite.Notes).Value;
+        }
+
+        private static Business CreateNewBusiness(BusinessToWrite businessToWrite)
+        {
+            return Business.Create(
+                BusinessName.Create(businessToWrite.Name).Value,
+                businessToWrite.Notes).Value;
+        }
+
+        private Customer CreateCustomer(Person entity, CustomerType customerType, string code)
+        {
+            return Customer.Create(entity, customerType, code).Value;
+        }
+
+        private Customer CreateCustomer(Business entity, CustomerType customerType, string code)
+        {
+            return Customer.Create(entity, customerType, code).Value;
+        }
 
         private static void AddVehiclesToCustomer(Customer customer, List<VehicleToWrite> vehicles)
         {

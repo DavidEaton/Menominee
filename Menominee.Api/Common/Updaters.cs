@@ -111,21 +111,29 @@ namespace Menominee.Api.Common
             }
 
             personFromRepository.UpdateContactDetails(contactDetails);
-
             personFromRepository.SetGender(personFromCaller.Gender);
             personFromRepository.SetBirthday(personFromCaller.Birthday);
-
-            if (personFromCaller?.DriversLicense is not null)
-            {
-                personFromRepository.SetDriversLicense(DriversLicense.Create(personFromCaller.DriversLicense.Number,
-                    personFromCaller.DriversLicense.State,
-                    DateTimeRange.Create(
-                    personFromCaller.DriversLicense.Issued,
-                    personFromCaller.DriversLicense.Expiry).Value).Value);
-            }
+            UpdateDriversLicense(personFromCaller, personFromRepository);
 
         }
 
+        private static void UpdateDriversLicense(PersonToWrite personFromCaller, Person personFromRepository)
+        {
+            if (personFromCaller?.DriversLicense is not null)
+            {
+                var result = DateTimeRange.Create(personFromCaller.DriversLicense.Issued, personFromCaller.DriversLicense.Expiry);
+
+                if (result.IsSuccess)
+                {
+                    var dl = DriversLicense.Create(
+                        personFromCaller.DriversLicense.Number,
+                        personFromCaller.DriversLicense.State,
+                        result.Value).Value;
+
+                    personFromRepository.SetDriversLicense(dl);
+                }
+            }
+        }
 
         internal static void UpdateName(PersonToWrite personFromCaller, Person personFromRepository)
         {

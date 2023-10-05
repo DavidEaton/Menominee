@@ -136,6 +136,25 @@ namespace Menominee.Shared.Models.Contactable
             return new string(input.Where(character => char.IsDigit(character)).ToArray());
         }
 
+        internal static List<PhoneToRead> ConvertWriteToReadDtos(List<PhoneToWrite> phones)
+        {
+            return phones
+                .Select(phone =>
+                    ConvertWriteToReadDto(phone))
+                .ToList();
+        }
 
+        private static PhoneToRead ConvertWriteToReadDto(PhoneToWrite phone)
+        {
+            return phone is not null
+                ? new()
+                {
+                    Id = phone.Id,
+                    Number = phone.Number,
+                    PhoneType = phone.PhoneType,
+                    IsPrimary = phone.IsPrimary
+                }
+                : new();
+        }
     }
 }
