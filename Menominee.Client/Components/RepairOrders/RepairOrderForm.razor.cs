@@ -205,10 +205,22 @@ public partial class RepairOrderForm
         if (Valid())
         {
             if (RepairOrderToEdit.Id == 0)
-                await DataService.AddAsync(RepairOrderToEdit);
+            {
+                var result = await DataService.AddAsync(RepairOrderToEdit);
+                if (result.IsFailure)
+                {
+                    // TODO: Alert user of failure
+                }
+            }
 
             if (RepairOrderToEdit.Id != 0)
-                await DataService.UpdateAsync(RepairOrderToEdit);
+            {
+                var result = await DataService.UpdateAsync(RepairOrderToEdit);
+                if (result.IsFailure)
+                {
+                    // TODO: Alert user of failure
+                }
+            }
 
             await OnSave.InvokeAsync();
         }

@@ -6,8 +6,11 @@ using Menominee.Common.Enums;
 using Menominee.Common.Http;
 using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
+using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Businesses;
+using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Customers;
+using Menominee.Shared.Models.DriversLicenses;
 using Menominee.Shared.Models.Pagination;
 using Menominee.Shared.Models.Persons;
 using Menominee.Shared.Models.Vehicles;
@@ -239,33 +242,124 @@ namespace Menominee.Api.Customers
 
         private async Task<Customer> CreatePersonCustomerAsync(CustomerToWrite customerToAdd)
         {
-            var person = customerToAdd.Person.Id > 0
-                ? await personRepository.GetEntityAsync(customerToAdd.Person.Id)
-                : CreateNewPerson(customerToAdd.Person);
-            return CreateCustomer(person, customerToAdd.CustomerType, customerToAdd.Code);
+            if (customerToAdd.Person.Id < 1)
+            {
+                var newPerson = CreateNewPerson(customerToAdd.Person);
+                personRepository.Add(newPerson);
+                await personRepository.SaveChangesAsync();
+                return CreateCustomer(newPerson, customerToAdd.CustomerType, customerToAdd.Code);
+            }
+
+            if (customerToAdd.Person.Id > 0)
+            {
+                var existingPerson = await personRepository.GetEntityAsync(customerToAdd.Person.Id);
+                return CreateCustomer(existingPerson, customerToAdd.CustomerType, customerToAdd.Code);
+            }
+
+            return null;
         }
 
         private async Task<Customer> CreateBusinessCustomerAsync(CustomerToWrite customerToAdd)
         {
-            var business = customerToAdd.Business.Id > 0
-                ? await businessRepository.GetEntityAsync(customerToAdd.Business.Id)
-                : CreateNewBusiness(customerToAdd.Business);
-            return CreateCustomer(business, customerToAdd.CustomerType, customerToAdd.Code);
+            if (customerToAdd.Business.Id < 1)
+            {
+                //var contact = await personRepository.GetEntityAsync(customerToAdd.Business.Contact.Id);
+                var newBusiness = CreateNewBusiness(customerToAdd.Business);
+                businessRepository.Add(newBusiness);
+                await personRepository.SaveChangesAsync();
+                return CreateCustomer(newBusiness, customerToAdd.CustomerType, customerToAdd.Code);
+            }
+
+            if (customerToAdd.Business.Id > 0)
+            {
+                var existingBusiness = await businessRepository.GetEntityAsync(customerToAdd.Business.Id);
+                return CreateCustomer(existingBusiness, customerToAdd.CustomerType, customerToAdd.Code);
+            }
+
+            return null;
         }
 
-        private static Person CreateNewPerson(PersonToWrite personToWrite)
+        private static Person CreateNewPerson(PersonToWrite personToAdd)
         {
-            return Person.Create(
-                PersonName.Create(personToWrite.Name.LastName, personToWrite.Name.FirstName, personToWrite.Name.MiddleName).Value,
-                personToWrite.Gender,
-                personToWrite.Notes).Value;
+            var newPerson = Person.Create(
+                PersonName.Create(personToAdd.Name.LastName, personToAdd.Name.FirstName, personToAdd.Name.MiddleName).Value,
+                personToAdd.Gender,
+                personToAdd.Notes,
+                personToAdd.Birthday).Value;
+
+            SetDriversLicense(personToAdd.DriversLicense, newPerson);
+            SetAddress(personToAdd.Address, newPerson);
+
+            personToAdd.Phones
+                .Select(phone => Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value)
+                .ToList()
+                .ForEach(newPhone => newPerson.AddPhone(newPhone));
+
+            personToAdd.Emails
+                .Select(email => Email.Create(email.Address, email.IsPrimary).Value)
+                .ToList()
+                .ForEach(newEmail => newPerson.AddEmail(newEmail));
+
+            return newPerson;
         }
 
-        private static Business CreateNewBusiness(BusinessToWrite businessToWrite)
+        private static void SetAddress(AddressToWrite addressToAdd, Person newPerson)
+        {
+            if (addressToAdd is not null)
+            {
+                var address = Address.Create(
+                    addressToAdd.AddressLine1,
+                    addressToAdd.City,
+                    addressToAdd.State,
+                    addressToAdd.PostalCode,
+                    addressToAdd.AddressLine2
+                ).Value;
+
+                newPerson.SetAddress(address);
+            }
+        }
+
+        public static void SetDriversLicense(DriversLicenseToWrite driversLicenseToAdd, Person newPerson)
+        {
+            if (driversLicenseToAdd is not null)
+            {
+                var range = DateTimeRange.Create(driversLicenseToAdd.Issued, driversLicenseToAdd.Expiry).Value;
+
+                var driversLicense = DriversLicense.Create(
+                    driversLicenseToAdd.Number,
+                    driversLicenseToAdd.State,
+                    range
+                ).Value;
+
+                newPerson.SetDriversLicense(driversLicense);
+            }
+        }
+
+        private static Business CreateNewBusiness(BusinessToWrite businessToAdd)
         {
             return Business.Create(
-                BusinessName.Create(businessToWrite.Name).Value,
-                businessToWrite.Notes).Value;
+                BusinessName.Create(businessToAdd.Name).Value,
+                businessToAdd.Notes,
+                null,
+                CreateAddress(businessToAdd),
+                CreateEmails(businessToAdd.Emails),
+                CreatePhones(businessToAdd.Phones)
+                ).Value;
+        }
+
+        private static Address CreateAddress(BusinessToWrite businessToAdd)
+        {
+            return Address.Create(businessToAdd.Address.AddressLine1, businessToAdd.Address.City, businessToAdd.Address.State, businessToAdd.Address.PostalCode, businessToAdd.Address.AddressLine2).Value;
+        }
+
+        private static IReadOnlyList<Email> CreateEmails(List<EmailToWrite> emails)
+        {
+            return emails.Select(email => Email.Create(email.Address, email.IsPrimary).Value).ToList();
+        }
+
+        private static IReadOnlyList<Phone> CreatePhones(List<PhoneToWrite> phones)
+        {
+            return phones.Select(phone => Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value).ToList();
         }
 
         private Customer CreateCustomer(Person entity, CustomerType customerType, string code)

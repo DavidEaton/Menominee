@@ -25,6 +25,9 @@ namespace Menominee.Client.Components.RepairOrders
 
         public async Task<Result<PostResponse>> AddAsync(RepairOrderToWrite fromCaller)
         {
+            if (fromCaller.Customer is null || fromCaller.Vehicle is null)
+                return Result.Failure<PostResponse>("Customer and Vehicle are required");
+
             var entityType = "Repair Order";
             try
             {

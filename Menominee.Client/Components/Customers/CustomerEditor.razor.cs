@@ -2,7 +2,6 @@
 using Menominee.Shared.Models.Customers;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
-using Menominee.Client.Components.Address;
 using Menominee.Shared.Models.Persons;
 
 namespace Menominee.Client.Components.Customers
@@ -10,7 +9,7 @@ namespace Menominee.Client.Components.Customers
     public partial class CustomerEditor
     {
         [Parameter]
-        public CustomerToRead Customer { get; set; }
+        public CustomerToRead? Customer { get; set; }
 
         [Parameter]
         public FormMode FormMode { get; set; }
@@ -25,16 +24,20 @@ namespace Menominee.Client.Components.Customers
         private EditContext EditContext { get; set; } = default!;
         private CustomerValidator CustomerValidator { get; set; } = new();
         private CustomerToWrite CustomerModel { get; set; } = new();
-
-        private AddressEditor addressEditor;
-        List<CustomerTypeEnumModel> CustomerTypeEnumData { get; set; } = new List<CustomerTypeEnumModel>();
-        List<EntityTypeEnumModel> EntityTypeEnumData { get; set; } = new List<EntityTypeEnumModel>();
+        private List<CustomerTypeEnumModel> CustomerTypeEnumData { get; set; } = new List<CustomerTypeEnumModel>();
+        private List<EntityTypeEnumModel> EntityTypeEnumData { get; set; } = new List<EntityTypeEnumModel>();
+        private bool Submitting { get; set; } = false;
 
         protected override void OnInitialized()
         {
-            if (FormMode.Equals(FormMode.Edit))
+            if (FormMode.Equals(FormMode.Edit) && Customer is not null)
             {
                 CustomerModel = CustomerHelper.ConvertReadToWriteDto(Customer);
+            }
+
+            foreach (CustomerType item in Enum.GetValues(typeof(CustomerType)))
+            {
+                CustomerTypeEnumData.Add(new CustomerTypeEnumModel { DisplayText = EnumExtensions.GetDisplayName(item), Value = item });
             }
 
             foreach (EntityType item in Enum.GetValues(typeof(EntityType)))
@@ -45,15 +48,22 @@ namespace Menominee.Client.Components.Customers
             EditContext = new EditContext(CustomerModel);
             if (FormMode.Equals(FormMode.Add))
             {
-                CustomerModel.EntityType = EntityType.Person;
-                EntityTypeChanged();
+                CustomerModel.CustomerType = CustomerType.Retail;
             }
+
+            CustomerTypeChanged();
 
             base.OnInitialized();
         }
 
         private async Task HandleSubmit(EditContext editContext)
         {
+            if (!Submitting)
+            {
+                return;
+            }
+            Submitting = false; // reset in case of error
+
             var isValid = editContext.Validate();
 
             if (!isValid)
@@ -72,23 +82,49 @@ namespace Menominee.Client.Components.Customers
             await OnDiscard.InvokeAsync();
         }
 
-        protected async Task Submit()
+        protected void Submit()
+        {
+            Submitting = true;
+        }
+
+        protected void Close()
         {
 
         }
 
-        protected async Task Close()
+        private void CustomerTypeChanged()
         {
+            switch (CustomerModel.CustomerType)
+            {
+                case CustomerType.Retail:
+                case CustomerType.Employee:
+                    CustomerModel.EntityType = EntityType.Person;
+                    break;
+                case CustomerType.Business:
+                case CustomerType.Fleet:
+                case CustomerType.BillingCenter:
+                case CustomerType.BillingCenterPrepaid:
+                    CustomerModel.EntityType = EntityType.Business;
+                    break;
+                default:
+                    CustomerModel.EntityType = EntityType.Person;
+                    break;
+            }
 
+            EntityTypeChanged();
         }
-
 
         private void EntityTypeChanged()
         {
             if (CustomerModel.EntityType == EntityType.Business)
             {
                 if (CustomerModel.Business is null)
-                    CustomerModel.Business = new();
+                {
+                    CustomerModel.Business = new()
+                    {
+                        Address = new()
+                    };
+                }
 
                 CustomerModel.Person = null;
             }
@@ -99,7 +135,10 @@ namespace Menominee.Client.Components.Customers
 
                 if (CustomerModel.Person is null)
                 {
-                    CustomerModel.Person = new();
+                    CustomerModel.Person = new()
+                    {
+                        Address = new()
+                    };
                 }
 
                 CustomerModel.Person.Name = name;
@@ -107,17 +146,24 @@ namespace Menominee.Client.Components.Customers
             }
         }
 
+        private void TabChangedHandler(int newIndex)
+        {
+            if (newIndex == 1)
+            {
+
+            }
+        }
 
         private class CustomerTypeEnumModel
         {
             public CustomerType Value { get; set; }
-            public string DisplayText { get; set; }
+            public string DisplayText { get; set; } = string.Empty;
         }
 
         private class EntityTypeEnumModel
         {
             public EntityType Value { get; set; }
-            public string DisplayText { get; set; }
+            public string DisplayText { get; set; } = string.Empty;
         }
 
     }

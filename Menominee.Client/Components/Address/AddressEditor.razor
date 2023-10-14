@@ -1,62 +1,68 @@
-﻿<div class="form-group">
-    <label for="address" class="k-label">Street 1</label>
-    <TelerikTextBox @bind-Value="@Address.AddressLine1"
-                    Id="address"
-                    Width="100%"
-                    AutoComplete="off"
-                    Enabled="Enabled" />
-</div>
-<div class="form-group">
-    <label for="addressLine2" class="k-label">Street 2</label>
-    <TelerikTextBox @bind-Value="@Address.AddressLine2"
-                    Id="addressLine2"
-                    Width="100%"
-                    AutoComplete="off"
-                    Enabled="Enabled" />
-</div>
-<div class="form-group">
-    <label for="city" class="k-label">City</label>
-    <TelerikTextBox @bind-Value="@Address.City"
-                    Id="city"
-                    Width="100%"
-                    AutoComplete="off"
-                    Enabled="Enabled" />
-</div>
+﻿<form id="addressEditor">
+    <div class="row">
+        <label for="address" class="k-label">Street 1</label>
+        <TelerikTextBox @bind-Value="@Address.AddressLine1"
+                        Id="address"
+                        Width="100%"
+                        AutoComplete="off"
+                        Enabled="Enabled" />
+    </div>
 
-<div class="form-group">
-    <label for="state" class="k-label">State</label>
-    <TelerikComboBox Data="StateProvinceEnumData"
-                     Id="state"
-                     TextField="DisplayText"
-                     ValueField="Value"
-                     @bind-Value="@Address.State"
-                     Width="100%"
-                     Filterable="true"
-                     ClearButton="false"
-                     Placeholder="Select a State"
-                     Enabled="Enabled" />
-</div>
+    <div class="row">
+        <label for="addressLine2" class="k-label">Street 2</label>
+        <TelerikTextBox @bind-Value="@Address.AddressLine2"
+                        Id="addressLine2"
+                        Width="100%"
+                        AutoComplete="off"
+                        Enabled="Enabled" />
+    </div>
 
-<div>
-    <label for="postalCode" class="k-label">Postal Code</label>
-    <TelerikTextBox @bind-Value="@Address.PostalCode"
-                    Id="postalCode"
-                    Width="100%"
-                    AutoComplete="off"
-                    Enabled="Enabled" />
-</div>
+    <div class="row">
+        <div class="col-12 col-md-9 col-lg-6 p-0">
+            <label for="postalCode" class="k-label">ZIP/Postal Code</label>
+            <TelerikTextBox @bind-Value="@Address.PostalCode"
+                            Id="postalCode"
+                            AutoComplete="off"
+                            Enabled="Enabled" />
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="city" class="k-label">City</label>
+        <TelerikTextBox @bind-Value="@Address.City"
+                        Id="city"
+                        Width="100%"
+                        AutoComplete="off"
+                        Enabled="Enabled" />
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-md-9 col-lg-6 p-0">
+            <label for="stateProv">State/Province</label>
+            <TelerikDropDownList @bind-Value="@Address.State"
+                                 Data="@StateProvinceEnumData"
+                                 TextField="DisplayText"
+                                 ValueField="Value"
+                                 Id="stateProv">
+                <ItemTemplate>
+                    @context.FullDisplayText
+                </ItemTemplate>
+                <DropDownListSettings>
+                    <DropDownListPopupSettings Width="20rem" />
+                </DropDownListSettings>
+            </TelerikDropDownList>
+        </div>
+    </div>
+</form>
+
+
 <style>
-    .k-label {
-        margin-bottom: .2rem !important;
+    .row {
+        margin: 0 0 .5rem 0;
     }
 
-    .add-item {
-        color: white;
-        background-color: forestgreen;
+    #addressEditor .row:last-of-type {
+        margin: 0;
     }
 
-    .remove-item {
-        color: white;
-        background-color: indianred;
-    }
 </style>

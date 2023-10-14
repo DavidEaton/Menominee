@@ -310,6 +310,9 @@ namespace Menominee.Api.RepairOrders
         [HttpPost]
         public async Task<ActionResult<PostResponse>> AddAsync(RepairOrderToWrite repairOrderToAdd)
         {
+            if (repairOrderToAdd.Customer is null || repairOrderToAdd.Vehicle is null)
+                return BadRequest("Customer and Vehicle are required.");
+
             var customer = await customerRepository.GetEntityAsync(repairOrderToAdd.Customer.Id);
             var vehicle = await vehicleRepository.GetEntityAsync(repairOrderToAdd.Vehicle.Id);
             var repairOrderNumbers = await repository.GetTodaysRepairOrderNumbersAsync();

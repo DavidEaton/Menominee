@@ -1,7 +1,6 @@
 using Azure.Identity;
 using Menominee.Api;
 using Menominee.Api.Businesses;
-using Menominee.Api.Common;
 using Menominee.Api.CreditCards;
 using Menominee.Api.Customers;
 using Menominee.Api.Data;
@@ -213,8 +212,8 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.UseWebAssemblyDebugging();
-        app.UseMiddleware<DebugMiddleware>();
-        app.UseMiddleware<RequestLoggingMiddleware>();
+        //app.UseMiddleware<DebugMiddleware>(); // slows performance; enable only when needed
+        //app.UseMiddleware<RequestLoggingMiddleware>(); // slows performance; enable only when needed
     }
     else
     {

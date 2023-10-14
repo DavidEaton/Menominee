@@ -32,7 +32,6 @@ public partial class RepairOrderCustomerVehicleTab
     private FormMode EditCustomerFormMode = FormMode.Unknown;
     private CustomerLookupMode CustomerLookupMode = CustomerLookupMode.Unknown;
 
-
     private void AddCustomer()
     {
         EditCustomerFormMode = FormMode.Add;
@@ -47,34 +46,35 @@ public partial class RepairOrderCustomerVehicleTab
     {
         if (customer.Id > 0)
         {
-            var result = await CustomerDataService.UpdateAsync(customer);
+            var updateResult = await CustomerDataService.UpdateAsync(customer);
 
-            if (result.IsFailure)
+            if (updateResult.IsFailure)
             {
+                // TODO: Alert user of failure
                 return;
             }
         }
         else
         {
-            var result = await CustomerDataService.AddAsync(customer);
+            var addResult = await CustomerDataService.AddAsync(customer);
 
-            if (result.IsFailure)
+            if (addResult.IsFailure)
             {
+                // TODO: Alert user of failure
                 return;
             }
 
-            customer.Id = result.Value.Id;
+            var saveResult = await CustomerDataService.GetAsync(addResult.Value.Id);
+
+            if (saveResult.IsFailure)
+            {
+                // TODO: Alert user of failure
+                return;
+            }
+
+            RepairOrderToEdit.Customer = saveResult.Value;
+            customer.Id = saveResult.Value.Id;
         }
-
-        /*RepairOrderToEdit.Customer = CustomerHelper. customer
-
-        new()
-        {
-            Id = customer.Id,
-            Code = customer.Code,
-            CustomerType = customer.CustomerType,
-            Address = customer.Person.Address,
-        };*/
 
         await RepairOrderToEditChanged.InvokeAsync(RepairOrderToEdit);
         EditCustomerFormMode = FormMode.Unknown;
@@ -120,20 +120,21 @@ public partial class RepairOrderCustomerVehicleTab
             vehicle.Id = result.Value;
         }
 
-        RepairOrderToEdit.Vehicle = new()
-        {
-            Id = vehicle.Id,
-            VIN = vehicle.VIN,
-            Year = vehicle.Year,
-            Make = vehicle.Make,
-            Model = vehicle.Model,
-            Plate = vehicle.Plate,
-            PlateStateProvince = vehicle.PlateStateProvince,
-            UnitNumber = vehicle.UnitNumber,
-            Color = vehicle.Color,
-            Active = vehicle.Active,
-            NonTraditionalVehicle = vehicle.NonTraditionalVehicle
-        };
+        RepairOrderToEdit.Vehicle = VehicleHelper.ConvertWriteToReadDto(vehicle);
+        //RepairOrderToEdit.Vehicle = new()
+        //{
+        //    Id = vehicle.Id,
+        //    VIN = vehicle.VIN,
+        //    Year = vehicle.Year,
+        //    Make = vehicle.Make,
+        //    Model = vehicle.Model,
+        //    Plate = vehicle.Plate,
+        //    PlateStateProvince = vehicle.PlateStateProvince,
+        //    UnitNumber = vehicle.UnitNumber,
+        //    Color = vehicle.Color,
+        //    Active = vehicle.Active,
+        //    NonTraditionalVehicle = vehicle.NonTraditionalVehicle
+        //};
 
         await RepairOrderToEditChanged.InvokeAsync(RepairOrderToEdit);
         EditVehicleFormMode = FormMode.Unknown;

@@ -100,6 +100,7 @@ public class CustomerHelper
                 EntityType = customer.EntityType,
                 Person = customer.Person is not null ? PersonHelper.ConvertToWriteDto(customer.Person) : new(),
                 Business = customer.Business is not null ? BusinessHelper.CovertToWriteDto(customer.Business) : new(),
+                Code = customer.Code,
                 Vehicles = ConvertVehiclesToWrite(customer)
             };
     }

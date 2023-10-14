@@ -3,71 +3,74 @@
 @using Syncfusion.Blazor.DropDowns
 
 <TelerikWindow Visible="true"
-			   Modal="true"
-			   Width="500px"
-			   Class="popupWindowClass">
-	<WindowTitle>
-		@Title
-	</WindowTitle>
-	<WindowContent>
-		<div class="form-row">
-			<div class="form-group col col-12">
-				<label class="m-label" for="name">Tax Name</label>
-				<input type="text" class="form-control" tabindex="0" id="name" autocomplete="off" onfocus="this.select();" @bind-value="ExciseFee.Description">
-			</div>
-		</div>
+               Modal="true"
+               MaxWidth="500px"
+               Class="popupWindowClass">
+    <WindowTitle>
+        @Title
+    </WindowTitle>
+    <WindowContent>
+        @if (ExciseFee is not null)
+        {
+            <div class="form-row">
+                <div class="form-group col col-12">
+                    <label class="m-label" for="name">Tax Name</label>
+                    <input type="text" class="form-control" tabindex="0" id="name" autocomplete="off" onfocus="this.select();" @bind-value="ExciseFee.Description">
+                </div>
+            </div>
 
-		<div class="form-row">
-			<div class="form-group col col-12 col-md-4">
-				@if (feeTypeList != null)
-				{
-					<label class="m-label" for="taxType">Fee Type</label>
-					<SfDropDownList TValue="ExciseFeeType"
-								TItem="FeeTypeListItem"
-								PopupHeight="230px"
-								DataSource="@feeTypeList"
-								@bind-Value="@ExciseFee.FeeType">
-						<DropDownListFieldSettings Text="Text" Value="Value" />
-					</SfDropDownList>
-				}
-			</div>
-			<div class="form-group col col-12 col-md-4">
-				@if (ExciseFee.FeeType == ExciseFeeType.Flat)
-				{
-					<label class="m-label" for="feeFlat">Amount</label>
-					<TelerikNumericTextBox @bind-Value="ExciseFee.Amount"
-                                           Format="C"
-                                           Id="feeFlat"
-                                           Arrows="false">
-					</TelerikNumericTextBox>
+            <div class="form-row">
+                <div class="form-group col col-12 col-md-4">
+                    @if (feeTypeList != null)
+                    {
+                        <label class="m-label" for="taxType">Fee Type</label>
+                        <SfDropDownList TValue="ExciseFeeType"
+                                        TItem="FeeTypeListItem"
+                                        PopupHeight="230px"
+                                        DataSource="@feeTypeList"
+                        @bind-Value="@ExciseFee.FeeType">
+                            <DropDownListFieldSettings Text="Text" Value="Value" />
+                        </SfDropDownList>
+                    }
+                </div>
+                <div class="form-group col col-12 col-md-4">
+                    @if (ExciseFee.FeeType == ExciseFeeType.Flat)
+                    {
+                        <label class="m-label" for="feeFlat">Amount</label>
+                        <TelerikNumericTextBox @bind-Value="ExciseFee.Amount"
+                                               Format="C"
+                                               Id="feeFlat"
+                                               Arrows="false">
+                        </TelerikNumericTextBox>
 
-				}
-				else if (ExciseFee.FeeType == ExciseFeeType.Percentage)
-				{
-					<label class="m-label" for="feePercent">Percent</label>
-					<TelerikNumericTextBox @bind-Value="ExciseFee.Amount"
-										   Format="#0.00#'%'"
-                                           Decimals=3
-                                           Id="feePercent"
-                                           Arrows="false">
-					</TelerikNumericTextBox>
+                    }
+                    else if (ExciseFee.FeeType == ExciseFeeType.Percentage)
+                    {
+                        <label class="m-label" for="feePercent">Percent</label>
+                        <TelerikNumericTextBox @bind-Value="ExciseFee.Amount"
+                                               Format="#0.00#'%'"
+                                               Decimals=3
+                                               Id="feePercent"
+                                               Arrows="false">
+                        </TelerikNumericTextBox>
 
-				}
-			</div>
-		</div>
+                    }
+                </div>
+            </div>
+        }
 
-		<SaveDiscardButtons OnSave="@OnSave" OnDiscard="@OnCancel" />
+        <SaveDiscardButtons OnSave="@OnSave" OnDiscard="@OnCancel" />
 
-	</WindowContent>
+    </WindowContent>
 </TelerikWindow>
 
 <style>
-	.dialog-button {
-		margin-right: 0.7rem;
-	}
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
 
-	.form-group {
-		margin-bottom: .5rem !important;
-	}
+    .form-group {
+        margin-bottom: .5rem !important;
+    }
 
 </style>

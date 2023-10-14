@@ -324,6 +324,36 @@ app {
         background-color: darkgray;
     }
 
+.k-label {
+    margin-bottom: .2rem !important;
+}
+
+.k-form-md .k-form-field {
+    margin-top: 0;
+    margin-bottom: .5rem;
+}
+
+.k-tabstrip, .k-form-buttons {
+    margin-top: .5rem !important;
+}
+
+.m-rounded-tab {
+    border-top-left-radius: 8px !important;
+    border-top-right-radius: 8px !important;
+    overflow: hidden;
+}
+
+li.k-tabstrip-item.k-item.k-active span.k-link {
+    font-weight: 600 !important;
+    color: white !important;
+    background-color: var(--bg-color-medium) !important;
+}
+
+li.k-tabstrip-item.k-item.k-state-default span.k-link {
+    color: black !important;
+    background-color: var(--bg-color-extra-light) !important;
+}
+
 .form-control-label {
     font-size: small
 }

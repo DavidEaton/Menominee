@@ -1,9 +1,6 @@
 ﻿using Menominee.Shared.Models.Contactable;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 using Telerik.Blazor;
 
@@ -12,19 +9,19 @@ namespace Menominee.Client.Components.Emails
     public partial class EmailListEditor : ComponentBase
     {
         [Parameter]
-        public IList<EmailToWrite> Emails { get; set; }
+        public IList<EmailToWrite>? Emails { get; set; } = null;
 
         [Parameter]
         public FormMode FormMode { get; set; }
 
         [CascadingParameter]
-        public DialogFactory Dialogs { get; set; }
+        public DialogFactory? Dialogs { get; set; }
 
         private IEnumerable<EmailToWrite> SelectedEmails { get; set; } = Enumerable.Empty<EmailToWrite>();
-        private EmailToWrite SelectedEmail { get; set; }
-        private EmailToWrite EmailToModify { get; set; } = null;
+        private EmailToWrite? SelectedEmail { get; set; }
+        private EmailToWrite? EmailToModify { get; set; } = null;
 
-        private TelerikGrid<EmailToWrite> Grid { get; set; }
+        private TelerikGrid<EmailToWrite>? Grid { get; set; }
 
         private int SelectedEmailIndex
         {
@@ -39,9 +36,10 @@ namespace Menominee.Client.Components.Emails
 
         private bool CanEdit { get; set; } = false;
 
-        private long EmailIdToSelect { get; set; } = 0;
+        private long emailIdToSelect = 0;
         private int selectedEmailIndex = -1;
         private bool editDialogVisible = false;
+        private bool parametersSet = false;
 
         private FormMode EmailFormMode { get; set; } = FormMode.Unknown;
         private bool CanEditEmail { get; set; } = false;
@@ -52,16 +50,19 @@ namespace Menominee.Client.Components.Emails
             get => editDialogVisible;
             set
             {
-                if (value == true)
+                if (value)
                 {
                     if (EmailFormMode == FormMode.Add)
                     {
                         EmailToModify = new();
-                        if (Emails.Count == 0)
+                        if (Emails?.Count == 0)
+                        {
                             EmailToModify.IsPrimary = true;
+                        }
                     }
 
-                    if (EmailFormMode == FormMode.Edit || EmailFormMode == FormMode.View)
+                    if ((EmailFormMode is FormMode.Edit or FormMode.View) && 
+                        SelectedEmail is not null)
                     {
                         EmailToModify = new();
                         CopyEmail(SelectedEmail, EmailToModify);
@@ -70,7 +71,10 @@ namespace Menominee.Client.Components.Emails
                 else
                 {
                     if (EmailToModify is not null)
+                    {
                         EmailToModify = null;
+                    }
+
                     EmailFormMode = FormMode.Unknown;
                 }
 
@@ -80,15 +84,26 @@ namespace Menominee.Client.Components.Emails
 
         protected override void OnParametersSet()
         {
-            CanEdit = FormMode == FormMode.Add || FormMode == FormMode.Edit;
+            if (parametersSet)
+            {
+                return;
+            }
+            parametersSet = true;
+
+            CanEdit = FormMode is FormMode.Add or FormMode.Edit;
 
             if (Emails?.Count > 0)
             {
-                if (EmailIdToSelect == 0)
+                if (emailIdToSelect == 0)
+                {
                     SelectedEmail = Emails.FirstOrDefault();
+                }
 
-                SelectedEmailIndex = Emails.IndexOf(SelectedEmail);
-                SelectedEmails = new List<EmailToWrite> { SelectedEmail };
+                if (SelectedEmail is not null)
+                {
+                    SelectedEmailIndex = Emails.IndexOf(SelectedEmail);
+                    SelectedEmails = new List<EmailToWrite> { SelectedEmail };
+                }
             }
         }
 
@@ -109,21 +124,36 @@ namespace Menominee.Client.Components.Emails
 
         private async Task OnDelete()
         {
-            if (SelectedEmail is not null
-            && await Dialogs.ConfirmAsync($"Are you sure you want to remove {SelectedEmail.Address}?", "Remove Email"))
+            if (SelectedEmail is not null && 
+                Emails is not null && 
+                Dialogs is not null &&
+                await Dialogs.ConfirmAsync($"Are you sure you want to remove {SelectedEmail.Address}?", "Remove Email"))
             {
                 Emails.Remove(SelectedEmail);
                 SelectedEmail = Emails.FirstOrDefault();
-                SelectedEmails = new List<EmailToWrite> { SelectedEmail };
-                SelectedEmailIndex = Emails.IndexOf(SelectedEmail);
-                Grid.Rebind();
+                if (SelectedEmail is not null)
+                {
+                    SelectedEmails = new List<EmailToWrite> { SelectedEmail };
+                    SelectedEmailIndex = Emails.IndexOf(SelectedEmail);
+                }
+                else
+                {
+                    SelectedEmailIndex = -1;
+                }
+                Grid?.Rebind();
             }
         }
 
         private void OnSaveEdit()
         {
-            if (EmailFormMode != FormMode.Add && EmailFormMode != FormMode.Edit)
+            if (EmailFormMode is not FormMode.Add and not FormMode.Edit)
+            {
                 return;
+            }
+            if (Emails is null || EmailToModify is null)
+            {
+                return;
+            }
 
             if (EmailFormMode == FormMode.Add)
             {
@@ -131,7 +161,7 @@ namespace Menominee.Client.Components.Emails
                 SelectedEmailIndex = Emails.IndexOf(EmailToModify);
                 SelectedEmail = Emails[SelectedEmailIndex];
                 SelectedEmails = new List<EmailToWrite> { SelectedEmail };
-                Grid.Rebind();
+                Grid?.Rebind();
             }
             else if (EmailFormMode == FormMode.Edit)
             {
@@ -150,8 +180,11 @@ namespace Menominee.Client.Components.Emails
         private void OnRowSelected(GridRowClickEventArgs args)
         {
             SelectedEmail = args.Item as EmailToWrite;
-            SelectedEmailIndex = Emails.IndexOf(SelectedEmail);
-            SelectedEmails = new List<EmailToWrite> { SelectedEmail };
+            if (SelectedEmail is not null)
+            {
+                SelectedEmailIndex = Emails?.IndexOf(SelectedEmail) ?? -1;
+                SelectedEmails = new List<EmailToWrite> { SelectedEmail };
+            }
         }
 
         private static void CopyEmail(EmailToWrite src, EmailToWrite dst)

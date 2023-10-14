@@ -14,7 +14,7 @@ namespace Menominee.Client.Components.Phones
         public PhoneToWrite Phone { get; set; }
 
         [Parameter]
-        public IList<PhoneToWrite> Phones { get; set; }
+        public List<PhoneToWrite>? Phones { get; set; } = null;
 
         [Parameter]
         public bool Enabled { get; set; }

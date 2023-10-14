@@ -12,10 +12,10 @@
            title="Add phone">
         add Phone
     </label>
-    @if ((int)Phones?.Count() > 0)
+    @if (Phones is not null)
     {
         <ContactableTemplate Items="Phones"
-                         TItem="Menominee.Shared.Models.Contactable.PhoneToWrite"
+                             TItem="Menominee.Shared.Models.Contactable.PhoneToWrite"
                          Context="phone"
                          @key="Phone"
                          OnRowClick="Edit">

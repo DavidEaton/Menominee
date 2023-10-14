@@ -3,67 +3,70 @@
 
 <TelerikWindow Visible="true"
                Modal="true"
-               Width="500px"
+               MaxWidth="500px"
+               Resizable="false"
                Class="popupWindowClass">
     <WindowTitle>
         @Title
     </WindowTitle>
     <WindowContent>
-			<div class="form-row">
-				<div class="form-group col col-12">
-					<label class="m-label" for="name">Name</label>
-					<input type="text" class="form-control" id="name" autocomplete="off" onfocus="this.select();" @bind-value="CreditCard.Name">
-				</div>
-			</div>
+        @if (CreditCard is not null)
+        {
+            <div class="form-row">
+                <div class="form-group col col-12">
+                    <label class="m-label" for="name">Name</label>
+                    <input type="text" class="form-control" id="name" autocomplete="off" onfocus="this.select();" @bind-value="CreditCard.Name">
+                </div>
+            </div>
 
-			<div class="form-row">
-				<div class="form-group col col-12 col-md-4">
-					@if (feeTypeList != null)
-					{
-						<label class="m-label" for="feeType">Fee Type</label>
-						<SfDropDownList TValue="CreditCardFeeType"
-									TItem="FeeTypeListItem"
-									PopupHeight="230px"
-									DataSource="@feeTypeList"
-                                    Width="140px"
-									@bind-Value="@CreditCard.FeeType">
-							<DropDownListFieldSettings Text="Text" Value="Value" />
-						</SfDropDownList>
-					}
-				</div>
-				<div class="form-group col col-12 col-md-3">
-					@if (CreditCard.FeeType == CreditCardFeeType.Flat)
-					{
-						<label class="m-label" for="flatFee">Amount</label>
-						<TelerikNumericTextBox @bind-Value="CreditCard.Fee"
-										   Format="C"
-										   Id="flatFee"
-										   Arrows="false">
-						</TelerikNumericTextBox>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    @if (FeeTypeList != null)
+                    {
+                        <label class="m-label" for="feeType">Fee Type</label>
+                        <SfDropDownList TValue="CreditCardFeeType"
+                                        TItem="FeeTypeListItem"
+                                        PopupHeight="230px"
+                                        DataSource="@FeeTypeList"
+                        @bind-Value="@CreditCard.FeeType">
+                            <DropDownListFieldSettings Text="DisplayText" Value="Value" />
+                        </SfDropDownList>
+                    }
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    @if (CreditCard.FeeType == CreditCardFeeType.Flat)
+                    {
+                        <label class="m-label" for="flatFee">Amount</label>
+                        <TelerikNumericTextBox @bind-Value="CreditCard.Fee"
+                                               Format="C"
+                                               Id="flatFee"
+                                               Arrows="false">
+                        </TelerikNumericTextBox>
 
-					}
-					else if (CreditCard.FeeType == CreditCardFeeType.Percentage)
-					{
-						<label class="m-label" for="feePercent">Percentage</label>
-						<TelerikNumericTextBox @bind-Value="CreditCard.Fee"
-										   Format="#0.00#'%'"
-                                           Decimals=3
-										   Id="feePercent"
-										   Arrows="false">
-						</TelerikNumericTextBox>
+                    }
+                    else if (CreditCard.FeeType == CreditCardFeeType.Percentage)
+                    {
+                        <label class="m-label" for="feePercent">Percentage</label>
+                        <TelerikNumericTextBox @bind-Value="CreditCard.Fee"
+                                               Format="#0.00#'%'"
+                                               Decimals=3
+                                               Id="feePercent"
+                                               Arrows="false">
+                        </TelerikNumericTextBox>
 
-					}
-				</div>
-			</div>
+                    }
+                </div>
+            </div>
 
-			<div class="form-row">
-				<div class="form-group col col-12">
-					<TelerikCheckBox Id="deposit" @bind-Value="CreditCard.IsAddedToDeposit" />
-					<label class="m-label" for="deposit">Add To Deposit</label>
-				</div>
-			</div>
+            <div class="form-row">
+                <div class="form-group col col-12">
+                    <TelerikCheckBox Id="deposit" @bind-Value="CreditCard.IsAddedToDeposit" />
+                    <label class="m-label" for="deposit">Add To Deposit</label>
+                </div>
+            </div>
+        }
 
-			<SaveDiscardButtons OnSave="@OnSave" OnDiscard="@OnCancel" />
+        <SaveDiscardButtons OnSave="@OnSave" OnDiscard="@OnCancel" />
 
     </WindowContent>
 </TelerikWindow>

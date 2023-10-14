@@ -57,7 +57,6 @@ public class CustomersControllerShould : IntegrationTestBase
         var customerFromEndpoint = await HttpClient.GetFromJsonAsync<CustomerToRead>($"{Route}/{customerFromDatabase.Id}");
 
         customerFromEndpoint.Should().BeOfType<CustomerToRead>();
-
     }
 
     [Fact]
@@ -79,10 +78,83 @@ public class CustomersControllerShould : IntegrationTestBase
     }
 
     [Fact]
+    public async Task Add_a_new_Person_and_a_new_Customer()
+    {
+        var generateId = false;
+        var includeAddress = true;
+        var includeDriverseLicense = true;
+        var collectionCount = 3;
+        var person = new PersonFaker(
+            generateId: generateId,
+            includeAddress: includeAddress,
+            includeDriversLicense: includeDriverseLicense,
+            emailsCount: collectionCount,
+            phonesCount: collectionCount).Generate();
+        var customer = Customer.Create(person, CustomerType.Retail, Code).Value;
+
+        var request = CustomerHelper.ConvertToWriteDto(customer);
+
+        var result = await PostCustomer(request);
+        var id = JsonSerializerHelper.GetIdFromString(result);
+        var customerFromEndpoint = await HttpClient
+            .GetFromJsonAsync<CustomerToRead>($"{Route}/{id}");
+
+        customerFromEndpoint.Should().BeOfType<CustomerToRead>();
+        customerFromEndpoint.Person.Should().NotBeNull();
+        customerFromEndpoint.Person.Id.Should().BeGreaterThan(0);
+        customerFromEndpoint.Person.Name.Should().BeEquivalentTo(request.Person.Name, options => options.ExcludingMissingMembers());
+        customerFromEndpoint.Person.Birthday.Should().Be(request.Person.Birthday);
+        customerFromEndpoint.Person.Gender.Should().Be(request.Person.Gender);
+        customerFromEndpoint.Person.Address.Should().BeEquivalentTo(request.Person.Address, options => options.ExcludingMissingMembers());
+        foreach (var email in request.Person.Emails)
+            customerFromEndpoint.Person.Emails.Should().ContainEquivalentOf(email, options => options.Excluding(c => c.Id));
+        foreach (var phone in request.Person.Phones)
+            customerFromEndpoint.Person.Phones.Should().ContainEquivalentOf(phone, options => options.Excluding(c => c.Id));
+        customerFromEndpoint.Person.DriversLicense.Should().BeEquivalentTo(request.Person.DriversLicense, options => options.ExcludingMissingMembers());
+    }
+
+    [Fact]
     public async Task Add_a_Business_Customer()
     {
         var business = DbContext.Businesses.First();
         var customer = Customer.Create(business, CustomerType.Retail, Code).Value;
+
+        var request = CustomerHelper.ConvertToWriteDto(customer);
+
+        var result = await PostCustomer(request);
+        var id = JsonSerializerHelper.GetIdFromString(result);
+        var customerFromEndpoint = await HttpClient
+            .GetFromJsonAsync<CustomerToRead>($"{Route}/{id}");
+
+        customerFromEndpoint.Should().BeOfType<CustomerToRead>();
+        customerFromEndpoint.Business.Should().NotBeNull();
+        customerFromEndpoint.Business.Id.Should().BeGreaterThan(0);
+        customerFromEndpoint.Business.Name.Should().BeEquivalentTo(request.Business.Name);
+        customerFromEndpoint.Business.Address.Should().BeEquivalentTo(request.Business.Address, options => options.ExcludingMissingMembers());
+        foreach (var email in request.Business.Emails)
+            customerFromEndpoint.Business.Emails.Should().ContainEquivalentOf(email, options => options.Excluding(c => c.Id));
+        foreach (var phone in request.Business.Phones)
+            customerFromEndpoint.Business.Phones.Should().ContainEquivalentOf(phone, options => options.Excluding(c => c.Id));
+        customerFromEndpoint.Business.Should()
+            .BeEquivalentTo(CustomerHelper.ConvertToReadDto(customer).Business, options => options.Excluding(c => c.Id));
+        customerFromEndpoint.Vehicles.Should()
+            .BeEquivalentTo(CustomerHelper.ConvertToReadDto(customer).Vehicles, options => options.Excluding(v => v.Id));
+    }
+
+    [Fact]
+    public async Task Add_a_new_Business_and_a_new_Customer()
+    {
+        var generateId = false;
+        var includeAddress = true;
+        var collectionCount = 3;
+        var business = new BusinessFaker(
+            generateId: generateId,
+            includeAddress: includeAddress,
+            emailsCount: collectionCount,
+            phonesCount: collectionCount).Generate();
+        var customer = Customer.Create(business, CustomerType.Retail, Code).Value;
+
+        var request = CustomerHelper.ConvertToWriteDto(customer);
 
         var result = await PostCustomer(CustomerHelper.ConvertToWriteDto(customer));
         var id = JsonSerializerHelper.GetIdFromString(result);

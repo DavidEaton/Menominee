@@ -1,6 +1,6 @@
-﻿using Menominee.Domain.Entities;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Menominee.Domain.Entities;
 using TestingHelperLibrary.Fakers;
 using Address = Menominee.Common.ValueObjects.Address;
 using Email = Menominee.Domain.Entities.Email;
@@ -70,12 +70,12 @@ namespace TestingHelperLibrary
 
         public static List<Business> CreateBusinesses(List<BusinessName> names)
         {
-            var orgs = new List<Business>();
+            var businesses = new List<Business>();
 
             foreach (var name in names)
-                orgs.Add(CreateBusiness(name));
+                businesses.Add(CreateBusiness(name));
 
-            return orgs;
+            return businesses;
         }
 
         public static Business CreateBusiness(BusinessName name)

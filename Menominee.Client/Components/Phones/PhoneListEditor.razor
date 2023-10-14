@@ -7,28 +7,26 @@
 @if (Phones is not null)
 {
     <TelerikGrid Data="Phones"
-             OnRowClick="@OnRowSelected"
-             OnRowDoubleClick="@OnEdit"
-             Sortable="true"
-             FilterMode="GridFilterMode.FilterMenu"
-             ShowColumnMenu="true"
-             SelectionMode="GridSelectionMode.Single"
-             SelectedItems="@SelectedPhones"
-             EditMode="@(CanEdit ? GridEditMode.Inline : GridEditMode.None)"
-             @ref="@Grid">
+                 OnRowClick="@OnRowSelected"
+                 OnRowDoubleClick="@OnEdit"
+                 SelectedItems="@SelectedPhones"
+                 SelectionMode="GridSelectionMode.Single"
+                 Class="max-phone-grid-height"
+                 Id="phoneGrid"
+                 @ref="@Grid">
         <GridColumns>
-            <GridColumn Width="60%"
-                    Title="Number"
-                    ShowColumnChooser="false"
-                    Lockable="false"
-                    ShowColumnMenu="false"
-                    Sortable="false"
-                    Filterable="false">
+            <GridColumn Width="70%"
+                        Title="Number"
+                        ShowColumnChooser="false"
+                        Lockable="false"
+                        ShowColumnMenu="false"
+                        Sortable="false"
+                        Filterable="false">
                 <Template>
                     @{
                         @if ((context as PhoneToWrite).IsPrimary)
                         {
-                            <span class="green-check">
+                            <span class="green-check pr-2">
                                 <TelerikFontIcon Icon="@FontIcon.CheckCircle" />
                             </span>
                         }
@@ -36,46 +34,61 @@
                     }
                 </Template>
             </GridColumn>
-            <GridColumn Width="40%"
-                    Field="@nameof(PhoneToWrite.PhoneType)"
-                    Title="Type"
-                    ShowColumnChooser="false"
-                    Lockable="false"
-                    ShowColumnMenu="false"
-                    Sortable="false"
-                    Filterable="false">
+            <GridColumn Width="30%"
+                        Field="@nameof(PhoneToWrite.PhoneType)"
+                        Title="Type"
+                        ShowColumnChooser="false"
+                        Lockable="false"
+                        ShowColumnMenu="false"
+                        Sortable="false"
+                        Filterable="false">
             </GridColumn>
         </GridColumns>
+        <NoDataTemplate>
+            No Phones Entered
+        </NoDataTemplate>
     </TelerikGrid>
 
     @if (PhoneToModify is not null)
     {
         <PhoneEditor Phone="PhoneToModify"
-             FormMode="PhoneFormMode"
-             OnSave="OnSaveEdit"
-             OnCancel="OnCancelEdit" />
+                     FormMode="PhoneFormMode"
+                     OnSave="OnSaveEdit"
+                     OnCancel="OnCancelEdit" />
     }
 
     @if (CanEdit)
     {
         <EditNewDeleteIconButtons OnEdit="OnEdit"
-                          OnNew="OnNew"
-                          OnDelete="OnDelete"
-                          ShowDivider="false"
-                          CanAdd="CanEdit"
-                          CanEdit="CanEditPhone"
-                          CanDelete="CanDeletePhone" />
+                                  OnNew="OnNew"
+                                  OnDelete="OnDelete"
+                                  ShowDivider="false"
+                                  CanAdd="CanEdit"
+                                  CanEdit="CanEditPhone"
+                                  CanDelete="CanDeletePhone" />
     }
     else
     {
         <EditNewDeleteIconButtons OnEdit="OnEdit"
-                          ShowDivider="false"
-                          CanEdit="CanEditPhone" />
+                                  ShowDivider="false"
+                                  CanEdit="CanEditPhone" />
     }
 }
 
 <style>
     .green-check {
-        color: green
+        color: green;
+    }
+
+    .max-phone-grid-height {
+        max-height: 163px !important;
+    }
+
+    #phoneGrid .k-grid-header {
+        background-color: #f8f9fa;
+    }
+
+    #phoneGrid .k-table-thead {
+        display: none;
     }
 </style>

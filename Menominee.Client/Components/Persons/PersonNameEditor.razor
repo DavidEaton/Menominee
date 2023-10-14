@@ -1,26 +1,34 @@
-﻿<div class="form-group row">
-    <label for="firstName" class="k-label">First Name</label>
-    <TelerikTextBox @bind-Value="PersonName.FirstName"
-                    Id="firstName"
-                    Width="100%">
-    </TelerikTextBox>
+﻿<div class="person-name-container">
+    <div class="row">
+        <div class="col-9 pl-0">
+            <label for="firstName" class="k-label">First Name</label>
+            <TelerikTextBox @bind-Value="PersonName.FirstName"
+                            Id="firstName"
+                            AutoComplete="off"
+                            Width="100%">
+            </TelerikTextBox>
+        </div>
+        <div class="col-3 p-0">
+            <label for="middleName" class="k-label">Middle</label>
+            <TelerikTextBox @bind-Value="PersonName.MiddleName"
+                            Id="middleName"
+                            AutoComplete="off"
+                            Width="100%">
+            </TelerikTextBox>
+        </div>
+    </div>
+    <div class="row mb-0">
+        <label for="lastName" class="k-label">Last Name</label>
+        <TelerikTextBox @bind-Value="PersonName.LastName"
+                        Id="lastName"
+                        AutoComplete="off"
+                        Width="100%">
+        </TelerikTextBox>
+    </div>
 </div>
-<div class="form-group row">
-    <label for="middleName" class="k-label">Middle Name</label>
-    <TelerikTextBox @bind-Value="PersonName.MiddleName"
-                    Id="middleName"
-                    Width="100%">
-    </TelerikTextBox>
-</div>
-<div class="form-group row">
-    <label for="lastName" class="k-label">Last Name</label>
-    <TelerikTextBox @bind-Value="PersonName.LastName"
-                    Id="lastName"
-                    Width="100%">
-    </TelerikTextBox>
-</div>
+
 <style>
-    .k-label {
-        margin-bottom: .2rem !important;
+    .person-name-container {
+        display: grid;
     }
 </style>

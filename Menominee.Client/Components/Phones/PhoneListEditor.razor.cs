@@ -1,18 +1,15 @@
 ﻿using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
 using Telerik.Blazor.Components;
 using Telerik.Blazor;
 using Menominee.Shared.Models.Contactable;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Phones
 {
     public partial class PhoneListEditor : ComponentBase
     {
         [Parameter]
-        public IList<PhoneToWrite> Phones { get; set; }
+        public IList<PhoneToWrite>? Phones { get; set; } = null;
 
         [Parameter]
         public FormMode FormMode { get; set; }
@@ -21,13 +18,13 @@ namespace Menominee.Client.Components.Phones
         public PhoneType DefaultPhoneType { get; set; } = PhoneType.Mobile;
 
         [CascadingParameter]
-        public DialogFactory Dialogs { get; set; }
+        public DialogFactory? Dialogs { get; set; }
 
         private IEnumerable<PhoneToWrite> SelectedPhones { get; set; } = Enumerable.Empty<PhoneToWrite>();
-        private PhoneToWrite SelectedPhone { get; set; }
-        private PhoneToWrite PhoneToModify { get; set; } = null;
+        private PhoneToWrite? SelectedPhone { get; set; }
+        private PhoneToWrite? PhoneToModify { get; set; } = null;
 
-        private TelerikGrid<PhoneToWrite> Grid { get; set; }
+        private TelerikGrid<PhoneToWrite>? Grid { get; set; }
 
         private int SelectedPhoneIndex
         {
@@ -42,9 +39,10 @@ namespace Menominee.Client.Components.Phones
 
         private bool CanEdit { get; set; } = false;
 
-        private long phoneIdToSelect { get; set; } = 0;
+        private long phoneIdToSelect = 0;
         private int selectedPhoneIndex = -1;
         private bool editDialogVisible = false;
+        private bool parametersSet = false;
 
         private FormMode PhoneFormMode { get; set; } = FormMode.Unknown;
         private bool CanEditPhone { get; set; } = false;
@@ -55,17 +53,22 @@ namespace Menominee.Client.Components.Phones
             get => editDialogVisible;
             set
             {
-                if (value == true)
+                if (value)
                 {
                     if (PhoneFormMode == FormMode.Add)
                     {
-                        PhoneToModify = new PhoneToWrite();
-                        PhoneToModify.PhoneType = DefaultPhoneType;
-                        if (Phones.Count == 0)
+                        PhoneToModify = new PhoneToWrite
+                        {
+                            PhoneType = DefaultPhoneType
+                        };
+                        if (Phones?.Count == 0)
+                        {
                             PhoneToModify.IsPrimary = true;
+                        }
                     }
 
-                    if (PhoneFormMode == FormMode.Edit || PhoneFormMode == FormMode.View)
+                    if ((PhoneFormMode == FormMode.Edit || PhoneFormMode == FormMode.View) &&
+                        SelectedPhone is not null)
                     {
                         PhoneToModify = new PhoneToWrite();
                         CopyPhone(SelectedPhone, PhoneToModify);
@@ -74,7 +77,10 @@ namespace Menominee.Client.Components.Phones
                 else
                 {
                     if (PhoneToModify is not null)
+                    {
                         PhoneToModify = null;
+                    }
+
                     PhoneFormMode = FormMode.Unknown;
                 }
 
@@ -84,15 +90,26 @@ namespace Menominee.Client.Components.Phones
 
         protected override void OnParametersSet()
         {
-            CanEdit = FormMode == FormMode.Add || FormMode == FormMode.Edit;
+            if (parametersSet)
+            {
+                return;
+            }
+            parametersSet = true;
+
+            CanEdit = FormMode is FormMode.Add or FormMode.Edit;
 
             if (Phones?.Count > 0)
             {
                 if (phoneIdToSelect == 0)
+                {
                     SelectedPhone = Phones.FirstOrDefault();
+                }
 
-                SelectedPhoneIndex = Phones.IndexOf(SelectedPhone);
-                SelectedPhones = new List<PhoneToWrite> { SelectedPhone };
+                if (SelectedPhone is not null)
+                {
+                    SelectedPhoneIndex = Phones.IndexOf(SelectedPhone);
+                    SelectedPhones = new List<PhoneToWrite> { SelectedPhone };
+                }
             }
         }
 
@@ -113,21 +130,36 @@ namespace Menominee.Client.Components.Phones
 
         private async Task OnDelete()
         {
-            if (SelectedPhone is not null
-            && await Dialogs.ConfirmAsync($"Are you sure you want to remove {SelectedPhone.Number.ToString()}?", "Remove Phone"))
+            if (SelectedPhone is not null &&
+                Phones is not null &&
+                Dialogs is not null &&
+                await Dialogs.ConfirmAsync($"Are you sure you want to remove {SelectedPhone.ToString()}?", "Remove Phone"))
             {
                 Phones.Remove(SelectedPhone);
                 SelectedPhone = Phones.FirstOrDefault();
-                SelectedPhones = new List<PhoneToWrite> { SelectedPhone };
-                SelectedPhoneIndex = Phones.IndexOf(SelectedPhone);
-                Grid.Rebind();
+                if (SelectedPhone is not null)
+                {
+                    SelectedPhones = new List<PhoneToWrite> { SelectedPhone };
+                    SelectedPhoneIndex = Phones.IndexOf(SelectedPhone);
+                }
+                else
+                {
+                    SelectedPhone = null;
+                }
+                Grid?.Rebind();
             }
         }
 
         private void OnSaveEdit()
         {
-            if (PhoneFormMode != FormMode.Add && PhoneFormMode != FormMode.Edit)
+            if (PhoneFormMode is not FormMode.Add and not FormMode.Edit)
+            {
                 return;
+            }
+            if (Phones is null || PhoneToModify is null)
+            {
+                return;
+            }
 
             if (PhoneFormMode == FormMode.Add)
             {
@@ -135,7 +167,7 @@ namespace Menominee.Client.Components.Phones
                 SelectedPhoneIndex = Phones.IndexOf(PhoneToModify);
                 SelectedPhone = Phones[SelectedPhoneIndex];
                 SelectedPhones = new List<PhoneToWrite> { SelectedPhone };
-                Grid.Rebind();
+                Grid?.Rebind();
             }
             else if (PhoneFormMode == FormMode.Edit)
             {
@@ -144,7 +176,6 @@ namespace Menominee.Client.Components.Phones
             EditDialogVisible = false;
             StateHasChanged();
         }
-
         private void OnCancelEdit()
         {
             PhoneFormMode = FormMode.Unknown;
@@ -154,8 +185,11 @@ namespace Menominee.Client.Components.Phones
         private void OnRowSelected(GridRowClickEventArgs args)
         {
             SelectedPhone = args.Item as PhoneToWrite;
-            SelectedPhoneIndex = Phones.IndexOf(SelectedPhone);
-            SelectedPhones = new List<PhoneToWrite> { SelectedPhone };
+            if (SelectedPhone is not null)
+            {
+                SelectedPhoneIndex = Phones?.IndexOf(SelectedPhone) ?? -1;
+                SelectedPhones = new List<PhoneToWrite> { SelectedPhone };
+            }
         }
 
         private static void CopyPhone(PhoneToWrite src, PhoneToWrite dst)
@@ -165,6 +199,5 @@ namespace Menominee.Client.Components.Phones
             dst.PhoneType = src.PhoneType;
             dst.IsPrimary = src.IsPrimary;
         }
-
     }
 }

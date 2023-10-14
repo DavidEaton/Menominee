@@ -8,7 +8,7 @@ namespace Menominee.Client.Components.Settings
     public partial class CreditCardEditor
     {
         [Parameter]
-        public CreditCardToWrite CreditCard { get; set; }
+        public CreditCardToWrite? CreditCard { get; set; }
 
         [Parameter]
         public string Title { get; set; } = "Edit Credit Card";
@@ -20,29 +20,17 @@ namespace Menominee.Client.Components.Settings
         public EventCallback OnCancel { get; set; }
 
         [Inject]
-        IJSRuntime JsInterop { get; set; }
-
-        //private bool parametersSet = false;
+        private IJSRuntime? JsInterop { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             foreach (CreditCardFeeType feeType in Enum.GetValues(typeof(CreditCardFeeType)))
             {
-                feeTypeList.Add(new FeeTypeListItem { Text = EnumExtensions.GetDisplayName(feeType), Value = feeType });
+                FeeTypeList.Add(new FeeTypeListItem { DisplayText = EnumExtensions.GetDisplayName(feeType), Value = feeType });
             }
 
             await base.OnInitializedAsync();
         }
-
-        //protected override void OnParametersSet()
-        //{
-        //    if (parametersSet)
-        //        return;
-
-        //    parametersSet = true;
-
-        //    StateHasChanged();
-        //}
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -55,15 +43,16 @@ namespace Menominee.Client.Components.Settings
 
         public async Task Focus(string elementId)
         {
-            await JsInterop.InvokeVoidAsync("jsfunction.focusElement", elementId);
+            if (JsInterop is not null)
+                await JsInterop.InvokeVoidAsync("jsfunction.focusElement", elementId);
         }
 
-        private List<FeeTypeListItem> feeTypeList { get; set; } = new List<FeeTypeListItem>();
+        private List<FeeTypeListItem> FeeTypeList { get; set; } = new List<FeeTypeListItem>();
 
         public class FeeTypeListItem
         {
-            public string Text { get; set; }
             public CreditCardFeeType Value { get; set; }
+            public string DisplayText { get; set; } = string.Empty;
         }
     }
 }
