@@ -26,7 +26,7 @@ namespace Menominee.Api.Payables.Vendors
             this.paymentMethodRepository = paymentMethodRepository ?? throw new ArgumentNullException(nameof(paymentMethodRepository));
         }
 
-        [HttpGet]
+        [HttpGet("list")]
         public async Task<ActionResult<IReadOnlyList<VendorToRead>>> GetAsync()
         {
             var result = await repository.GetAllAsync();
