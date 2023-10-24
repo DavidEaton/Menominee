@@ -37,7 +37,8 @@ app {
 }
 
 .content {
-    padding-top: 1.1rem;
+    /*padding-top: 1.1rem;*/
+    padding: 1.1rem;
 }
 
 #menuitem-home:hover, .mi-home, #menuitem-home.k-drawer-item.k-selected {
@@ -154,7 +155,7 @@ app {
 .m-main-content {
     /*padding: 64px 6px 6px 6px;*/
     /*padding: 64px 1rem 1rem 1rem;*/
-    overflow-y: auto;
+    /*overflow-y: auto;*/
     /*overflow-x: hidden;*/
     /*max-height: calc(100vh - 57px);*/
     /*min-height: calc(100vh - 57px);*/
@@ -204,6 +205,7 @@ app {
 .m-label {
     margin-bottom: .1rem !important;
     font-size: 1rem !important;
+    display: block;
 }
 
 .m-form-sub-header {
