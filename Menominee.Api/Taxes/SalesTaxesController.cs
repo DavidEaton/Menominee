@@ -17,7 +17,7 @@ namespace Menominee.Api.Taxes
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        [HttpGet("listing")]
+        [HttpGet("list")]
         public async Task<ActionResult<IReadOnlyList<SalesTaxToReadInList>>> GetListAsync()
         {
             var result = await repository.GetListAsync();
@@ -33,7 +33,9 @@ namespace Menominee.Api.Taxes
             var result = await repository.GetAsync(id);
 
             if (result == null)
+            {
                 return NotFound();
+            }
 
             return result;
         }
@@ -43,10 +45,14 @@ namespace Menominee.Api.Taxes
         {
             var taxFromRepository = await repository.GetEntityAsync(salesTaxToUpdate.Id);
             if (taxFromRepository is null)
+            {
                 return NotFound($"Could not find Sales Tax to update: {salesTaxToUpdate.Description}");
+            }
 
             if (TaxesAreEqual(taxFromRepository, salesTaxToUpdate))
+            {
                 return NoContent();
+            }
 
             UpdateSalesTax(salesTaxToUpdate, taxFromRepository);
             await repository.SaveChangesAsync();
@@ -67,7 +73,7 @@ namespace Menominee.Api.Taxes
             //taxFromRepository.SetExciseFees(ExciseFeeHelper.ConvertWriteDtosToEntities(salesTax.ExciseFees));
         }
 
-        private bool TaxesAreEqual(SalesTax entity, SalesTaxToWrite dto)
+        private static bool TaxesAreEqual(SalesTax entity, SalesTaxToWrite dto)
         {
             return entity.Description == dto.Description
                 && entity.TaxType == dto.TaxType
@@ -107,7 +113,9 @@ namespace Menominee.Api.Taxes
             // TODO - Is this where we should this delete the entries in the SalesTaxTaxableExciseFee table too?
             var taxFromRepository = await repository.GetEntityAsync(id);
             if (taxFromRepository is null)
+            {
                 return NotFound($"Could not find Sales Tax in the database to delete with Id: {id}.");
+            }
 
             repository.Delete(taxFromRepository);
             await repository.SaveChangesAsync();

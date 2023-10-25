@@ -13,35 +13,29 @@ namespace Menominee.Client.Components.Payables
     public partial class VendorInvoiceTaxes : ComponentBase
     {
         [Inject]
-        public ISalesTaxDataService SalesTaxDataService { get; set; }
+        public ISalesTaxDataService? SalesTaxDataService { get; set; }
 
         [Parameter]
-        public IList<VendorInvoiceTaxToWrite> Taxes { get; set; }
+        public IList<VendorInvoiceTaxToWrite>? Taxes { get; set; }
 
         [Parameter]
-        public Action OnCalculateTotals { get; set; }
+        public Action? OnCalculateTotals { get; set; }
 
         [CascadingParameter]
-        public InvoiceTotals InvoiceTotals { get; set; }
+        public InvoiceTotals? InvoiceTotals { get; set; }
 
         [CascadingParameter]
         public FormMode FormMode { get; set; }
 
         private bool CanEdit { get; set; } = false;
-
-        public IEnumerable<VendorInvoiceTaxToWrite> SelectedTaxes { get; set; } = Enumerable.Empty<VendorInvoiceTaxToWrite>();
-        public VendorInvoiceTaxToWrite SelectedTax { get; set; }
-
-        public TelerikGrid<VendorInvoiceTaxToWrite> Grid { get; set; }
-
+        private IEnumerable<VendorInvoiceTaxToWrite> SelectedTaxes { get; set; } = Enumerable.Empty<VendorInvoiceTaxToWrite>();
+        private VendorInvoiceTaxToWrite? SelectedTax { get; set; }
+        private TelerikGrid<VendorInvoiceTaxToWrite>? Grid { get; set; }
         private IReadOnlyList<SalesTaxToReadInList> SalesTaxes = new List<SalesTaxToReadInList>();
 
         protected override async Task OnInitializedAsync()
         {
-            var result = await SalesTaxDataService.GetAllAsync();
-
-            if (result.IsSuccess)
-                SalesTaxes = (IReadOnlyList<SalesTaxToReadInList>)result.Value.OrderByDescending(tax => tax.Order);
+            await GetSalesTaxes();
         }
 
         protected override async Task OnParametersSetAsync()
@@ -51,6 +45,20 @@ namespace Menominee.Client.Components.Payables
             SortAndSelectTaxes();
         }
 
+        private async Task GetSalesTaxes()
+        {
+            if (SalesTaxDataService is not null)
+            {
+                var result = await SalesTaxDataService.GetAllAsync();
+
+                if (result.IsSuccess)
+                {
+                    SalesTaxes = result.Value
+                        .OrderBy(tax => tax.Order)
+                        .ToList();
+                }
+            }
+        }
         private async Task AddMissingTaxesToInvoice()
         {
             foreach (var salesTax in SalesTaxes)
@@ -60,7 +68,7 @@ namespace Menominee.Client.Components.Payables
                     var result = await GetSalesTax(salesTax.Id);
                     if (result.IsSuccess)
                     {
-                        Taxes.Add(CreateVendorInvoiceTax(result.Value));
+                        Taxes?.Add(CreateVendorInvoiceTax(result.Value));
                     }
                 }
             }
@@ -68,15 +76,17 @@ namespace Menominee.Client.Components.Payables
 
         private bool TaxIsMissing(long salesTaxId)
         {
-            return !Taxes.Any(tax => tax.SalesTax?.Id == salesTaxId);
+            return !Taxes?.Any(tax => tax.SalesTax?.Id == salesTaxId) ?? false;
         }
 
         private async Task<Result<SalesTaxToRead>> GetSalesTax(long salesTaxId)
         {
-            return await SalesTaxDataService.GetAsync(salesTaxId);
+            return SalesTaxDataService is not null
+                ? await SalesTaxDataService.GetAsync(salesTaxId)
+                : Result.Failure<SalesTaxToRead>($"Failed to retrieve sales tax {salesTaxId}.");
         }
 
-        private VendorInvoiceTaxToWrite CreateVendorInvoiceTax(SalesTaxToRead salesTax)
+        private static VendorInvoiceTaxToWrite CreateVendorInvoiceTax(SalesTaxToRead salesTax)
         {
             return new VendorInvoiceTaxToWrite
             {
@@ -86,9 +96,16 @@ namespace Menominee.Client.Components.Payables
 
         private void SortAndSelectTaxes()
         {
-            Taxes = Taxes.OrderByDescending(tax => tax.SalesTax.Order).ToList();
-            SelectTax(Taxes.FirstOrDefault());
-            Grid?.Rebind();
+            if (Taxes is not null)
+            {
+                Taxes = Taxes.OrderBy(tax => tax.SalesTax.Order).ToList();
+                var tax = Taxes.FirstOrDefault();
+                if (tax is not null)
+                {
+                    SelectTax(tax);
+                }
+                Grid?.Rebind();
+            }
         }
 
         private void SelectTax(VendorInvoiceTaxToWrite tax)
@@ -99,20 +116,23 @@ namespace Menominee.Client.Components.Payables
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectTax(args.Item as VendorInvoiceTaxToWrite);
+            SelectTax((VendorInvoiceTaxToWrite)args.Item);
         }
 
         private void OnCalcTaxClick(GridCommandEventArgs args)
         {
-            SelectTax(args.Item as VendorInvoiceTaxToWrite);
+            SelectTax((VendorInvoiceTaxToWrite)args.Item);
 
-            SelectedTax.Amount = CalculateTax(SelectedTax.SalesTax.PartTaxRate);
-            OnCalculateTotals?.Invoke();
+            if (SelectedTax is not null)
+            {
+                SelectedTax.Amount = CalculateTax(SelectedTax.SalesTax.PartTaxRate);
+                OnCalculateTotals?.Invoke();
+            }
         }
 
         private void OnTaxAmountChange()
         {
-            if (SelectedTax != null)
+            if (SelectedTax is not null)
             {
                 OnCalculateTotals?.Invoke();
             }
@@ -120,7 +140,9 @@ namespace Menominee.Client.Components.Payables
 
         private double CalculateTax(double taxRate)
         {
-            return Math.Round((InvoiceTotals.TaxableTotal * taxRate) / 100.0, 2);
+            return InvoiceTotals is not null
+                ? Math.Round(InvoiceTotals.TaxableTotal * taxRate / 100.0, 2)
+                : 0.0;
         }
     }
 }
