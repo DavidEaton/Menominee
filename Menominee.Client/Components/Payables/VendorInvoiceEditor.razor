@@ -17,7 +17,7 @@
                                 <div>
                                     <Card Title="Items">
                                         <Content>
-                                            <VendorInvoiceItems LineItems="Invoice.LineItems"
+                                            <VendorInvoiceItems LineItems="Invoice?.LineItems"
                                                 OnCalculateTotals="CalculateTotals" />
                                         </Content>
                                     </Card>
@@ -25,13 +25,13 @@
                                 <div class="tax-payment-row">
                                     <Card Title="Taxes">
                                         <Content>
-                                            <VendorInvoiceTaxes Taxes="Invoice.Taxes"
+                                            <VendorInvoiceTaxes Taxes="Invoice?.Taxes"
                                                 OnCalculateTotals="CalculateTotals" />
                                         </Content>
                                     </Card>
                                     <Card Title="Payments">
                                         <Content>
-                                            <VendorInvoicePayments Payments="Invoice.Payments"
+                                            <VendorInvoicePayments Payments="Invoice?.Payments"
                                                 OnCalculateTotals="CalculateTotals" />
                                         </Content>
                                     </Card>
@@ -64,11 +64,11 @@
                     <div class="m-vertical-divider"></div>
                     @if (Invoice?.Status == VendorInvoiceStatus.Open && Invoice.LineItems?.Count > 0)
                     {
-                        <button class="btn btn-secondary m-button" @onclick="OnCompleteAsync"><i class="fas fa-check"></i> @PostButtonText()</button>
+                        <button class="btn btn-secondary m-button" @onclick="OnCompleteAsync"><i class="fas fa-check"></i> @PostButtonText</button>
                     }
                     @if (Invoice?.Status == VendorInvoiceStatus.Completed)
                     {
-                        <button class="btn btn-secondary m-button" @onclick="OnRevertAsync">@UnpostButtonText()</button>
+                        <button class="btn btn-secondary m-button" @onclick="OnRevertAsync">@UnpostButtonText</button>
                     }
                     <button class="btn btn-secondary m-button" @onclick="OnPrint"><i class="fas fa-print"></i> Print</button>
                 </div>
