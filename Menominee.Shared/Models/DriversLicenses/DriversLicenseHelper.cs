@@ -7,7 +7,7 @@ namespace Menominee.Shared.Models.DriversLicenses
         public static DriversLicenseToRead ConvertToReadDto(DriversLicense driversLicense)
         {
             return driversLicense is null
-                ? new()
+                ? null
                 : new()
                 {
                     Number = driversLicense.Number,
@@ -20,7 +20,7 @@ namespace Menominee.Shared.Models.DriversLicenses
         public static DriversLicenseToWrite ConvertToWriteDto(DriversLicense driversLicense)
         {
             return driversLicense is null
-                ? new()
+                ? null
                 : new()
                 {
                     Number = driversLicense.Number,
@@ -33,7 +33,7 @@ namespace Menominee.Shared.Models.DriversLicenses
         internal static DriversLicenseToWrite ConvertReadToWriteDto(DriversLicenseToRead driversLicense)
         {
             return driversLicense is null
-                ? new()
+                ? null
                 : new()
                 {
                     Number = driversLicense.Number,
@@ -46,7 +46,7 @@ namespace Menominee.Shared.Models.DriversLicenses
         internal static DriversLicenseToRead ConvertWriteToReadDto(DriversLicenseToWrite driversLicense)
         {
             return driversLicense is null
-                ? new()
+                ? null
                 : new()
                 {
                     Number = driversLicense.Number,

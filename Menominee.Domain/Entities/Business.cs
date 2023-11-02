@@ -1,19 +1,23 @@
 ﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Enums;
 using Menominee.Common.Extensions;
 using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
+using Menominee.Domain.Interfaces;
 using System.Collections.Generic;
 
 namespace Menominee.Domain.Entities
 {
-    public class Business : Contactable
+    public class Business : Contactable, ICustomerEntity
     {
-        // Targeting tests at the abstract base class binds them to the code’s implementation details.
-        // Always test all concrete classes; don’t test abstract classes directly
         public static readonly string InvalidMessage = $"Invalid business.";
 
         public BusinessName Name { get; private set; }
         public Person Contact { get; private set; }
+        public override string ToString() => Name.Name;
+        public string DisplayName => Name.ToString();
+        public EntityType EntityType => EntityType.Business;
+
         private Business(
             BusinessName name,
             string notes = null,
@@ -63,11 +67,6 @@ namespace Menominee.Domain.Entities
         public void SetContact(Person contact)
         {
             Contact = contact;
-        }
-
-        public override string ToString()
-        {
-            return Name.Name;
         }
 
         #region ORM

@@ -10,30 +10,13 @@ namespace Menominee.Shared.Models.Persons
 {
     public class PersonToRead
     {
-        public long Id { get; set; }
-        public PersonNameToRead Name { get; set; }
-        public Gender Gender { get; set; }
+        public long Id { get; set; } = default;
+        public PersonNameToRead Name { get; set; } = new();
+        public Gender Gender { get; set; } = Gender.Other;
         public DateTime? Birthday { get; set; }
-        public DriversLicenseToRead DriversLicense { get; set; }
-        public AddressToRead Address { get; set; }
+        public DriversLicenseToRead DriversLicense { get; set; } = new();
+        public AddressToRead Address { get; set; } = new();
         public List<PhoneToRead> Phones { get; set; } = new List<PhoneToRead>();
         public List<EmailToRead> Emails { get; set; } = new List<EmailToRead>();
-        public string LastFirstMiddle
-        {
-            get => string.IsNullOrWhiteSpace(Name.MiddleName) ? $"{Name.LastName}, {Name.FirstName}" : $"{Name.LastName}, {Name.FirstName} {Name.MiddleName}";
-        }
-        public string LastFirstMiddleInitial
-        {
-            get => string.IsNullOrWhiteSpace(Name.MiddleName) ? $"{Name.LastName}, {Name.FirstName}" : $"{Name.LastName}, {Name.FirstName} {Name.MiddleName[0]}.";
-        }
-        public string FirstMiddleLast
-        {
-            get => string.IsNullOrWhiteSpace(Name.MiddleName) ? $"{Name.FirstName} {Name.LastName}" : $"{Name.FirstName} {Name.MiddleName} {Name.LastName}";
-        }
-
-        public override string ToString()
-        {
-            return LastFirstMiddleInitial;
-        }
     }
 }

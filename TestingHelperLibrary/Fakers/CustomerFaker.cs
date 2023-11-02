@@ -13,6 +13,7 @@ namespace TestingHelperLibrary.Fakers
         public CustomerFaker(
             bool generateId = false,
             bool includeAddress = false,
+            bool includeContact = false,
             int emailsCount = 0,
             int phonesCount = 0,
             int vehiclesCount = 0,
@@ -26,24 +27,50 @@ namespace TestingHelperLibrary.Fakers
                 var customerType = faker.PickRandom<CustomerType>();
                 var code = faker.Random.Replace("??????????");
                 var includeDriversLicense = faker.Random.Bool();
-                Result<Customer> result = null;
 
-                Entity customer = faker.Random.Bool()
-                    ? new PersonFaker(true, includeAddress, includeDriversLicense, emailsCount, phonesCount).Generate()
-                    : new BusinessFaker(true, includeAddress, false, emailsCount, phonesCount).Generate();
+                var customer = GenerateRandomEntity(
+                    faker,
+                    includeAddress,
+                    includeContact,
+                    includeDriversLicense,
+                    emailsCount,
+                    phonesCount);
 
-                if (customer.GetType() == typeof(Person))
-                    result = Customer.Create((Person)customer, customerType, code);
+                var result = CreateCustomer(customer, customerType, code);
 
-                if (customer.GetType() == typeof(Business))
-                    result = Customer.Create((Business)customer, customerType, code);
-
-                var vehicles = new VehicleFaker(generateId).Generate(vehiclesCount);
-
-                vehicles.ForEach(vehicles => result.Value.AddVehicle(vehicles));
+                AddVehiclesToCustomer(result, vehiclesCount, generateId);
 
                 return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
             });
+        }
+
+        private static Entity GenerateRandomEntity(
+            Faker faker,
+            bool includeAddress,
+            bool includeContact,
+            bool includeDriversLicense,
+            int emailsCount,
+            int phonesCount)
+        {
+            return faker.Random.Bool()
+                ? new PersonFaker(true, includeAddress, includeDriversLicense, emailsCount, phonesCount).Generate()
+                : new BusinessFaker(true, includeAddress, includeContact, emailsCount, phonesCount).Generate();
+        }
+
+        private static Result<Customer> CreateCustomer(Entity customer, CustomerType customerType, string code)
+        {
+            return customer switch
+            {
+                Person person => Customer.Create(person, customerType, code),
+                Business business => Customer.Create(business, customerType, code),
+                _ => throw new InvalidOperationException("Unsupported customer entity type.")
+            };
+        }
+
+        private static void AddVehiclesToCustomer(Result<Customer> result, int vehiclesCount, bool generateId)
+        {
+            var vehicles = new VehicleFaker(generateId).Generate(vehiclesCount);
+            vehicles.ForEach(vehicle => result.Value.AddVehicle(vehicle));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Menominee.Common.ValueObjects;
+using Menominee.Domain.Entities;
 using Business = Menominee.Domain.Entities.Business;
 using Person = Menominee.Domain.Entities.Person;
 
@@ -11,45 +12,54 @@ namespace TestingHelperLibrary.Fakers
         {
             RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
 
-            CustomInstantiator(faker =>
-            {
-                var name = BusinessName.Create(faker.Company.CompanyName()).Value;
-                var notes = faker.Lorem.Sentence(20);
-                var birthday = faker.Person.DateOfBirth;
+            CustomInstantiator(faker => GenerateBusiness(faker, generateId, includeAddress, includeContact, emailsCount, phonesCount));
+        }
 
-                Address? address = null;
-                Person? contact = null;
+        private Business GenerateBusiness(Faker faker, bool generateId, bool includeAddress, bool includeContact, int emailsCount, int phonesCount)
+        {
+            var name = BusinessName.Create(faker.Company.CompanyName()).Value;
+            var notes = faker.Lorem.Sentence(20);
 
-                if (includeAddress)
-                {
-                    address = new AddressFaker().Generate();
-                }
+            var address = includeAddress ? GenerateAddress() : null;
+            var contact = includeContact ? GenerateContact(generateId, includeAddress, emailsCount, phonesCount) : null;
+            var emails = GenerateEmails(generateId, emailsCount);
+            var phones = GeneratePhones(generateId, phonesCount);
 
-                if (includeContact)
-                {
-                    contact = new PersonFaker(true, includeAddress, false, emailsCount, phonesCount).Generate();
-                }
+            var result = Business.Create(name, notes, contact, address, emails, phones);
 
-                var emails = emailsCount <= 0
-                    ? null
-                    : generateId
-                        ? Utilities.GenerateRandomUniqueLongValues(emailsCount)
-                            .Select(id => new EmailFaker(id).Generate())
-                            .ToList()
-                        : new EmailFaker(generateId: false).Generate(emailsCount);
+            return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
+        }
 
-                var phones = phonesCount <= 0
-                    ? null
-                    : generateId
-                        ? Utilities.GenerateRandomUniqueLongValues(phonesCount)
-                            .Select(id => new PhoneFaker(id).Generate())
-                            .ToList()
-                        : new PhoneFaker(generateId: false).Generate(phonesCount);
+        private Address GenerateAddress()
+        {
+            return new AddressFaker().Generate();
+        }
 
-                var result = Business.Create(name, notes, contact, address, emails, phones);
+        private Person GenerateContact(bool generateId, bool includeAddress, int emailsCount, int phonesCount)
+        {
+            return new PersonFaker(generateId, includeAddress, false, emailsCount, phonesCount).Generate();
+        }
 
-                return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
-            });
+        private List<Email>? GenerateEmails(bool generateId, int emailsCount)
+        {
+            return emailsCount <= 0
+                ? null
+                : generateId
+                    ? Utilities.GenerateRandomUniqueLongValues(emailsCount)
+                        .Select(id => new EmailFaker(id).Generate())
+                        .ToList()
+                    : new EmailFaker(generateId: false).Generate(emailsCount);
+        }
+
+        private List<Phone>? GeneratePhones(bool generateId, int phonesCount)
+        {
+            return phonesCount <= 0
+                ? null
+                : generateId
+                    ? Utilities.GenerateRandomUniqueLongValues(phonesCount)
+                        .Select(id => new PhoneFaker(id).Generate())
+                        .ToList()
+                    : new PhoneFaker(generateId: false).Generate(phonesCount);
         }
     }
 }

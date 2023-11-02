@@ -78,7 +78,7 @@ namespace Menominee.Client.Components.Settings.Pages
                 var result = await ExciseFeeDataService.GetAsync(Id);
 
                 if (result.IsSuccess)
-                    ExciseFee = ExciseFeeHelper.CovertReadToWriteDto(result.Value);
+                    ExciseFee = ExciseFeeHelper.ConvertReadToWriteDto(result.Value);
 
                 if (result.IsFailure)
                 {

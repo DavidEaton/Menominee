@@ -23,8 +23,7 @@ namespace Menominee.Api.Customers
 
         public void Add(Customer customer)
         {
-            if (customer is not null)
-                context.Attach(customer);
+            Helper.SetShadowProperties(context, customer);
         }
 
         public void Delete(Customer customer)
@@ -33,39 +32,65 @@ namespace Menominee.Api.Customers
                 context.Remove(customer);
         }
 
-        public async Task<CustomerToRead> GetAsync(long id)
+        public async Task<CustomerToRead?> GetAsync(long id)
         {
-            return CustomerHelper.ConvertToReadDto(await GetEntityAsync(id));
+            var result = await GetEntityAsync(id);
+
+            return result is null
+                ? null
+                : CustomerHelper.ConvertToReadDto(result);
         }
 
-        public async Task<IReadOnlyList<CustomerToRead>> GetAllAsync()
+        public async Task<IReadOnlyList<CustomerToRead?>> GetAllAsync()
         {
-            var customers = new List<CustomerToRead>();
+            return await GetCustomersAsync<CustomerToRead?>(CustomerHelper.ConvertToReadDto);
+        }
 
+        public async Task<Customer?> GetEntityAsync(long id)
+        {
+            var customer = context.Customers
+                .Where(customer => customer.Id == id)
+                .FirstOrDefault();
+
+            if (customer is null)
+            {
+                return null;
+            }
+
+            await Helper.LoadRelatedDataAsync(customer, context);
+
+            return customer;
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<IReadOnlyList<CustomerToReadInList?>> GetListAsync()
+        {
+            return await GetCustomersAsync<CustomerToReadInList>(CustomerHelper.ConvertToReadInListDto);
+        }
+
+        private async Task<IReadOnlyList<T>> GetCustomersAsync<T>(Func<Customer?, T> convertToDto)
+        {
+            var customers = new List<T>();
             var customersFromContext = await context.Customers
-                .Include(customer => customer.Person)
-                .Include(customer => customer.Business)
-                    .ThenInclude(business => business.Contact)
-                .AsNoTracking()
                 .AsSplitQuery()
                 .ToArrayAsync();
 
             foreach (var customer in customersFromContext)
-                customers.Add(CustomerHelper.ConvertToReadDto(customer));
+            {
+                await Helper.LoadRelatedDataAsync(customer, context);
+                customers.Add(convertToDto(customer));
+            }
 
             return customers;
         }
 
         public async Task<PagedList<CustomerToRead>> GetByCodeAsync(string code, Pagination pagination)
         {
-            var query = await context.Customers
-                .Where(customer => customer.Code.Equals(code))
-                .Include(customer => customer.Person)
-                .Include(customer => customer.Business)
-                .AsNoTracking()
-                .AsSplitQuery()
-                .Select(customer => CustomerHelper.ConvertToReadDto(customer))
-                .ToListAsync();
+            var query = await GetAllAsync();
 
             var orderedQuery = pagination.SortOrder.Equals(SortOrder.Desc)
                 ? query.OrderByDescending(GetSortProperty(pagination.SortColumn)).AsQueryable()
@@ -85,58 +110,5 @@ namespace Menominee.Api.Customers
             };
         }
 
-        public async Task SaveChangesAsync()
-        {
-            await context.SaveChangesAsync();
-        }
-
-        public async Task<IReadOnlyList<CustomerToReadInList>> GetListAsync()
-        {
-            var customersFromContext = await context.Customers
-                // Person
-                .Include(customer =>
-                    customer.Person.Phones
-                        .Where(phone => phone.IsPrimary))
-                .Include(customer =>
-                    customer.Person.Emails
-                        .Where(email => email.IsPrimary))
-                // Business and Business.Contact
-                .Include(customer =>
-                    customer.Business.Contact.Phones
-                        .Where(phone => phone.IsPrimary))
-                .Include(customer =>
-                    customer.Business.Contact.Emails
-                        .Where(email => email.IsPrimary))
-                .AsNoTracking()
-                .AsSplitQuery()
-                .ToArrayAsync();
-
-            return customersFromContext
-                .Select(customer => CustomerHelper.ConvertToReadInListDto(customer))
-                .ToList();
-        }
-
-        public async Task<Customer> GetEntityAsync(long id)
-        {
-            var customerFromContext = await context.Customers
-                // Person
-                .Include(customer =>
-                    customer.Person.Phones)
-                .Include(customer =>
-                    customer.Person.Emails)
-                // Business and Business.Contact
-                .Include(customer =>
-                    customer.Business.Contact.Phones)
-                .Include(customer =>
-                    customer.Business.Contact.Emails)
-                // Vehicles
-                .Include(customer =>
-                    customer.Vehicles)
-
-                .AsSplitQuery()
-                .FirstOrDefaultAsync(customer => customer.Id == id);
-
-            return customerFromContext;
-        }
     }
 }

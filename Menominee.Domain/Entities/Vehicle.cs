@@ -241,6 +241,11 @@ public class Vehicle : Entity
         return Result.Success(Active = active);
     }
 
+    public Result<bool> SetNonTraditionalVehicle(bool nonTraditionalVehicle)
+    {
+        return Result.Success(NonTraditionalVehicle = nonTraditionalVehicle);
+    }
+
     #region ORM
 
     // EF requires a parameterless constructor

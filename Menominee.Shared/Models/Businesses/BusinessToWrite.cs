@@ -23,5 +23,12 @@ namespace Menominee.Shared.Models.Businesses
         public string Notes { get; set; } = string.Empty;
         public List<PhoneToWrite> Phones { get; set; } = new List<PhoneToWrite>();
         public List<EmailToWrite> Emails { get; set; } = new List<EmailToWrite>();
+        public bool IsEmpty =>
+            Id == 0 &&
+            string.IsNullOrWhiteSpace(Name) &&
+            ((Address is null) || Address.IsEmpty) &&
+            Phones.Count == 0 &&
+            Emails.Count == 0;
+        public bool IsNotEmpty => !IsEmpty;
     }
 }

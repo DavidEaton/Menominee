@@ -1,14 +1,15 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Domain.BaseClasses;
 using Menominee.Common.Enums;
 using Menominee.Common.Extensions;
 using Menominee.Common.ValueObjects;
+using Menominee.Domain.BaseClasses;
+using Menominee.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 
 namespace Menominee.Domain.Entities
 {
-    public class Person : Contactable
+    public class Person : Contactable, ICustomerEntity
     {
         // Targeting tests at the abstract base class binds them to the code’s implementation details.
         // Always test all concrete classes; don’t test abstract classes directly (like Contactable)
@@ -17,6 +18,10 @@ namespace Menominee.Domain.Entities
         public Gender Gender { get; private set; }
         public DateTime? Birthday { get; private set; }
         public DriversLicense DriversLicense { get; private set; }
+        public override string ToString() => Name.ToString();
+        public string DisplayName => Name.ToString();
+        public EntityType EntityType => EntityType.Person;
+
         internal Person(
             PersonName name,
             Gender gender,
@@ -114,10 +119,6 @@ namespace Menominee.Domain.Entities
             return false;
         }
 
-        public override string ToString()
-        {
-            return Name.LastFirstMiddle;
-        }
         #region ORM
 
         // EF requires a parameterless constructor

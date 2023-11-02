@@ -25,42 +25,43 @@ namespace Menominee.Shared.Models.Persons
                         MiddleName = person.Name?.MiddleName
                     },
                     Gender = person.Gender,
-                    DriversLicense = DriversLicenseHelper.ConvertToReadDto(person.DriversLicense),
+                    DriversLicense = DriversLicenseHelper.ConvertToReadDto(person?.DriversLicense),
                     Address =
                         person?.Address is not null
-                        ? AddressHelper.ConvertToReadDto(person.Address)
+                        ? AddressHelper.ConvertToReadDto(person?.Address)
                         : null,
                     Birthday = person?.Birthday,
-                    Phones = PhoneHelper.ConvertToReadDtos(person.Phones),
-                    Emails = EmailHelper.ConvertToReadDtos(person.Emails)
+                    Phones = PhoneHelper.ConvertToReadDtos(person?.Phones),
+                    Emails = EmailHelper.ConvertToReadDtos(person?.Emails)
                 };
         }
 
         public static PersonToWrite ConvertToWriteDto(Person person)
         {
             return person is null
-                ? null
+                ? new()
                 : new()
                 {
                     Id = person.Id,
-                    Name = PersonNameHelper.ConvertToWriteDto(person.Name),
+                    Name = PersonNameHelper.ConvertToWriteDto(person?.Name),
                     Gender = person.Gender,
                     DriversLicense = person.DriversLicense is not null
                         ? DriversLicenseHelper
-                        .ConvertToWriteDto(person.DriversLicense)
+                        .ConvertToWriteDto(person?.DriversLicense)
                         : null,
-                    Address = person.Address is not null
-                        ? AddressHelper.ConvertToWriteDto(person.Address)
+                    Address = person?.Address is not null
+                        ? AddressHelper.ConvertToWriteDto(person?.Address)
                         : null,
                     Birthday = person.Birthday,
-                    Phones = PhoneHelper.ConvertToWriteDtos(person.Phones),
-                    Emails = EmailHelper.ConvertToWriteDtos(person.Emails)
+                    Notes = person.Notes,
+                    Phones = PhoneHelper.ConvertToWriteDtos(person?.Phones),
+                    Emails = EmailHelper.ConvertToWriteDtos(person?.Emails)
                 };
         }
 
-        public static Person ConvertWriteDtoToEntity(PersonToWrite person)
+        public static Person ConvertWriteDtoToEntity(PersonToWrite personDto)
         {
-            if (person is null)
+            if (personDto is null)
                 return null;
 
             Address address = null;
@@ -68,35 +69,35 @@ namespace Menominee.Shared.Models.Persons
             List<Phone> phones = new();
             List<Email> emails = new();
 
-            var personName = PersonName.Create(person.Name.LastName, person.Name.FirstName, person.Name.MiddleName).Value;
+            var personName = PersonName.Create(personDto.Name.LastName, personDto.Name.FirstName, personDto.Name.MiddleName).Value;
 
-            if (person?.Address is not null)
-                address = Address.Create(person.Address.AddressLine1, person.Address.City, person.Address.State, person.Address.PostalCode, person.Address.AddressLine2).Value;
+            if (personDto.Address is not null)
+                address = Address.Create(personDto.Address.AddressLine1, personDto.Address.City, personDto.Address.State, personDto.Address.PostalCode, personDto.Address.AddressLine2).Value;
 
-            if (person?.Phones.Count > 0)
-                foreach (var phone in person.Phones)
+            if (personDto?.Phones.Count > 0)
+                foreach (var phone in personDto.Phones)
                     phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
 
-            if (person?.Emails.Count > 0)
-                foreach (var email in person.Emails)
+            if (personDto?.Emails.Count > 0)
+                foreach (var email in personDto.Emails)
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
 
-            if (person?.DriversLicense is not null)
+            if (personDto?.DriversLicense is not null)
             {
                 DateTimeRange dateTimeRange = DateTimeRange.Create(
-                    person.DriversLicense.Issued,
-                    person.DriversLicense.Expiry).Value;
+                    personDto.DriversLicense.Issued,
+                    personDto.DriversLicense.Expiry).Value;
 
-                driversLicense = DriversLicense.Create(person.DriversLicense.Number,
-                    person.DriversLicense.State,
+                driversLicense = DriversLicense.Create(personDto.DriversLicense.Number,
+                    personDto.DriversLicense.State,
                     dateTimeRange).Value;
             }
 
             return Person.Create(
                 personName,
-                person.Gender,
-                person.Notes,
-                person.Birthday,
+                personDto.Gender,
+                personDto.Notes,
+                personDto.Birthday,
                 emails,
                 phones,
                 address,
@@ -106,71 +107,59 @@ namespace Menominee.Shared.Models.Persons
 
         public static PersonToWrite ConvertReadToWriteDto(PersonToRead person)
         {
-            if (person is null)
-                return new();
-
-            PersonToWrite Person = new()
-            {
-                Id = person.Id,
-                Name = new()
+            return person is null
+                ? new()
+                : new()
                 {
-                    LastName = person.Name.LastName,
-                    MiddleName = person.Name?.MiddleName,
-                    FirstName = person.Name.FirstName
-                },
+                    Id = person.Id,
+                    Name = new()
+                    {
+                        LastName = person.Name.LastName,
+                        MiddleName = person.Name?.MiddleName,
+                        FirstName = person.Name.FirstName
+                    },
 
-                Gender = person.Gender,
-                Birthday = person?.Birthday
-            };
-            if (person?.Address is not null)
-            {
-                Person.Address = new()
+                    Gender = person.Gender,
+                    Birthday = person?.Birthday,
+
+                    Address = person.Address is not null
+                ? new()
                 {
                     AddressLine1 = person.Address.AddressLine1,
                     City = person.Address.City,
                     State = person.Address.State,
                     PostalCode = person.Address.PostalCode,
                     AddressLine2 = person.Address.AddressLine2,
-                };
-            }
+                }
+                : new(),
 
-            if (person?.DriversLicense is not null)
-            {
-                Person.DriversLicense = new()
+                    DriversLicense = person?.DriversLicense is not null
+                ? new DriversLicenseToWrite
                 {
                     Number = person.DriversLicense.Number,
                     State = person.DriversLicense.State,
                     Issued = person.DriversLicense.Issued,
                     Expiry = person.DriversLicense.Expiry
+                }
+                : new(),
+
+                    Phones = person?.Phones
+                ?.Select(phone => new PhoneToWrite
+                {
+                    Number = phone.Number,
+                    PhoneType = phone.PhoneType,
+                    IsPrimary = phone.IsPrimary
+                })
+                .ToList() ?? new(),
+
+                    Emails = person?.Emails
+                ?.Select(email => new EmailToWrite
+                {
+                    Address = email.Address,
+                    IsPrimary = email.IsPrimary
+                })
+                .ToList() ?? new()
                 };
-            }
-
-            if (person?.Phones.Count > 0)
-            {
-                foreach (var phone in person.Phones)
-                {
-                    Person.Phones.Add(new()
-                    {
-                        Number = phone.Number,
-                        PhoneType = phone.PhoneType,
-                        IsPrimary = phone.IsPrimary
-                    });
-                }
-            }
-
-            if (person?.Emails.Count > 0)
-            {
-                foreach (var email in person.Emails)
-                {
-                    Person.Emails.Add(new()
-                    {
-                        Address = email.Address,
-                        IsPrimary = email.IsPrimary
-                    });
-                }
-            }
-
-            return Person;
         }
 
         public static PersonToReadInList ConvertToReadInListDto(Person person)
@@ -187,9 +176,15 @@ namespace Menominee.Shared.Models.Persons
                     Name = person.Name.LastFirstMiddle,
                     PostalCode = person?.Address?.PostalCode,
                     State = person?.Address?.State.ToString(),
-                    PrimaryPhone = PhoneHelper.GetPrimaryPhone(person) ?? PhoneHelper.GetOrdinalPhone(person, 0),
-                    PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(person) ?? PhoneHelper.GetOrdinalPhoneType(person, 0),
-                    PrimaryEmail = EmailHelper.GetPrimaryEmail(person) ?? EmailHelper.GetOrdinalEmail(person, 0)
+                    PrimaryPhone =
+                        PhoneHelper.GetPrimaryPhone(person).ToString()
+                        ?? PhoneHelper.GetOrdinalPhone(person, 0).ToString(),
+                    PrimaryPhoneType =
+                        PhoneHelper.GetPrimaryPhone(person).PhoneType.ToString()
+                        ?? PhoneHelper.GetOrdinalPhone(person, 0).PhoneType.ToString(),
+                    PrimaryEmail =
+                        EmailHelper.GetPrimaryEmail(person)
+                        ?? EmailHelper.GetOrdinalEmail(person, 0)
                 };
         }
 
@@ -200,10 +195,10 @@ namespace Menominee.Shared.Models.Persons
                 : new()
                 {
                     Id = person.Id,
-                    Address = AddressHelper.ConvertReadToWriteDto(person.Address),
-                    DriversLicense = DriversLicenseHelper.ConvertReadToWriteDto(person.DriversLicense),
+                    Address = AddressHelper.ConvertReadToWriteDto(person?.Address),
+                    DriversLicense = DriversLicenseHelper.ConvertReadToWriteDto(person?.DriversLicense),
                     Birthday = person?.Birthday,
-                    Name = PersonNameHelper.ConvertReadToWriteDto(person.Name),
+                    Name = PersonNameHelper.ConvertReadToWriteDto(person?.Name),
 
                     Phones = (List<PhoneToWrite>)person.Phones.Select(phone => new PhoneToWrite()
                     {
@@ -226,10 +221,10 @@ namespace Menominee.Shared.Models.Persons
                 : new()
                 {
                     Id = person.Id,
-                    Address = AddressHelper.ConvertWriteToReadDto(person.Address),
-                    DriversLicense = DriversLicenseHelper.ConvertWriteToReadDto(person.DriversLicense),
+                    Address = AddressHelper.ConvertWriteToReadDto(person?.Address),
+                    DriversLicense = DriversLicenseHelper.ConvertWriteToReadDto(person?.DriversLicense),
                     Birthday = person?.Birthday,
-                    Name = PersonNameHelper.ConvertWriteToReadDto(person.Name),
+                    Name = PersonNameHelper.ConvertWriteToReadDto(person?.Name),
 
                     Phones = (List<PhoneToRead>)person.Phones.Select(phone => new PhoneToRead()
                     {

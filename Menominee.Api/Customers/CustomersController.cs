@@ -111,21 +111,25 @@ namespace Menominee.Api.Customers
         {
             var customerFromRepository = await customerRepository.GetEntityAsync(id);
 
-            if (customerFromRepository == null || customerFromRepository?.EntityType == null)
-                return NotFound($"Could not find Customer in the database to update.");
-
-            if (customerFromRepository.EntityType == EntityType.Business)
+            if (customerFromRepository is null)
             {
-                var businessFromRepository = customerFromRepository.Business;
-                Updaters.UpdateBusiness(customerToWrite.Business, businessFromRepository);
-                await customerRepository.SaveChangesAsync();
+                return NotFound($"Could not find Customer in the database to update with Id: {id}.");
             }
 
-            if (customerFromRepository.EntityType == EntityType.Person)
+            UpdateCustomerEntity(customerToWrite, customerFromRepository);
+
+            var result = UpdateCustomerType(customerToWrite, customerFromRepository);
+            var badRequestResult = IsFailure(result);
+            if (badRequestResult is not null)
             {
-                var personFromRepository = customerFromRepository.Person;
-                Updaters.UpdatePerson(customerToWrite.Person, personFromRepository, personRepository);
-                await customerRepository.SaveChangesAsync();
+                return badRequestResult;
+            }
+
+            result = UpdateCustomerCode(customerToWrite, customerFromRepository);
+            badRequestResult = IsFailure(result);
+            if (badRequestResult is not null)
+            {
+                return badRequestResult;
             }
 
             AddNewVehicles(customerFromRepository, customerToWrite);
@@ -135,6 +139,54 @@ namespace Menominee.Api.Customers
             await customerRepository.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        private ActionResult IsFailure(Result result)
+        {
+            if (result.IsFailure)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return null;
+        }
+
+        private static void UpdateCustomerEntity(CustomerToWrite customerToWrite, Customer? customerFromRepository)
+        {
+            // TODO: Retrun success or failure result
+            switch (customerFromRepository?.CustomerEntity)
+            {
+                case Person person:
+                    ContactDetailUpdaters.UpdatePerson(customerToWrite.Person, person);
+                    break;
+                case Business business:
+                    ContactDetailUpdaters.UpdateBusiness(customerToWrite.Business, business);
+                    break;
+
+                default:
+                    //return NotFound($"Could not find Customer in the database to update.");
+                    break;
+            }
+        }
+
+        private static Result UpdateCustomerType(CustomerToWrite customerToWrite, Customer? customerFromRepository)
+        {
+            if (customerFromRepository?.CustomerType != customerToWrite.CustomerType)
+            {
+                return customerFromRepository.SetCustomerType(customerToWrite.CustomerType);
+            }
+
+            return Result.Success();
+        }
+
+        private static Result UpdateCustomerCode(CustomerToWrite customerToWrite, Customer? customerFromRepository)
+        {
+            if (customerFromRepository?.Code != customerToWrite.Code)
+            {
+                return customerFromRepository.SetCode(customerToWrite.Code);
+            }
+
+            return Result.Success();
         }
 
         private static void DeleteVehicles(Customer customerFromRepository, CustomerToWrite customerFromCaller)
@@ -163,11 +215,18 @@ namespace Menominee.Api.Customers
 
                     if (updatedVehicle is not null)
                     {
+                        // TODO: return success or failure result
+                        if (vehicle.NonTraditionalVehicle != updatedVehicle.NonTraditionalVehicle)
+                            vehicle.SetNonTraditionalVehicle(updatedVehicle.NonTraditionalVehicle);
+
                         if (vehicle.Active != updatedVehicle.Active)
                             vehicle.SetActive(updatedVehicle.Active);
 
                         if (vehicle.Color != updatedVehicle.Color)
                             vehicle.SetColor(updatedVehicle.Color);
+
+                        if (vehicle.UnitNumber != updatedVehicle.UnitNumber)
+                            vehicle.SetUnitNumber(updatedVehicle.UnitNumber);
 
                         if (vehicle.Make != updatedVehicle.Make)
                             vehicle.SetMake(updatedVehicle.Make);
@@ -242,41 +301,36 @@ namespace Menominee.Api.Customers
 
         private async Task<Customer> CreatePersonCustomerAsync(CustomerToWrite customerToAdd)
         {
-            if (customerToAdd.Person.Id < 1)
-            {
-                var newPerson = CreateNewPerson(customerToAdd.Person);
-                personRepository.Add(newPerson);
-                await personRepository.SaveChangesAsync();
-                return CreateCustomer(newPerson, customerToAdd.CustomerType, customerToAdd.Code);
-            }
+            var person = customerToAdd.Person.Id > 0
+                ? await personRepository.GetEntityAsync(customerToAdd.Person.Id)
+                : await SaveNewPersonAsync(customerToAdd.Person);
 
-            if (customerToAdd.Person.Id > 0)
-            {
-                var existingPerson = await personRepository.GetEntityAsync(customerToAdd.Person.Id);
-                return CreateCustomer(existingPerson, customerToAdd.CustomerType, customerToAdd.Code);
-            }
+            return CreateCustomer(person, customerToAdd.CustomerType, customerToAdd.Code);
+        }
 
-            return null;
+        private async Task<Person> SaveNewPersonAsync(PersonToWrite personToWrite)
+        {
+            var person = CreateNewPerson(personToWrite);
+            personRepository.Add(person);
+            await personRepository.SaveChangesAsync();
+            return person;
         }
 
         private async Task<Customer> CreateBusinessCustomerAsync(CustomerToWrite customerToAdd)
         {
-            if (customerToAdd.Business.Id < 1)
-            {
-                //var contact = await personRepository.GetEntityAsync(customerToAdd.Business.Contact.Id);
-                var newBusiness = CreateNewBusiness(customerToAdd.Business);
-                businessRepository.Add(newBusiness);
-                await personRepository.SaveChangesAsync();
-                return CreateCustomer(newBusiness, customerToAdd.CustomerType, customerToAdd.Code);
-            }
+            var business = customerToAdd.Business.Id > 0
+                ? await businessRepository.GetEntityAsync(customerToAdd.Business.Id)
+                : await SaveNewBusinessAsync(customerToAdd.Business);
 
-            if (customerToAdd.Business.Id > 0)
-            {
-                var existingBusiness = await businessRepository.GetEntityAsync(customerToAdd.Business.Id);
-                return CreateCustomer(existingBusiness, customerToAdd.CustomerType, customerToAdd.Code);
-            }
+            return CreateCustomer(business, customerToAdd.CustomerType, customerToAdd.Code);
+        }
 
-            return null;
+        private async Task<Business> SaveNewBusinessAsync(BusinessToWrite businessToWrite)
+        {
+            var business = CreateNewBusiness(businessToWrite);
+            businessRepository.Add(business);
+            await businessRepository.SaveChangesAsync();
+            return business;
         }
 
         private static Person CreateNewPerson(PersonToWrite personToAdd)
@@ -302,7 +356,6 @@ namespace Menominee.Api.Customers
 
             return newPerson;
         }
-
         private static void SetAddress(AddressToWrite addressToAdd, Person newPerson)
         {
             if (addressToAdd is not null)

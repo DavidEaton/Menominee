@@ -1,7 +1,7 @@
 ﻿using Menominee.Domain.Entities;
+using Menominee.Domain.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using Base = Menominee.Domain.BaseClasses;
 
 namespace Menominee.Shared.Models.Contactable
 {
@@ -14,24 +14,41 @@ namespace Menominee.Shared.Models.Contactable
                 : null;
         }
 
-        public static string GetPrimaryEmail(Base.Contactable entity)
+        public static string GetPrimaryEmail(ICustomerEntity entity)
         {
-            if (entity == null)
-                return string.Empty;
+            switch (entity)
+            {
+                case Person person when person?.Phones != null && person.Phones.Any():
+                    return person.Emails.FirstOrDefault(email => email?.IsPrimary == true)?.Address ?? null;
 
-            return entity.Emails.Count > 0
-                ? entity.Emails.FirstOrDefault(email => email?.IsPrimary == true)?.Address
-                : string.Empty;
+                case Business business when business?.Phones != null && business.Phones.Any():
+                    return business.Emails.FirstOrDefault(email => email?.IsPrimary == true)?.Address ?? null;
+
+                default:
+                    return string.Empty;
+            }
         }
 
-        public static string GetOrdinalEmail(Base.Contactable entity, int position)
+        public static string GetOrdinalEmail(ICustomerEntity entity, int position)
         {
-            if (entity == null)
+            if (entity is null)
                 return string.Empty;
 
-            return entity.Emails.Count > 0
-                ? entity.Emails[position]?.ToString()
-                : string.Empty;
+            switch (entity)
+            {
+                case Person person when person?.Emails is not null && person.Emails.Any():
+                    return person.Emails.Count > 0
+                    ? person.Emails[position]?.ToString()
+                    : string.Empty;
+
+                case Business business when business?.Emails is not null && business.Emails.Any():
+                    return business.Emails.Count > 0
+                    ? business.Emails[position]?.ToString()
+                    : string.Empty;
+
+                default:
+                    return string.Empty;
+            }
         }
 
 

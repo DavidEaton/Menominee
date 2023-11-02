@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Menominee.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,236 +16,145 @@ namespace Menominee.Domain.Entities
         public static readonly string UnknownEntityTypeMessage = $"Customer is unknown entity type.";
         public static readonly string RequiredMessage = "Please include all required items.";
         public static readonly string InvalidCodeLengthMessage = $"Code must be {MaximumCodeLength} characters or less.";
+        public static readonly string UnsupportedMessage = "Unsupported customer entity type.";
 
-        public Person Person { get; private set; }
-        public Business Business { get; private set; }
-        public EntityType EntityType => GetEntityType();
         public CustomerType CustomerType { get; private set; }
-        private DateTime Created { get; set; }
-        public ContactPreferences ContactPreferences { get; private set; }
         public string Code { get; private set; }
-
+        public ContactPreferences ContactPreferences { get; private set; }
+        public ICustomerEntity CustomerEntity { get; private set; }
+        public EntityType EntityType => CustomerEntity.EntityType;
+        public string DisplayName => CustomerEntity.DisplayName;
+        public string Notes => CustomerEntity.Notes;
+        public Address Address => CustomerEntity.Address;
+        public string Name => CustomerEntity.ToString();
         private readonly List<Vehicle> vehicles = new();
         public IReadOnlyList<Vehicle> Vehicles => vehicles.ToList();
-        public string Name =>
-            Person is not null
-                ? Person.Name.FirstMiddleLast
-                : Business is not null
-                    ? Business.Name.Name
-                    : string.Empty;
+        public IReadOnlyList<Phone> Phones => CustomerEntity.Phones;
+        public IReadOnlyList<Email> Emails => CustomerEntity.Emails;
 
-        public string Notes =>
-            Person is not null
-                ? Person.Notes
-                : Business is not null
-                    ? Business.Notes
-                    : string.Empty;
-
-        public IReadOnlyList<Phone> Phones =>
-            Person is not null
-                ? Person.Phones.ToList()
-                : Business is not null
-                    ? Business.Phones.ToList()
-                    : new List<Phone>();
-
-        public IReadOnlyList<Email> Emails =>
-            Person is not null
-                ? Person.Emails.ToList()
-                : Business is not null
-                    ? Business.Emails.ToList()
-                    : new List<Email>();
-
-        public Address Address =>
-            Person is not null
-                ? Person.Address
-                : Business is not null
-                    ? Business.Address
-                    : null;
-
-        public Person Contact => Business?.Contact;
-
-        private Customer(Person person, CustomerType customerType, string code)
+        private Customer(ICustomerEntity entity, CustomerType customerType, string code)
         {
-            Person = person;
+            CustomerEntity = entity;
             CustomerType = customerType;
-            Created = DateTime.Now;
             Code = code;
         }
 
-        private Customer(Business business, CustomerType customerType, string code)
+        public static Result<Customer> Create(ICustomerEntity entity, CustomerType customerType, string code)
         {
-            Business = business;
-            CustomerType = customerType;
-            Created = DateTime.Now;
-            Code = code;
-        }
-
-        public static Result<Customer> Create(Person person, CustomerType customerType, string code)
-        {
-            if (person is null)
+            if (entity is null)
                 return Result.Failure<Customer>(RequiredMessage);
 
             if (!Enum.IsDefined(typeof(CustomerType), customerType))
                 return Result.Failure<Customer>(RequiredMessage);
 
             code = code?.Trim() ?? string.Empty;
-            var codeResult = ValidateCode(code);
-            if (codeResult.IsFailure)
-                return Result.Failure<Customer>(codeResult.Error);
 
-            return Result.Success(new Customer(person, customerType, code));
-        }
-
-        public static Result<Customer> Create(Business business, CustomerType customerType, string code)
-        {
-            if (business is null)
+            if (string.IsNullOrWhiteSpace(code))
                 return Result.Failure<Customer>(RequiredMessage);
 
-            if (!Enum.IsDefined(typeof(CustomerType), customerType))
-                return Result.Failure<Customer>(RequiredMessage);
-
-            code = code?.Trim() ?? string.Empty;
-            var codeResult = ValidateCode(code);
-            if (codeResult.IsFailure)
-                return Result.Failure<Customer>(codeResult.Error);
-
-            return Result.Success(new Customer(business, customerType, code));
+            return Result.Success(new Customer(entity, customerType, code));
         }
-
-        private EntityType GetEntityType() => Person is not null
-                ? EntityType.Person
-                : Business is not null
-                    ? EntityType.Business
-                    : throw new InvalidOperationException(UnknownEntityTypeMessage);
 
         public Result SetAddress(Address address)
         {
-            // Address (if present) is guaranteed to be valid;
-            // it was validated on creation.
-            if (address is null)
-                return Result.Failure<Address>(RequiredMessage);
+            switch (CustomerEntity)
+            {
+                case Person person:
+                    return person.SetAddress(address);
 
-            if (Person is not null)
-                return Result.Success(Person.SetAddress(address));
+                case Business business:
+                    return business.SetAddress(address);
 
-            if (Business is not null)
-                return Result.Success(Business.SetAddress(address));
-
-            return Result.Failure<Address>(UnknownEntityTypeMessage);
+                default:
+                    return Result.Failure(UnsupportedMessage);
+            }
         }
 
-        public Result ClearAddress()
+        public void ClearAddress()
         {
-            if (Person is not null)
-                return Result.Success(Person.ClearAddress());
+            switch (CustomerEntity)
+            {
+                case Person person:
+                    person.ClearAddress();
+                    break;
 
-            if (Business is not null)
-                return Result.Success(Business.ClearAddress());
+                case Business business:
+                    business.ClearAddress();
+                    break;
 
-            return Result.Failure<Address>(UnknownEntityTypeMessage);
+                default:
+                    throw new InvalidOperationException(UnsupportedMessage);
+            }
+        }
+
+        public Result SetCustomerType(CustomerType customerType)
+        {
+            if (Enum.IsDefined(typeof(CustomerType), customerType))
+            {
+                CustomerType = customerType;
+                return Result.Success();
+            }
+
+            return Result.Failure(RequiredMessage);
         }
 
         public Result<Phone> AddPhone(Phone phone)
         {
-            if (phone is null)
-                return Result.Failure<Phone>(RequiredMessage);
-
-            if (CustomerHasPhone(phone))
-                return Result.Failure<Phone>($"{DuplicateItemMessagePrefix} Phone: {phone.PhoneType} - {phone}");
-
-            switch (EntityType)
+            switch (CustomerEntity)
             {
-                case EntityType.Person:
-                    Person.AddPhone(phone);
-                    return Result.Success(phone);
+                case Person person:
+                    return person.AddPhone(phone);
 
-                case EntityType.Business:
-                    Business.AddPhone(phone);
-                    return Result.Success(phone);
+                case Business business:
+                    return business.AddPhone(phone);
 
-                default: return Result.Failure<Phone>(UnknownEntityTypeMessage);
+                default:
+                    return Result.Failure<Phone>(UnsupportedMessage);
             }
         }
 
         public Result<Phone> RemovePhone(Phone phone)
         {
-            if (phone is null)
-                return Result.Failure<Phone>(RequiredMessage);
-
-            switch (EntityType)
+            switch (CustomerEntity)
             {
-                case EntityType.Person:
-                    Person.RemovePhone(phone);
-                    return Result.Success(phone);
+                case Person person:
+                    return person.RemovePhone(phone);
 
-                case EntityType.Business:
-                    Business.RemovePhone(phone);
-                    return Result.Success(phone);
+                case Business business:
+                    return business.RemovePhone(phone);
 
-                default: return Result.Failure<Phone>(UnknownEntityTypeMessage);
+                default:
+                    return Result.Failure<Phone>(UnsupportedMessage);
             }
-        }
-
-        private bool CustomerHasPhone(Phone phone)
-        {
-            if (Person is not null)
-                return Person.Phones.Any(x => x == phone);
-
-            if (Business is not null)
-                return Business.Phones.Any(x => x == phone);
-
-            throw new InvalidOperationException(UnknownEntityTypeMessage);
         }
 
         public Result<Email> AddEmail(Email email)
         {
-            if (email is null)
-                return Result.Failure<Email>(RequiredMessage);
-
-            if (CustomerHasEmail(email))
-                return Result.Failure<Email>($"{DuplicateItemMessagePrefix} Email: {email.Address}");
-
-            switch (EntityType)
+            switch (CustomerEntity)
             {
-                case EntityType.Person:
-                    Person.AddEmail(email);
-                    return Result.Success(email);
+                case Person person:
+                    return person.AddEmail(email);
 
-                case EntityType.Business:
-                    Business.AddEmail(email);
-                    return Result.Success(email);
+                case Business business:
+                    return business.AddEmail(email);
 
-                default: return Result.Failure<Email>(UnknownEntityTypeMessage);
+                default:
+                    return Result.Failure<Email>(UnsupportedMessage);
             }
-        }
-
-        private bool CustomerHasEmail(Email email)
-        {
-            if (Person is not null)
-                return Person.Emails.Any(x => x == email);
-
-            if (Business is not null)
-                return Business.Emails.Any(x => x == email);
-
-            throw new InvalidOperationException(UnknownEntityTypeMessage);
         }
 
         public Result<Email> RemoveEmail(Email email)
         {
-            if (email is null)
-                return Result.Failure<Email>(RequiredMessage);
-
-            switch (EntityType)
+            switch (CustomerEntity)
             {
-                case EntityType.Person:
-                    Person.RemoveEmail(email);
-                    return Result.Success(email);
+                case Person person:
+                    return person.RemoveEmail(email);
 
-                case EntityType.Business:
-                    Business.RemoveEmail(email);
-                    return Result.Success(email);
+                case Business business:
+                    return business.RemoveEmail(email);
 
-                default: return Result.Failure<Email>(UnknownEntityTypeMessage);
+                default:
+                    return Result.Failure<Email>(UnsupportedMessage);
             }
         }
 
@@ -271,27 +181,41 @@ namespace Menominee.Domain.Entities
 
         private bool CustomerHasVehicle(Vehicle vehicle)
         {
-            return Vehicles.Any(v => v == vehicle);
+            return Vehicles.Any(existingVehicle => existingVehicle == vehicle);
         }
 
         public Result<string> SetCode(string code)
         {
             code = code?.Trim() ?? string.Empty;
 
-            if (string.IsNullOrWhiteSpace(code)) return Result.Success(Code = code);
+            if (string.IsNullOrWhiteSpace(code))
+                return Result.Failure<string>(RequiredMessage);
 
             return code.Length <= MaximumCodeLength
                 ? Result.Success(Code = code)
                 : Result.Failure<string>(InvalidCodeLengthMessage);
         }
 
-        private static Result ValidateCode(string code)
+        public Result SetCustomerEntity(ICustomerEntity entity)
         {
-            if (string.IsNullOrWhiteSpace(code)) return Result.Success();
+            if (entity is null)
+                return Result.Failure<ICustomerEntity>(RequiredMessage);
 
-            return code.Length <= MaximumCodeLength
-                ? Result.Success()
-                : Result.Failure(InvalidCodeLengthMessage);
+            switch (entity.EntityType)
+            {
+                case EntityType.Person:
+                    CustomerEntity = entity;
+                    break;
+
+                case EntityType.Business:
+                    CustomerEntity = entity;
+                    break;
+
+                default:
+                    return Result.Failure(UnsupportedMessage);
+            }
+
+            return Result.Success();
         }
 
         #region ORM

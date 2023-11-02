@@ -122,9 +122,7 @@ try
 
     services.TryAddScoped<UserContext, UserContext>();
     services.TryAddScoped<IPersonRepository, PersonRepository>();
-    services.TryAddScoped<PersonsController, PersonsController>();
     services.TryAddScoped<IBusinessRepository, BusinessRepository>();
-    services.TryAddScoped<BusinessesController, BusinessesController>();
     services.TryAddScoped<ICustomerRepository, CustomerRepository>();
     services.TryAddScoped<IVendorRepository, VendorRepository>();
     services.TryAddScoped<IVendorInvoiceRepository, VendorInvoiceRepository>();
@@ -169,6 +167,13 @@ try
 
     var reportsPath = Path.Combine(builder.Environment.ContentRootPath, "Reports");
 
+    if (builder.Environment.IsEnvironment("Testing"))
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(builder.Configuration[$"DatabaseSettings:IntegrationTestsConnectionString"])
+            .EnableSensitiveDataLogging()
+            .UseLoggerFactory(LoggerFactory.Create(builder => { builder.AddConsole(); }))
+            .LogTo(Console.WriteLine, LogLevel.Information));
+
     if (builder.Environment.IsDevelopment())
     {
         // services.AddDbContext<ApplicationDbContext>();
@@ -199,13 +204,6 @@ try
                         new UriReportSourceResolver(reportsPath))
             });
     }
-
-    if (builder.Environment.IsEnvironment("Testing"))
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(builder.Configuration[$"DatabaseSettings:IntegrationTestsConnectionString"])
-            .EnableSensitiveDataLogging()
-            .UseLoggerFactory(LoggerFactory.Create(builder => { builder.AddConsole(); }))
-            .LogTo(Console.WriteLine, LogLevel.Information));
 
     var app = builder.Build();
     // Configure the HTTP request pipeline.

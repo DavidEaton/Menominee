@@ -247,12 +247,12 @@ Reads with child collections must include .AsSplitQuery() to prevent performance
 
 |Entity|Read|Write|Method|Inverted|
 |---:|---:| ---:|
-|0|1|1|CovertReadToWriteDto|CoverWriteToReadDto|
+|0|1|1|ConvertReadToWriteDto|CoverWriteToReadDto|
 |1|0|1|ConvertToWriteDto|ConvertWriteDtoToEntity|
 |1|1|0|ConvertToReadDto|ConvertReadDtoToEntity|
 
 Results in six possible methods named:  
-CovertReadToWriteDto  
+ConvertReadToWriteDto  
 CoverWriteToReadDto  
 ConvertToWriteDto  
 ConvertWriteDtoToEntity  

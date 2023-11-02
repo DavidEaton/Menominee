@@ -28,9 +28,14 @@ public partial class RepairOrderForm
         {
             var title = $"RO #{RandomInt()}";
 
-            if (RepairOrderToEdit?.Customer?.Name?.Length > 0)
+            if ((RepairOrderToEdit?.Customer?.IsBusiness ?? false) && RepairOrderToEdit?.Customer?.Business?.Name.Length > 0)
             {
-                title += $"   ~   {RepairOrderToEdit?.Customer?.Name}";
+                title += $"   ~   {RepairOrderToEdit?.Customer?.Business.Name}";
+            }
+
+            if ((RepairOrderToEdit?.Customer?.IsPerson ?? false) && RepairOrderToEdit?.Customer?.Person?.Name.ToString().Length > 0)
+            {
+                title += $"   ~   {RepairOrderToEdit?.Customer?.Person.Name.ToString()}";
             }
 
             if (RepairOrderToEdit?.Vehicle is not null && RepairOrderToEdit.Vehicle.Id != 0)

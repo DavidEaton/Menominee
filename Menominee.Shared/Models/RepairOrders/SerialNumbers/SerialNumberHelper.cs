@@ -1,5 +1,4 @@
 ﻿using Menominee.Domain.Entities.RepairOrders;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +7,7 @@ namespace Menominee.Shared.Models.RepairOrders.SerialNumbers
     public class SerialNumberHelper
     {
 
-        public static List<RepairOrderSerialNumberToWrite> CovertReadToWriteDtos(IReadOnlyList<RepairOrderSerialNumberToRead> serialNumbers)
+        public static List<RepairOrderSerialNumberToWrite> ConvertReadToWriteDtos(IReadOnlyList<RepairOrderSerialNumberToRead> serialNumbers)
         {
             return serialNumbers?.Select(
                 serialNumber =>
@@ -44,7 +43,7 @@ namespace Menominee.Shared.Models.RepairOrders.SerialNumbers
             ?? new List<RepairOrderSerialNumberToRead>();
         }
 
-        internal static List<RepairOrderSerialNumberToWrite> CovertToWriteDtos(IReadOnlyList<RepairOrderSerialNumber> serialNumbers)
+        internal static List<RepairOrderSerialNumberToWrite> ConvertToWriteDtos(IReadOnlyList<RepairOrderSerialNumber> serialNumbers)
         {
             return serialNumbers?.Select(
                 serialNumber =>

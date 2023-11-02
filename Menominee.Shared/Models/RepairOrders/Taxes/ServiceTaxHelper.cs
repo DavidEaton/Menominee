@@ -6,7 +6,7 @@ namespace Menominee.Shared.Models.RepairOrders.Taxes
 {
     public class ServiceTaxHelper
     {
-        public static List<RepairOrderServiceTaxToWrite> CovertReadToWriteDtos(IList<RepairOrderServiceTaxToRead> taxes)
+        public static List<RepairOrderServiceTaxToWrite> ConvertReadToWriteDtos(IList<RepairOrderServiceTaxToRead> taxes)
         {
             return taxes?.Select(
                 tax =>
@@ -47,7 +47,7 @@ namespace Menominee.Shared.Models.RepairOrders.Taxes
             ?? new List<RepairOrderServiceTaxToRead>();
         }
 
-        internal static List<RepairOrderServiceTaxToWrite> CovertToWriteDtos(IReadOnlyList<RepairOrderServiceTax> taxes)
+        internal static List<RepairOrderServiceTaxToWrite> ConvertToWriteDtos(IReadOnlyList<RepairOrderServiceTax> taxes)
         {
             return taxes?.Select(
                 tax =>

@@ -88,7 +88,7 @@ namespace Menominee.Shared.Models.Businesses
                     Id = business.Id,
                     Name = business.Name.Name,
                     ContactName = business?.Contact?.Name.LastFirstMiddle,
-                    ContactPrimaryPhone = PhoneHelper.GetPrimaryPhone(business?.Contact),
+                    ContactPrimaryPhone = PhoneHelper.GetPrimaryPhone((business?.Contact)).ToString(),
 
                     AddressLine1 = business?.Address?.AddressLine1,
                     AddressLine2 = business?.Address?.AddressLine2,
@@ -97,14 +97,14 @@ namespace Menominee.Shared.Models.Businesses
                     PostalCode = business?.Address?.PostalCode,
 
                     Notes = business.Notes,
-                    PrimaryPhone = PhoneHelper.GetPrimaryPhone(business),
-                    PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(business),
+                    PrimaryPhone = PhoneHelper.GetPrimaryPhone(business).ToString(),
+                    PrimaryPhoneType = PhoneHelper.GetPrimaryPhone(business).PhoneType.ToString(),
                     PrimaryEmail = EmailHelper.GetPrimaryEmail(business)
                 }
                 : new();
         }
 
-        internal static BusinessToWrite CovertToWriteDto(Business business)
+        internal static BusinessToWrite ConvertToWriteDto(Business business)
         {
             return business is not null
                 ? new()

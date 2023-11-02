@@ -18,7 +18,7 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems
 {
     public class LineItemHelper
     {
-        public static List<RepairOrderLineItemToWrite> CovertReadToWriteDtos(IList<RepairOrderLineItemToRead> lineItems)
+        public static List<RepairOrderLineItemToWrite> ConvertReadToWriteDtos(IList<RepairOrderLineItemToRead> lineItems)
         {
             return lineItems?.Select(
                 item =>
@@ -35,7 +35,7 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems
                     SaleType = item.SaleType,
                     SellingPrice = item.SellingPrice,
                     Total = item.Total,
-                    SerialNumbers = SerialNumberHelper.CovertReadToWriteDtos(item.SerialNumbers),
+                    SerialNumbers = SerialNumberHelper.ConvertReadToWriteDtos(item.SerialNumbers),
                     Warranties = WarrantyHelper.ConvertReadToWriteDtos(item.Warranties),
                     Taxes = ItemTaxHelper.ConvertReadToWriteDtos(item.Taxes),
                     Purchases = PurchaseHelper.ConvertReadToWriteDtos(item.Purchases)
@@ -85,14 +85,14 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems
                 ?? new List<RepairOrderLineItemToRead>();
         }
 
-        internal static List<RepairOrderLineItemToWrite> CovertToWriteDtos(IReadOnlyList<RepairOrderLineItem> lineItems)
+        internal static List<RepairOrderLineItemToWrite> ConvertToWriteDtos(IReadOnlyList<RepairOrderLineItem> lineItems)
         {
             return lineItems?.Select(
                 lineItem =>
                 new RepairOrderLineItemToWrite
                 {
                     Id = lineItem.Id,
-                    Item = ItemHelper.ConvertToWriteDto(lineItem.Item),
+                    Item = ItemHelper.ConvertToWriteDto(lineItem?.Item),
                     Core = lineItem.Core,
                     Cost = lineItem.Cost,
                     DiscountAmount = new DiscountAmountToRead() { DiscountType = lineItem.DiscountAmount.Type },
@@ -103,7 +103,7 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems
                     SaleType = lineItem.SaleType,
                     SellingPrice = lineItem.SellingPrice,
                     Total = lineItem.AmountTotal,
-                    SerialNumbers = SerialNumberHelper.CovertToWriteDtos(lineItem.SerialNumbers),
+                    SerialNumbers = SerialNumberHelper.ConvertToWriteDtos(lineItem.SerialNumbers),
                     Warranties = WarrantyHelper.ConvertToWriteDtos(lineItem.Warranties),
                     Taxes = ItemTaxHelper.ConvertToWriteDtos(lineItem.Taxes),
                     Purchases = PurchaseHelper.ConvertToWriteDtos(lineItem.Purchases)

@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using System;
 using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
@@ -30,10 +31,10 @@ namespace Menominee.Common.ValueObjects
             firstName = (firstName ?? string.Empty).Trim();
             middleName = (middleName is null || middleName == string.Empty) ? null : middleName.Trim();
 
-            if (lastName.Length < MinimumLength    ||
-                lastName.Length > MaximumLength    ||
-                firstName.Length > MaximumLength   ||
-                firstName.Length > MaximumLength   ||
+            if (lastName.Length < MinimumLength ||
+                lastName.Length > MaximumLength ||
+                firstName.Length > MaximumLength ||
+                firstName.Length > MaximumLength ||
                 middleName?.Length > MaximumLength ||
                 middleName?.Length > MaximumLength)
                 return Result.Failure<PersonName>(InvalidLengthMessage);
@@ -92,7 +93,7 @@ namespace Menominee.Common.ValueObjects
             return LastFirstMiddleInitial;
         }
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return LastName;
             yield return FirstName;

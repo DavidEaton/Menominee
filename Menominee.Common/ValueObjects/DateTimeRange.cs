@@ -63,7 +63,7 @@ namespace Menominee.Common.ValueObjects
             return Result.Success(new DateTimeRange(start, start.AddDays(7)));
         }
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return End;
             yield return Start;

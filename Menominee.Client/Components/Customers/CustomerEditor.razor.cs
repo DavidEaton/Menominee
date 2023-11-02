@@ -1,15 +1,15 @@
 ﻿using Menominee.Common.Enums;
 using Menominee.Shared.Models.Customers;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components;
 using Menominee.Shared.Models.Persons;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Menominee.Client.Components.Customers
 {
     public partial class CustomerEditor
     {
         [Parameter]
-        public CustomerToRead? Customer { get; set; }
+        public CustomerToWrite Customer { get; set; }
 
         [Parameter]
         public FormMode FormMode { get; set; }
@@ -32,7 +32,7 @@ namespace Menominee.Client.Components.Customers
         {
             if (FormMode.Equals(FormMode.Edit) && Customer is not null)
             {
-                CustomerModel = CustomerHelper.ConvertReadToWriteDto(Customer);
+                CustomerModel = Customer;
             }
 
             foreach (CustomerType item in Enum.GetValues(typeof(CustomerType)))

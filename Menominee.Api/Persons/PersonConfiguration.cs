@@ -1,11 +1,12 @@
-﻿using Menominee.Common.Enums;
+﻿using Menominee.Api.Configurations;
+using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace Menominee.Api.Configurations
+namespace Menominee.Api.Persons
 {
     public class PersonConfiguration : EntityConfiguration<Person>
     {

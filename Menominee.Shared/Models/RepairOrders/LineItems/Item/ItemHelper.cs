@@ -13,19 +13,19 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems.Item
     public class ItemHelper
     {
         internal static RepairOrderItemToWrite ConvertToWriteDto(RepairOrderItem item) =>
-            item == null
+            item is null
                 ? new RepairOrderItemToWrite()
                 : new RepairOrderItemToWrite
                 {
                     Description = item.Description,
                     Id = item.Id,
-                    Labor = item.Labor?.ToWriteDto(),
-                    Manufacturer = ManufacturerHelper.ConvertToReadDto(item.Manufacturer),
-                    Part = item.Part?.ToWriteDto(),
+                    Labor = item.Labor?.ToRequest(),
+                    Manufacturer = ManufacturerHelper.ConvertToReadDto(item?.Manufacturer),
+                    Part = item.Part?.ToRequest(),
                     PartNumber = item.PartNumber,
                     PartType = item.PartType,
-                    ProductCode = ProductCodeHelper.ConvertToReadDto(item.ProductCode),
-                    SaleCode = SaleCodeHelper.ConvertToReadDto(item.SaleCode)
+                    ProductCode = ProductCodeHelper.ConvertToReadDto(item?.ProductCode),
+                    SaleCode = SaleCodeHelper.ConvertToReadDto(item?.SaleCode)
                 };
 
         internal static RepairOrderItem ConvertWriteDtoToEntity(

@@ -25,12 +25,8 @@ namespace TestingHelperLibrary
         }
         public static int GetIdFromString(string json)
         {
-            using (JsonDocument doc = JsonDocument.Parse(json))
-            {
-                JsonElement root = doc.RootElement;
-                int id = root.GetProperty("id").GetInt32();
-                return id;
-            }
+            using var doc = JsonDocument.Parse(json);
+            return doc.RootElement.GetProperty("id").GetInt32();
         }
 
         public static (bool, ApiError) DeserializeApiError(string errorContent)

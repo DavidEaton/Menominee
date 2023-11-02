@@ -1,8 +1,8 @@
 ﻿using Menominee.Domain.Entities;
+using Menominee.Domain.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Base = Menominee.Domain.BaseClasses;
 
 namespace Menominee.Shared.Models.Contactable
 {
@@ -79,44 +79,34 @@ namespace Menominee.Shared.Models.Contactable
                 : null;
         }
 
-        public static string GetPrimaryPhone(Base.Contactable entity)
+        public static Phone GetPrimaryPhone(ICustomerEntity entity)
         {
-            if (entity == null || entity?.Phones == null || entity?.Phones?.Count < 1)
-                return string.Empty;
+            switch (entity)
+            {
+                case Person person when person?.Phones != null && person.Phones.Any():
+                    return person.Phones.FirstOrDefault(phone => phone?.IsPrimary == true) ?? null;
 
-            return entity.Phones.Count > 0
-                ? entity.Phones.FirstOrDefault(phone => phone?.IsPrimary == true)?.ToString()
-                : string.Empty;
+                case Business business when business?.Phones != null && business.Phones.Any():
+                    return business.Phones.FirstOrDefault(phone => phone?.IsPrimary == true) ?? null;
+
+                default:
+                    return null;
+            }
         }
 
-        public static string GetPrimaryPhoneType(Base.Contactable entity)
+        public static Phone GetOrdinalPhone(ICustomerEntity entity, int position)
         {
-            if (entity == null || entity?.Phones?.Count < 1)
-                return string.Empty;
+            switch (entity)
+            {
+                case Person person when person?.Phones is not null && person.Phones.Any():
+                    return person?.Phones[position];
 
-            return entity.Phones.Count > 0
-                ? entity.Phones.FirstOrDefault(phone => phone?.IsPrimary == true)?.PhoneType.ToString()
-                : string.Empty;
-        }
+                case Business business when business?.Phones is not null && business.Phones.Any():
+                    return business?.Phones[position];
 
-        public static string GetOrdinalPhone(Person person, int position)
-        {
-            if (person == null || person?.Phones == null || person?.Phones?.Count < 1)
-                return string.Empty;
-
-            return person?.Phones.Count >
-                0 ? person?.Phones[position].ToString()
-                : string.Empty;
-        }
-
-        public static string GetOrdinalPhoneType(Person person, int position)
-        {
-            if (person == null || person?.Phones == null || person?.Phones?.Count < 1)
-                return string.Empty;
-
-            return person?.Phones.Count > 0
-                ? person?.Phones[position]?.PhoneType.ToString()
-                : string.Empty;
+                default:
+                    return null;
+            }
         }
 
         public static string FormatPhoneNumber(string number)

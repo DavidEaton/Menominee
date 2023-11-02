@@ -1,12 +1,12 @@
-﻿using Menominee.Domain.Entities.Inventory;
+﻿using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
 
 namespace Menominee.Shared.Models.RepairOrders.LineItems.Item
 {
     public class RepairOrderItemLaborToWrite
     {
         public long Id { get; set; }
-        public LaborAmount LaborAmount { get; set; }
-        public TechAmount TechAmount { get; set; }
+        public LaborAmountToWrite LaborAmount { get; set; }
+        public TechAmountToWrite TechAmount { get; set; }
 
     }
 }

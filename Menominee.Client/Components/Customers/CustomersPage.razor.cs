@@ -61,7 +61,7 @@ namespace Menominee.Client.Components.Customers
             Customer = CustomerHelper.ConvertReadToWriteDto(customerResult.Value);
 
             if (customerResult.Value.EntityType == EntityType.Person)
-                Caption = $"Editing Customer: {customerResult.Value.Person.FirstMiddleLast}";
+                Caption = $"Editing Customer: {customerResult.Value.Person.Name.ToString}";
 
             if (customerResult.Value.EntityType == EntityType.Business)
                 Caption = $"Editing Customer: {customerResult.Value.Business.Name}";

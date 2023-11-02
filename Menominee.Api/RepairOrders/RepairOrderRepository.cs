@@ -1,4 +1,5 @@
-﻿using Menominee.Api.Data;
+﻿using Menominee.Api.Customers;
+using Menominee.Api.Data;
 using Menominee.Domain.Entities.RepairOrders;
 using Menominee.Shared.Models.RepairOrders;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,9 @@ namespace Menominee.Api.RepairOrders
     public class RepairOrderRepository : IRepairOrderRepository
     {
         private readonly ApplicationDbContext context;
-        private readonly ILogger<RepairOrderRepository> _logger;
+        private readonly ILogger<RepairOrderRepository?> _logger;
 
-        public RepairOrderRepository(ApplicationDbContext context, ILogger<RepairOrderRepository> logger)
+        public RepairOrderRepository(ApplicationDbContext context, ILogger<RepairOrderRepository?> logger)
         {
             this.context = context ??
                            throw new ArgumentNullException(nameof(context));
@@ -34,15 +35,10 @@ namespace Menominee.Api.RepairOrders
                 context.Remove(repairOrder);
         }
 
-        public async Task<RepairOrderToRead> GetAsync(long id)
+        public async Task<RepairOrderToRead?> GetAsync(long id)
         {
             var repairOrderFromContext = await context.RepairOrders
                 .Include(repairOrder => repairOrder.Customer)
-                    .ThenInclude(customer => customer.Business)
-                .Include(repairOrder => repairOrder.Customer)
-                    .ThenInclude(customer => customer.Person)
-                .Include(repairOrder => repairOrder.Customer)
-                    .ThenInclude(customer => customer.Vehicles)
                 .Include(repairOrder => repairOrder.Vehicle)
                 .Include(repairOrder => repairOrder.Services)
                     .ThenInclude(service => service.LineItems)
@@ -71,21 +67,27 @@ namespace Menominee.Api.RepairOrders
                     .ThenInclude(service => service.Taxes)
                 .Include(repairOrder => repairOrder.Services)
                     .ThenInclude(service => service.SaleCode)
-
                 .Include(repairOrder => repairOrder.Statuses)
-
                 .Include(repairOrder => repairOrder.Taxes)
-
                 .Include(repairOrder => repairOrder.Payments)
-
                 .AsSplitQuery()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(repairOrder => repairOrder.Id == id);
+            //.AsNoTracking() // must enable tracking to load related etities
+            .FirstOrDefaultAsync(repairOrder => repairOrder.Id == id);
+
+            if (repairOrderFromContext is null)
+            {
+                return null;
+            }
+
+            await Helper.LoadCustomerEntity(repairOrderFromContext.Customer, context);
+            await Helper.LoadVehiclesAsync(repairOrderFromContext.Customer, context);
+            await Helper.LoadContactDetailsAsync(repairOrderFromContext.Customer, context);
 
             return RepairOrderHelper.ConvertToReadDto(repairOrderFromContext);
         }
 
-        public async Task<RepairOrder> GetEntityAsync(long id)
+
+        public async Task<RepairOrder?> GetEntityAsync(long id)
         {
             return await context.RepairOrders
                 .Include(repairOrder => repairOrder.Services)
@@ -115,10 +117,10 @@ namespace Menominee.Api.RepairOrders
                 .FirstOrDefaultAsync(repairOrder => repairOrder.Id == id);
         }
 
-        public async Task<IReadOnlyList<RepairOrderToReadInList>> GetListAsync()
+        public async Task<IReadOnlyList<RepairOrderToReadInList?>> GetListAsync()
         {
             _logger.LogInformation("GetRepairOrderListAsync");
-            IReadOnlyList<RepairOrder> repairOrders = await context.RepairOrders.ToListAsync();
+            IReadOnlyList<RepairOrder?> repairOrders = await context.RepairOrders.ToListAsync();
 
             return repairOrders
                 .Select(repairOrder =>
@@ -144,9 +146,11 @@ namespace Menominee.Api.RepairOrders
         {
             var invoiceNumbers = context.RepairOrders
                 .Select(repairOrder => repairOrder.InvoiceNumber)
+                .DefaultIfEmpty()
                 .Max();
 
             return invoiceNumbers;
         }
+
     }
 }

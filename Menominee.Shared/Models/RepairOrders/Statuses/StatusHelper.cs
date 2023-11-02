@@ -20,7 +20,7 @@ namespace Menominee.Shared.Models.RepairOrders.Statuses
             ?? new List<RepairOrderStatusToRead>();
         }
 
-        public static List<RepairOrderStatusToWrite> CovertReadToWriteDtos(List<RepairOrderStatusToRead> statuses)
+        public static List<RepairOrderStatusToWrite> ConvertReadToWriteDtos(List<RepairOrderStatusToRead> statuses)
         {
             return statuses?.Select(
                 status =>

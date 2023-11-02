@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using System;
 using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
@@ -36,7 +37,7 @@ namespace Menominee.Common.ValueObjects
             return new ContactPreferences(AllowMail, AllowEmail, allowSms);
         }
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return AllowEmail;
             yield return AllowEmail;

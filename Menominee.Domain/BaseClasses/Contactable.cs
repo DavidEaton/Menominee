@@ -10,13 +10,13 @@ using Entity = Menominee.Common.Entity;
 
 namespace Menominee.Domain.BaseClasses
 {
-    public abstract class Contactable : Entity, IContactLists
+    public abstract class Contactable : Entity, IContactable
     {
         // Targeting tests at the abstract base class binds them to the code’s implementation details.
         // Always test only concrete classes; don’t test abstract classes directly
         public static readonly int NoteMaximumLength = 10000;
         public static readonly string NoteMaximumLengthMessage = $"Notes cannot be over {NoteMaximumLength} characters in length.";
-        public static readonly string RequiredMessage = $"Please enter all required items.";
+        public static readonly string RequiredMessage = "Please include all required items.";
         public static readonly string NonuniqueMessage = $"Item has already been entered; each item must be unique.";
         public static readonly string PrimaryExistsMessage = $"Primary has already been entered.";
         public static readonly string InvalidValueMessage = $"Value was invalid";
@@ -50,10 +50,10 @@ namespace Menominee.Domain.BaseClasses
             if (email is null)
                 return Result.Failure<Email>(RequiredMessage);
 
-            if (ContactableHasEmail(email))
+            if (HasEmail(email))
                 return Result.Failure<Email>(NonuniqueMessage);
 
-            if (ContactableHasPrimaryEmail() && email.IsPrimary)
+            if (HasPrimaryEmail() && email.IsPrimary)
                 return Result.Failure<Email>(PrimaryExistsMessage);
 
             emails.Add(email);
@@ -79,10 +79,10 @@ namespace Menominee.Domain.BaseClasses
             if (phone is null)
                 return Result.Failure<Phone>(RequiredMessage);
 
-            if (ContactableHasPhone(phone))
+            if (HasPhone(phone))
                 return Result.Failure<Phone>(NonuniqueMessage);
 
-            if (ContactableHasPrimaryPhone() && phone.IsPrimary)
+            if (HasPrimaryPhone() && phone.IsPrimary)
                 return Result.Failure<Phone>(PrimaryExistsMessage);
 
             phones.Add(phone);
@@ -123,22 +123,22 @@ namespace Menominee.Domain.BaseClasses
             return Result.Success(Address = null);
         }
 
-        private bool ContactableHasPhone(Phone phone)
+        public bool HasPhone(Phone phone)
         {
             return Phones.Any(existingPhone => existingPhone.Number == phone.Number);
         }
 
-        private bool ContactableHasPrimaryPhone()
+        public bool HasPrimaryPhone()
         {
             return Phones.Any(existingPhone => existingPhone.IsPrimary);
         }
 
-        private bool ContactableHasEmail(Email email)
+        public bool HasEmail(Email email)
         {
             return Emails.Any(existingEmail => existingEmail.Address == email.Address);
         }
 
-        private bool ContactableHasPrimaryEmail()
+        public bool HasPrimaryEmail()
         {
             return Emails.Any(email => email.IsPrimary);
         }

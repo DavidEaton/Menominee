@@ -10,11 +10,11 @@ namespace Menominee.Api.Customers
     {
         void Add(Customer entity);
         void Delete(Customer entity);
-        Task<IReadOnlyList<CustomerToRead>> GetAllAsync();
-        Task<PagedList<CustomerToRead>> GetByCodeAsync(string code, Pagination pagination);
-        Task<IReadOnlyList<CustomerToReadInList>> GetListAsync();
-        Task<CustomerToRead> GetAsync(long id);
+        Task<IReadOnlyList<CustomerToRead?>> GetAllAsync();
+        Task<PagedList<CustomerToRead?>> GetByCodeAsync(string code, Pagination pagination);
+        Task<IReadOnlyList<CustomerToReadInList?>> GetListAsync();
+        Task<CustomerToRead?> GetAsync(long id);
         Task SaveChangesAsync();
-        Task<Customer> GetEntityAsync(long id);
+        Task<Customer?> GetEntityAsync(long id);
     }
 }

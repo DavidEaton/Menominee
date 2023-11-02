@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using System;
 using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
@@ -32,7 +33,7 @@ namespace Menominee.Common.ValueObjects
 
             if (name.Length < MinimumLength || name.Length > MaximumLength)
                 return Result.Failure<BusinessName>($"{InvalidMessage} You entered {name.Length} character(s).");
-            
+
             return Result.Success(new BusinessName(name));
         }
 
@@ -40,7 +41,7 @@ namespace Menominee.Common.ValueObjects
         {
             return Name;
         }
-        protected override IEnumerable<object> GetEqualityComponents()
+        protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return Name;
         }

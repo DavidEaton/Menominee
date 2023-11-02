@@ -9,9 +9,9 @@ namespace Menominee.Api.RepairOrders
     {
         void Add(RepairOrder repairOrder);
         void Delete(RepairOrder repairOrder);
-        Task<RepairOrder> GetEntityAsync(long id);
-        Task<RepairOrderToRead> GetAsync(long id);
-        Task<IReadOnlyList<RepairOrderToReadInList>> GetListAsync();
+        Task<RepairOrder?> GetEntityAsync(long id);
+        Task<RepairOrderToRead?> GetAsync(long id);
+        Task<IReadOnlyList<RepairOrderToReadInList?>> GetListAsync();
         Task SaveChangesAsync();
         Task<List<long>> GetTodaysRepairOrderNumbersAsync();
         long GetLastInvoiceNumberOrSeed();

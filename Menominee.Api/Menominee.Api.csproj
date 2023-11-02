@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
 		<UserSecretsId>596afd5f-e7c7-4c5b-b2e8-e71352278284</UserSecretsId>
 	</PropertyGroup>
 
@@ -29,13 +30,13 @@
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.16" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.16" />
 		<PackageReference Include="Microsoft.Graph" Version="4.7.0" />
 		<PackageReference Include="Microsoft.Identity.Web" Version="2.9.0" />
 		<PackageReference Include="Microsoft.Identity.Web.UI" Version="1.16.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.16" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.16" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.16">
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.12" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.12" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.12">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -45,6 +46,7 @@
 		<PackageReference Include="Serilog.AspNetCore.Ingestion" Version="1.0.0-dev-00032" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<PackageReference Include="System.Text.Json" Version="7.0.0" />
 		<PackageReference Include="Telerik.Reporting.Services.AspNetCore" Version="17.0.23.315" />
 		<PackageReference Include="Telerik.ReportViewer.Blazor" Version="17.0.23.315" />
 		<PackageReference Include="Telerik.WebReportDesigner.Services" Version="17.0.23.315" />

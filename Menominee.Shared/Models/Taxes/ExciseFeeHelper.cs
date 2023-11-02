@@ -17,7 +17,7 @@ namespace Menominee.Shared.Models.Taxes
                 .Value;
         }
 
-        public static ExciseFeeToWrite CovertReadToWriteDto(ExciseFeeToRead exciseFee)
+        public static ExciseFeeToWrite ConvertReadToWriteDto(ExciseFeeToRead exciseFee)
         {
             return exciseFee is null
                 ? new()
@@ -55,7 +55,7 @@ namespace Menominee.Shared.Models.Taxes
                 };
         }
 
-        internal static List<ExciseFeeToWrite> CovertReadToWriteDtos(List<ExciseFeeToRead> exciseFees)
+        internal static List<ExciseFeeToWrite> ConvertReadToWriteDtos(List<ExciseFeeToRead> exciseFees)
         {
             return exciseFees?.Select(
                 fee =>
@@ -94,7 +94,7 @@ namespace Menominee.Shared.Models.Taxes
             ?? new List<ExciseFee>();
         }
 
-        internal static List<ExciseFee> CovertReadDtoToEntity(List<ExciseFeeToRead> exciseFees)
+        internal static List<ExciseFee> ConvertReadDtoToEntity(List<ExciseFeeToRead> exciseFees)
         {
             return exciseFees.Select(fee =>
                     ExciseFee.Create(

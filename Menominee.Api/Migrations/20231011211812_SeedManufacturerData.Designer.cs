@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Menominee.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230822160009_AddCustomerCodeColumn")]
-    partial class AddCustomerCodeColumn
+    [Migration("20231011211812_SeedManufacturerData")]
+    partial class SeedManufacturerData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -105,6 +105,7 @@ namespace Menominee.Api.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Code")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -116,9 +117,11 @@ namespace Menominee.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BusinessId");
+                    b.HasIndex("BusinessId")
+                        .HasDatabaseName("IX_BusinessId");
 
-                    b.HasIndex("PersonId");
+                    b.HasIndex("PersonId")
+                        .HasDatabaseName("IX_PersonId");
 
                     b.ToTable("Customer", "dbo");
                 });
@@ -139,6 +142,9 @@ namespace Menominee.Api.Migrations
                     b.Property<long?>("BusinessId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("CustomerId")
+                        .HasColumnType("bigint");
+
                     b.Property<bool>("IsPrimary")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -153,6 +159,8 @@ namespace Menominee.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BusinessId");
+
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("PersonId");
 
@@ -169,12 +177,31 @@ namespace Menominee.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<double>("BenefitLoad")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0.0);
+
+                    b.Property<string>("CertificationNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("CompanyEmployeeId")
                         .HasMaxLength(4)
                         .HasColumnType("nvarchar(4)");
 
                     b.Property<DateTime?>("Exited")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("ExpenseCategory")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<DateTime?>("Hired")
                         .HasColumnType("datetime2");
@@ -185,6 +212,14 @@ namespace Menominee.Api.Migrations
 
                     b.Property<long?>("PersonalDetailsId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("PrintedName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("SSN")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
 
                     b.HasKey("Id");
 
@@ -505,18 +540,14 @@ namespace Menominee.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Prefix")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
                     b.HasKey("Id");
 
@@ -533,14 +564,16 @@ namespace Menominee.Api.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
 
                     b.Property<long?>("ManufacturerId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<long?>("SaleCodeId")
                         .HasColumnType("bigint");
@@ -552,6 +585,26 @@ namespace Menominee.Api.Migrations
                     b.HasIndex("SaleCodeId");
 
                     b.ToTable("ProductCode", "dbo");
+
+                    b.HasCheckConstraint("Check_ProductCode_Code_Length", "[Code] IS NULL OR (LEN([Code]) >= 1 AND LEN([Code]) <= 8)");
+                });
+
+            modelBuilder.Entity("Menominee.Domain.Entities.Inventory.SellingPriceName", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SellingPriceName", "dbo");
                 });
 
             modelBuilder.Entity("Menominee.Domain.Entities.Payables.Vendor", b =>
@@ -781,6 +834,9 @@ namespace Menominee.Api.Migrations
                     b.Property<long?>("BusinessId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("CustomerId")
+                        .HasColumnType("bigint");
+
                     b.Property<bool>("IsPrimary")
                         .HasColumnType("bit");
 
@@ -801,6 +857,8 @@ namespace Menominee.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BusinessId");
+
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("PersonId");
 
@@ -856,7 +914,9 @@ namespace Menominee.Api.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<long?>("LaborId")
                         .HasColumnType("bigint");
@@ -868,7 +928,9 @@ namespace Menominee.Api.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("PartNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("PartType")
                         .HasColumnType("int");
@@ -891,7 +953,7 @@ namespace Menominee.Api.Migrations
 
                     b.HasIndex("SaleCodeId");
 
-                    b.ToTable("RepairOrderItems");
+                    b.ToTable("RepairOrderItem", "dbo");
                 });
 
             modelBuilder.Entity("Menominee.Domain.Entities.RepairOrders.RepairOrderItemLabor", b =>
@@ -1174,7 +1236,7 @@ namespace Menominee.Api.Migrations
                     b.Property<long?>("RepairOrderId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Type")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1468,20 +1530,43 @@ namespace Menominee.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
                     b.Property<long?>("CustomerId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Make")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Model")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("NonTraditionalVehicle")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Plate")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int?>("PlateStateProvince")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UnitNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("VIN")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(17)
+                        .HasColumnType("nvarchar(17)");
 
                     b.Property<int?>("Year")
                         .HasColumnType("int");
@@ -1523,10 +1608,15 @@ namespace Menominee.Api.Migrations
                             b1.Property<long>("BusinessId")
                                 .HasColumnType("bigint");
 
-                            b1.Property<string>("AddressLine")
+                            b1.Property<string>("AddressLine1")
                                 .HasMaxLength(255)
                                 .HasColumnType("nvarchar(255)")
-                                .HasColumnName("AddressLine");
+                                .HasColumnName("AddressLine1");
+
+                            b1.Property<string>("AddressLine2")
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("AddressLine2");
 
                             b1.Property<string>("City")
                                 .HasMaxLength(255)
@@ -1534,8 +1624,8 @@ namespace Menominee.Api.Migrations
                                 .HasColumnName("AddressCity");
 
                             b1.Property<string>("PostalCode")
-                                .HasMaxLength(15)
-                                .HasColumnType("nvarchar(15)")
+                                .HasMaxLength(10)
+                                .HasColumnType("nvarchar(10)")
                                 .HasColumnName("AddressPostalCode");
 
                             b1.Property<string>("State")
@@ -1570,11 +1660,11 @@ namespace Menominee.Api.Migrations
 
             modelBuilder.Entity("Menominee.Domain.Entities.Customer", b =>
                 {
-                    b.HasOne("Menominee.Domain.Entities.Business", "Business")
+                    b.HasOne("Menominee.Domain.Entities.Business", null)
                         .WithMany()
                         .HasForeignKey("BusinessId");
 
-                    b.HasOne("Menominee.Domain.Entities.Person", "Person")
+                    b.HasOne("Menominee.Domain.Entities.Person", null)
                         .WithMany()
                         .HasForeignKey("PersonId");
 
@@ -1603,11 +1693,7 @@ namespace Menominee.Api.Migrations
                                 .HasForeignKey("CustomerId");
                         });
 
-                    b.Navigation("Business");
-
                     b.Navigation("ContactPreferences");
-
-                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("Menominee.Domain.Entities.Email", b =>
@@ -1615,6 +1701,10 @@ namespace Menominee.Api.Migrations
                     b.HasOne("Menominee.Domain.Entities.Business", null)
                         .WithMany("Emails")
                         .HasForeignKey("BusinessId");
+
+                    b.HasOne("Menominee.Domain.Entities.Customer", null)
+                        .WithMany("Emails")
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("Menominee.Domain.Entities.Person", null)
                         .WithMany("Emails")
@@ -2020,10 +2110,15 @@ namespace Menominee.Api.Migrations
                             b1.Property<long>("VendorId")
                                 .HasColumnType("bigint");
 
-                            b1.Property<string>("AddressLine")
+                            b1.Property<string>("AddressLine1")
                                 .HasMaxLength(255)
                                 .HasColumnType("nvarchar(255)")
-                                .HasColumnName("AddressLine");
+                                .HasColumnName("AddressLine1");
+
+                            b1.Property<string>("AddressLine2")
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("AddressLine2");
 
                             b1.Property<string>("City")
                                 .HasMaxLength(255)
@@ -2031,8 +2126,8 @@ namespace Menominee.Api.Migrations
                                 .HasColumnName("AddressCity");
 
                             b1.Property<string>("PostalCode")
-                                .HasMaxLength(15)
-                                .HasColumnType("nvarchar(15)")
+                                .HasMaxLength(10)
+                                .HasColumnType("nvarchar(10)")
                                 .HasColumnName("AddressPostalCode");
 
                             b1.Property<string>("State")
@@ -2242,10 +2337,15 @@ namespace Menominee.Api.Migrations
                             b1.Property<long>("PersonId")
                                 .HasColumnType("bigint");
 
-                            b1.Property<string>("AddressLine")
+                            b1.Property<string>("AddressLine1")
                                 .HasMaxLength(255)
                                 .HasColumnType("nvarchar(255)")
-                                .HasColumnName("AddressLine");
+                                .HasColumnName("AddressLine1");
+
+                            b1.Property<string>("AddressLine2")
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("AddressLine2");
 
                             b1.Property<string>("City")
                                 .HasMaxLength(255)
@@ -2253,8 +2353,8 @@ namespace Menominee.Api.Migrations
                                 .HasColumnName("AddressCity");
 
                             b1.Property<string>("PostalCode")
-                                .HasMaxLength(15)
-                                .HasColumnType("nvarchar(15)")
+                                .HasMaxLength(10)
+                                .HasColumnType("nvarchar(10)")
                                 .HasColumnName("AddressPostalCode");
 
                             b1.Property<string>("State")
@@ -2283,6 +2383,10 @@ namespace Menominee.Api.Migrations
                     b.HasOne("Menominee.Domain.Entities.Business", null)
                         .WithMany("Phones")
                         .HasForeignKey("BusinessId");
+
+                    b.HasOne("Menominee.Domain.Entities.Customer", null)
+                        .WithMany("Phones")
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("Menominee.Domain.Entities.Person", null)
                         .WithMany("Phones")
@@ -2756,6 +2860,10 @@ namespace Menominee.Api.Migrations
 
             modelBuilder.Entity("Menominee.Domain.Entities.Customer", b =>
                 {
+                    b.Navigation("Emails");
+
+                    b.Navigation("Phones");
+
                     b.Navigation("Vehicles");
                 });
 

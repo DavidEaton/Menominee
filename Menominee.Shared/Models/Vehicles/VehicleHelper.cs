@@ -49,7 +49,7 @@ namespace Menominee.Shared.Models.Vehicles
         public static VehicleToWrite ConvertToWriteDto(Vehicle vehicle)
         {
             return vehicle is null
-                ? null
+                ? new()
                 : new()
                 {
                     Id = vehicle.Id,
@@ -121,6 +121,11 @@ namespace Menominee.Shared.Models.Vehicles
                 .Select(vehicle => ConvertReadToWriteDto(vehicle))
                 .ToList()
                 ?? new List<VehicleToWrite>();
+        }
+
+        public static Vehicle ConvertWriteDtoToEntity(VehicleToWrite vehicle)
+        {
+            return Vehicle.Create(vehicle.VIN, vehicle.Year, vehicle.Make, vehicle.Model, vehicle.Plate, vehicle.PlateStateProvince, vehicle.UnitNumber, vehicle.Color, vehicle.Active, vehicle.NonTraditionalVehicle).Value;
         }
     }
 }

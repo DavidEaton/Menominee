@@ -11,6 +11,8 @@ namespace Menominee.Data.Generators
 {
     internal class RepairOrderGenerator
     {
+        private const string Code = "Code";
+
         public static void GenerateData()
         {
             var count = 10;
@@ -78,7 +80,7 @@ namespace Menominee.Data.Generators
                 RepairOrderGeneratorResult.Customers.Add(Customer.Create(
                     RepairOrderGeneratorResult.Persons[i],
                     CustomerType.Retail,
-                    code: string.Empty)
+                    code: Code)
                     .Value);
             }
         }
@@ -90,7 +92,7 @@ namespace Menominee.Data.Generators
                 RepairOrderGeneratorResult.Customers.Add(Customer.Create(
                     RepairOrderGeneratorResult.Businesses[i],
                     CustomerType.Retail,
-                    code: string.Empty)
+                    code: Code)
                     .Value);
             }
         }

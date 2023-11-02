@@ -155,7 +155,7 @@ namespace Menominee.Common.ValueObjects
             return AddressFull;
         }
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return AddressLine1;
             yield return City;

@@ -62,7 +62,7 @@ namespace Menominee.Common.ValueObjects
             return Result.Success(Create(Number, State, DateTimeRange.Create(start, end).Value).Value);
         }
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return Number;
             yield return State;

@@ -6,20 +6,6 @@ namespace Menominee.Shared.Models.RepairOrders.Payments
 {
     public class PaymentHelper
     {
-        public static List<RepairOrderPaymentToWrite> CovertReadToWriteDtos(List<RepairOrderPaymentToRead> payments)
-        {
-            return payments?.Select(
-                payment =>
-                new RepairOrderPaymentToWrite()
-                {
-                    Id = payment.Id,
-                    PaymentMethod = payment.PaymentMethod,
-                    Amount = payment.Amount
-
-                }).ToList()
-            ?? new List<RepairOrderPaymentToWrite>();
-        }
-
         public static List<RepairOrderPaymentToRead> ConvertToReadDtos(IReadOnlyList<RepairOrderPayment> payments)
         {
             return payments?.Select(

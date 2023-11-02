@@ -12,7 +12,8 @@ namespace Menominee.Data.Database
 {
     internal static class Helper
     {
-        internal const string ConnectionString = @"Server=localhost;Database=Menominee-stage;Trusted_Connection=True;";
+        internal const string ConnectionString = @"Server=localhost;Database=Menominee-stage;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+
         internal static int savedVendors = 0;
         internal static int savedVendorInvoices = 0;
         internal static int savedInventoryItems = 0;
@@ -21,7 +22,6 @@ namespace Menominee.Data.Database
         internal static int savedCustomers = 0;
         internal static int savedVehicles = 0;
         internal static int savedRepairOrders = 0;
-
 
         internal static bool EnsureDeletedEnsureMigrated { get; private set; } = true;
 
@@ -60,7 +60,7 @@ namespace Menominee.Data.Database
 
                 try
                 {
-                    context.Customers.Attach(customer);
+                    Api.Customers.Helper.SetShadowProperties(context, customer);
                     context.SaveChanges();
                     savedCustomers++;
                 }
@@ -74,7 +74,7 @@ namespace Menominee.Data.Database
                 }
             }
 
-            Console.WriteLine($"Saved {savedVendors} Vendor rows.");
+            Console.WriteLine($"Saved {savedCustomers} Customer rows.");
         }
 
         internal static void SaveToDatabase(Person person)

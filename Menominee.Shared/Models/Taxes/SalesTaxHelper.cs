@@ -21,7 +21,7 @@ namespace Menominee.Shared.Models.Taxes
                 .Value;
         }
 
-        public static SalesTaxToWrite CovertReadToWriteDto(SalesTaxToRead taxToRead)
+        public static SalesTaxToWrite ConvertReadToWriteDto(SalesTaxToRead taxToRead)
         {
             return taxToRead is null
                 ? new()
@@ -35,7 +35,7 @@ namespace Menominee.Shared.Models.Taxes
                     TaxIdNumber = taxToRead.TaxIdNumber,
                     PartTaxRate = taxToRead.PartTaxRate,
                     LaborTaxRate = taxToRead.LaborTaxRate,
-                    ExciseFees = ExciseFeeHelper.CovertReadToWriteDtos(taxToRead?.ExciseFees)
+                    ExciseFees = ExciseFeeHelper.ConvertReadToWriteDtos(taxToRead?.ExciseFees)
                 };
         }
 
@@ -85,7 +85,7 @@ namespace Menominee.Shared.Models.Taxes
                 salesTax.TaxIdNumber,
                 salesTax.PartTaxRate,
                 salesTax.LaborTaxRate,
-                ExciseFeeHelper.CovertReadDtoToEntity(salesTax.ExciseFees))
+                ExciseFeeHelper.ConvertReadDtoToEntity(salesTax.ExciseFees))
             .Value;
         }
     }

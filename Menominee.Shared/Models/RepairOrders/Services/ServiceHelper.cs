@@ -69,9 +69,9 @@ namespace Menominee.Shared.Models.RepairOrders.Services
                     ShopSuppliesTotal = service.ShopSuppliesTotal,
                     TaxTotal = service.TaxTotal,
                     Total = service.Total,
-                    LineItems = LineItemHelper.CovertReadToWriteDtos(service.Items),
-                    Techs = TechnicianHelper.CovertReadToWriteDtos(service.Techs),
-                    Taxes = ServiceTaxHelper.CovertReadToWriteDtos(service.Taxes)
+                    LineItems = LineItemHelper.ConvertReadToWriteDtos(service.Items),
+                    Techs = TechnicianHelper.ConvertReadToWriteDtos(service.Techs),
+                    Taxes = ServiceTaxHelper.ConvertReadToWriteDtos(service.Taxes)
                 }).ToList()
                 ?? new List<RepairOrderServiceToWrite>();
         }
@@ -115,9 +115,9 @@ namespace Menominee.Shared.Models.RepairOrders.Services
                     ShopSuppliesTotal = service.ShopSuppliesTotal,
                     TaxTotal = service.ServiceTaxTotal,
                     Total = service.Total,
-                    LineItems = LineItemHelper.CovertToWriteDtos(service.LineItems),
-                    Techs = TechnicianHelper.CovertToWriteDtos(service.Technicians),
-                    Taxes = ServiceTaxHelper.CovertToWriteDtos(service.Taxes)
+                    LineItems = LineItemHelper.ConvertToWriteDtos(service.LineItems),
+                    Techs = TechnicianHelper.ConvertToWriteDtos(service.Technicians),
+                    Taxes = ServiceTaxHelper.ConvertToWriteDtos(service.Taxes)
                 }).ToList()
                 ?? new List<RepairOrderServiceToWrite>();
         }

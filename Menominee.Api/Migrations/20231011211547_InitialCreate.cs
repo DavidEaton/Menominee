@@ -36,11 +36,11 @@ namespace Menominee.Api.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LaborPayType = table.Column<int>(type: "int", nullable: true),
-                    LaborPayAmount = table.Column<double>(type: "float", nullable: true),
+                    LaborType = table.Column<int>(type: "int", nullable: true),
+                    LaborAmount = table.Column<double>(type: "float", nullable: true),
                     TechSkillLevel = table.Column<int>(type: "int", nullable: true),
                     TechPayType = table.Column<int>(type: "int", nullable: true),
-                    TechAmount_Amount = table.Column<double>(type: "float", nullable: true),
+                    TechPayAmount = table.Column<double>(type: "float", nullable: true),
                     InspectionType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -55,11 +55,11 @@ namespace Menominee.Api.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LaborPayType = table.Column<int>(type: "int", nullable: true),
-                    LaborPayAmount = table.Column<double>(type: "float", nullable: true),
+                    LaborType = table.Column<int>(type: "int", nullable: true),
+                    LaborAmount = table.Column<double>(type: "float", nullable: true),
                     TechSkillLevel = table.Column<int>(type: "int", nullable: true),
                     TechPayType = table.Column<int>(type: "int", nullable: true),
-                    TechAmount_Amount = table.Column<double>(type: "float", nullable: true)
+                    TechPayAmount = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -159,8 +159,7 @@ namespace Menominee.Api.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Prefix = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Code = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                    Prefix = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -168,31 +167,44 @@ namespace Menominee.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RepairOrder",
+                name: "RepairOrderItemLabor",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RepairOrderNumber = table.Column<long>(type: "bigint", nullable: false),
-                    InvoiceNumber = table.Column<long>(type: "bigint", nullable: false),
-                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Vehicle = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PartsTotal = table.Column<double>(type: "float", nullable: false),
-                    LaborTotal = table.Column<double>(type: "float", nullable: false),
-                    DiscountTotal = table.Column<double>(type: "float", nullable: false),
-                    TaxTotal = table.Column<double>(type: "float", nullable: false),
-                    HazMatTotal = table.Column<double>(type: "float", nullable: false),
-                    ShopSuppliesTotal = table.Column<double>(type: "float", nullable: false),
-                    Total = table.Column<double>(type: "float", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DateModified = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DateInvoiced = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AccountingDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    LaborAmount_Type = table.Column<int>(type: "int", nullable: true),
+                    LaborAmount = table.Column<double>(type: "float", nullable: true),
+                    TechAmount_SkillLevel = table.Column<int>(type: "int", nullable: true),
+                    TechAmount_Type = table.Column<int>(type: "int", nullable: true),
+                    TechAmount = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RepairOrder", x => x.Id);
+                    table.PrimaryKey("PK_RepairOrderItemLabor", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RepairOrderItemPart",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    List = table.Column<double>(type: "float", nullable: false),
+                    Cost = table.Column<double>(type: "float", nullable: false),
+                    Core = table.Column<double>(type: "float", nullable: false),
+                    Retail = table.Column<double>(type: "float", nullable: false),
+                    TechAmount_SkillLevel = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TechAmount_Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TechAmount_Amount = table.Column<double>(type: "float", nullable: true),
+                    LineCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubLineCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Fractional = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RepairOrderItemPart", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -235,6 +247,37 @@ namespace Menominee.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SellingPriceName",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SellingPriceName", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Setting",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SettingName = table.Column<int>(type: "int", maxLength: 255, nullable: false),
+                    SettingGroup = table.Column<int>(type: "int", maxLength: 255, nullable: false),
+                    SettingValueType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Setting", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "InventoryItemPackagePlaceholder",
                 schema: "dbo",
                 columns: table => new
@@ -262,82 +305,14 @@ namespace Menominee.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RepairOrderPayment",
-                schema: "dbo",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PaymentMethod = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    Amount = table.Column<double>(type: "float", nullable: false),
-                    RepairOrderId = table.Column<long>(type: "bigint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RepairOrderPayment", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RepairOrderPayment_RepairOrder_RepairOrderId",
-                        column: x => x.RepairOrderId,
-                        principalSchema: "dbo",
-                        principalTable: "RepairOrder",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RepairOrderStatus",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RepairOrderId = table.Column<long>(type: "bigint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RepairOrderStatus", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RepairOrderStatus_RepairOrder_RepairOrderId",
-                        column: x => x.RepairOrderId,
-                        principalSchema: "dbo",
-                        principalTable: "RepairOrder",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RepairOrderTax",
-                schema: "dbo",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PartTaxRate = table.Column<double>(type: "float", nullable: true),
-                    PartTaxAmount = table.Column<double>(type: "float", nullable: true),
-                    LaborTaxRate = table.Column<double>(type: "float", nullable: true),
-                    LaborTaxAmount = table.Column<double>(type: "float", nullable: true),
-                    RepairOrderId = table.Column<long>(type: "bigint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RepairOrderTax", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RepairOrderTax_RepairOrder_RepairOrderId",
-                        column: x => x.RepairOrderId,
-                        principalSchema: "dbo",
-                        principalTable: "RepairOrder",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SaleCode",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
                     LaborRate = table.Column<double>(type: "float", nullable: false, defaultValue: 0.0),
                     DesiredMargin = table.Column<double>(type: "float", nullable: false, defaultValue: 0.0),
                     ShopSuppliesId = table.Column<long>(type: "bigint", nullable: true)
@@ -345,6 +320,7 @@ namespace Menominee.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SaleCode", x => x.Id);
+                    table.CheckConstraint("Check_SaleCode_DesiredMargin", "[DesiredMargin] >= 0 AND [DesiredMargin] <= 100");
                     table.ForeignKey(
                         name: "FK_SaleCode_SaleCodeShopSupplies_ShopSuppliesId",
                         column: x => x.ShopSuppliesId,
@@ -362,11 +338,32 @@ namespace Menominee.Api.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", maxLength: 10000, nullable: false),
                     FeeType = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Amount = table.Column<double>(type: "float", nullable: false, defaultValue: 0.0),
+                    InventoryItemPartId = table.Column<long>(type: "bigint", nullable: true),
+                    InventoryItemTireId = table.Column<long>(type: "bigint", nullable: true),
+                    RepairOrderItemPartId = table.Column<long>(type: "bigint", nullable: true),
                     SalesTaxId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ExciseFee", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExciseFee_InventoryItemPart_InventoryItemPartId",
+                        column: x => x.InventoryItemPartId,
+                        principalSchema: "dbo",
+                        principalTable: "InventoryItemPart",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ExciseFee_InventoryItemTire_InventoryItemTireId",
+                        column: x => x.InventoryItemTireId,
+                        principalSchema: "dbo",
+                        principalTable: "InventoryItemTire",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ExciseFee_RepairOrderItemPart_RepairOrderItemPartId",
+                        column: x => x.RepairOrderItemPartId,
+                        principalSchema: "dbo",
+                        principalTable: "RepairOrderItemPart",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ExciseFee_SalesTax_SalesTaxId",
                         column: x => x.SalesTaxId,
@@ -383,13 +380,14 @@ namespace Menominee.Api.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ManufacturerId = table.Column<long>(type: "bigint", nullable: true),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     SaleCodeId = table.Column<long>(type: "bigint", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProductCode", x => x.Id);
+                    table.CheckConstraint("Check_ProductCode_Code_Length", "[Code] IS NULL OR (LEN([Code]) >= 1 AND LEN([Code]) <= 8)");
                     table.ForeignKey(
                         name: "FK_ProductCode_Manufacturer_ManufacturerId",
                         column: x => x.ManufacturerId,
@@ -398,42 +396,6 @@ namespace Menominee.Api.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ProductCode_SaleCode_SaleCodeId",
-                        column: x => x.SaleCodeId,
-                        principalSchema: "dbo",
-                        principalTable: "SaleCode",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RepairOrderService",
-                schema: "dbo",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ServiceName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SaleCodeId = table.Column<long>(type: "bigint", nullable: true),
-                    IsCounterSale = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeclined = table.Column<bool>(type: "bit", nullable: false),
-                    PartsTotal = table.Column<double>(type: "float", nullable: false),
-                    LaborTotal = table.Column<double>(type: "float", nullable: false),
-                    DiscountTotal = table.Column<double>(type: "float", nullable: false),
-                    TaxTotal = table.Column<double>(type: "float", nullable: false),
-                    ShopSuppliesTotal = table.Column<double>(type: "float", nullable: false),
-                    Total = table.Column<double>(type: "float", nullable: false),
-                    RepairOrderId = table.Column<long>(type: "bigint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RepairOrderService", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RepairOrderService_RepairOrder_RepairOrderId",
-                        column: x => x.RepairOrderId,
-                        principalSchema: "dbo",
-                        principalTable: "RepairOrder",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_RepairOrderService_SaleCode_SaleCodeId",
                         column: x => x.SaleCodeId,
                         principalSchema: "dbo",
                         principalTable: "SaleCode",
@@ -513,82 +475,53 @@ namespace Menominee.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RepairOrderLineItem",
+                name: "RepairOrderItem",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Item_ManufacturerId = table.Column<long>(type: "bigint", nullable: true),
-                    ItemPartNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ItemDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Item_SaleCodeId = table.Column<long>(type: "bigint", nullable: true),
-                    Item_ProductCodeId = table.Column<long>(type: "bigint", nullable: true),
-                    ItemPartType = table.Column<int>(type: "int", nullable: true),
-                    SaleType = table.Column<int>(type: "int", nullable: false),
-                    IsDeclined = table.Column<bool>(type: "bit", nullable: false),
-                    IsCounterSale = table.Column<bool>(type: "bit", nullable: false),
-                    QuantitySold = table.Column<double>(type: "float", nullable: false),
-                    SellingPrice = table.Column<double>(type: "float", nullable: false),
-                    LaborPayType = table.Column<int>(type: "int", nullable: true),
-                    LaborAmount = table.Column<double>(type: "float", nullable: true),
-                    Cost = table.Column<double>(type: "float", nullable: false),
-                    Core = table.Column<double>(type: "float", nullable: false),
-                    DiscountType = table.Column<int>(type: "int", nullable: true),
-                    DiscountAmount = table.Column<double>(type: "float", nullable: true),
-                    Total = table.Column<double>(type: "float", nullable: false),
-                    RepairOrderServiceId = table.Column<long>(type: "bigint", nullable: true)
+                    ManufacturerId = table.Column<long>(type: "bigint", nullable: true),
+                    PartNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    SaleCodeId = table.Column<long>(type: "bigint", nullable: true),
+                    ProductCodeId = table.Column<long>(type: "bigint", nullable: true),
+                    PartType = table.Column<int>(type: "int", nullable: false),
+                    PartId = table.Column<long>(type: "bigint", nullable: true),
+                    LaborId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RepairOrderLineItem", x => x.Id);
+                    table.PrimaryKey("PK_RepairOrderItem", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RepairOrderLineItem_Manufacturer_Item_ManufacturerId",
-                        column: x => x.Item_ManufacturerId,
+                        name: "FK_RepairOrderItem_Manufacturer_ManufacturerId",
+                        column: x => x.ManufacturerId,
                         principalSchema: "dbo",
                         principalTable: "Manufacturer",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_RepairOrderLineItem_ProductCode_Item_ProductCodeId",
-                        column: x => x.Item_ProductCodeId,
+                        name: "FK_RepairOrderItem_ProductCode_ProductCodeId",
+                        column: x => x.ProductCodeId,
                         principalSchema: "dbo",
                         principalTable: "ProductCode",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_RepairOrderLineItem_RepairOrderService_RepairOrderServiceId",
-                        column: x => x.RepairOrderServiceId,
+                        name: "FK_RepairOrderItem_RepairOrderItemLabor_LaborId",
+                        column: x => x.LaborId,
                         principalSchema: "dbo",
-                        principalTable: "RepairOrderService",
+                        principalTable: "RepairOrderItemLabor",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_RepairOrderLineItem_SaleCode_Item_SaleCodeId",
-                        column: x => x.Item_SaleCodeId,
+                        name: "FK_RepairOrderItem_RepairOrderItemPart_PartId",
+                        column: x => x.PartId,
+                        principalSchema: "dbo",
+                        principalTable: "RepairOrderItemPart",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_RepairOrderItem_SaleCode_SaleCodeId",
+                        column: x => x.SaleCodeId,
                         principalSchema: "dbo",
                         principalTable: "SaleCode",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RepairOrderServiceTax",
-                schema: "dbo",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PartTaxRate = table.Column<double>(type: "float", nullable: true),
-                    PartTaxAmount = table.Column<double>(type: "float", nullable: true),
-                    LaborTaxRate = table.Column<double>(type: "float", nullable: true),
-                    LaborTaxAmount = table.Column<double>(type: "float", nullable: true),
-                    RepairOrderServiceId = table.Column<long>(type: "bigint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RepairOrderServiceTax", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RepairOrderServiceTax_RepairOrderService_RepairOrderServiceId",
-                        column: x => x.RepairOrderServiceId,
-                        principalSchema: "dbo",
-                        principalTable: "RepairOrderService",
                         principalColumn: "Id");
                 });
 
@@ -643,6 +576,295 @@ namespace Menominee.Api.Migrations
                         column: x => x.InventoryItemId,
                         principalSchema: "dbo",
                         principalTable: "InventoryItem",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Business",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    ContactId = table.Column<long>(type: "bigint", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", maxLength: 10000, nullable: true),
+                    AddressLine1 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    AddressLine2 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    AddressCity = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    AddressState = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true),
+                    AddressPostalCode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Business", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Company",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BusinessId = table.Column<long>(type: "bigint", nullable: true),
+                    NextInvoiceNumberOrSeed = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Company", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Company_Business_BusinessId",
+                        column: x => x.BusinessId,
+                        principalSchema: "dbo",
+                        principalTable: "Business",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Customer",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerType = table.Column<int>(type: "int", nullable: false),
+                    AllowMail = table.Column<bool>(type: "bit", nullable: true),
+                    AllowEmail = table.Column<bool>(type: "bit", nullable: true),
+                    AllowSms = table.Column<bool>(type: "bit", nullable: true),
+                    Code = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    BusinessId = table.Column<long>(type: "bigint", nullable: true),
+                    PersonId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customer", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Customer_Business_BusinessId",
+                        column: x => x.BusinessId,
+                        principalSchema: "dbo",
+                        principalTable: "Business",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Vehicle",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VIN = table.Column<string>(type: "nvarchar(17)", maxLength: 17, nullable: true),
+                    Year = table.Column<int>(type: "int", nullable: true),
+                    Make = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Model = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    NonTraditionalVehicle = table.Column<bool>(type: "bit", nullable: false),
+                    Plate = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    PlateStateProvince = table.Column<int>(type: "int", nullable: true),
+                    UnitNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    Color = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: true),
+                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    CustomerId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vehicle", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Vehicle_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalSchema: "dbo",
+                        principalTable: "Customer",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RepairOrder",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RepairOrderNumber = table.Column<long>(type: "bigint", nullable: false),
+                    InvoiceNumber = table.Column<long>(type: "bigint", nullable: false),
+                    CustomerId = table.Column<long>(type: "bigint", nullable: true),
+                    VehicleId = table.Column<long>(type: "bigint", nullable: true),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateModified = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AccountingDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RepairOrder", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RepairOrder_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalSchema: "dbo",
+                        principalTable: "Customer",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_RepairOrder_Vehicle_VehicleId",
+                        column: x => x.VehicleId,
+                        principalSchema: "dbo",
+                        principalTable: "Vehicle",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RepairOrderPayment",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    Amount = table.Column<double>(type: "float", nullable: false),
+                    RepairOrderId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RepairOrderPayment", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RepairOrderPayment_RepairOrder_RepairOrderId",
+                        column: x => x.RepairOrderId,
+                        principalSchema: "dbo",
+                        principalTable: "RepairOrder",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RepairOrderService",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ServiceName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SaleCodeId = table.Column<long>(type: "bigint", nullable: true),
+                    ShopSuppliesTotal = table.Column<double>(type: "float", nullable: false),
+                    RepairOrderId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RepairOrderService", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RepairOrderService_RepairOrder_RepairOrderId",
+                        column: x => x.RepairOrderId,
+                        principalSchema: "dbo",
+                        principalTable: "RepairOrder",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_RepairOrderService_SaleCode_SaleCodeId",
+                        column: x => x.SaleCodeId,
+                        principalSchema: "dbo",
+                        principalTable: "SaleCode",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RepairOrderStatus",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RepairOrderId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RepairOrderStatus", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RepairOrderStatus_RepairOrder_RepairOrderId",
+                        column: x => x.RepairOrderId,
+                        principalSchema: "dbo",
+                        principalTable: "RepairOrder",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RepairOrderTax",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PartTaxRate = table.Column<double>(type: "float", nullable: true),
+                    PartTaxAmount = table.Column<double>(type: "float", nullable: true),
+                    LaborTaxRate = table.Column<double>(type: "float", nullable: true),
+                    LaborTaxAmount = table.Column<double>(type: "float", nullable: true),
+                    RepairOrderId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RepairOrderTax", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RepairOrderTax_RepairOrder_RepairOrderId",
+                        column: x => x.RepairOrderId,
+                        principalSchema: "dbo",
+                        principalTable: "RepairOrder",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RepairOrderLineItem",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ItemId = table.Column<long>(type: "bigint", nullable: true),
+                    SaleType = table.Column<int>(type: "int", nullable: false),
+                    IsDeclined = table.Column<bool>(type: "bit", nullable: false),
+                    IsCounterSale = table.Column<bool>(type: "bit", nullable: false),
+                    QuantitySold = table.Column<double>(type: "float", nullable: false),
+                    SellingPrice = table.Column<double>(type: "float", nullable: false),
+                    LaborType = table.Column<int>(type: "int", nullable: true),
+                    LaborAmount = table.Column<double>(type: "float", nullable: true),
+                    Cost = table.Column<double>(type: "float", nullable: false),
+                    Core = table.Column<double>(type: "float", nullable: false),
+                    DiscountType = table.Column<int>(type: "int", nullable: true),
+                    DiscountAmount = table.Column<double>(type: "float", nullable: true),
+                    RepairOrderServiceId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RepairOrderLineItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RepairOrderLineItem_RepairOrderItem_ItemId",
+                        column: x => x.ItemId,
+                        principalSchema: "dbo",
+                        principalTable: "RepairOrderItem",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_RepairOrderLineItem_RepairOrderService_RepairOrderServiceId",
+                        column: x => x.RepairOrderServiceId,
+                        principalSchema: "dbo",
+                        principalTable: "RepairOrderService",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RepairOrderServiceTax",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PartTaxRate = table.Column<double>(type: "float", nullable: true),
+                    PartTaxAmount = table.Column<double>(type: "float", nullable: true),
+                    LaborTaxRate = table.Column<double>(type: "float", nullable: true),
+                    LaborTaxAmount = table.Column<double>(type: "float", nullable: true),
+                    RepairOrderServiceId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RepairOrderServiceTax", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RepairOrderServiceTax_RepairOrderService_RepairOrderServiceId",
+                        column: x => x.RepairOrderServiceId,
+                        principalSchema: "dbo",
+                        principalTable: "RepairOrderService",
                         principalColumn: "Id");
                 });
 
@@ -717,49 +939,6 @@ namespace Menominee.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Customer",
-                schema: "dbo",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PersonId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizationId = table.Column<long>(type: "bigint", nullable: true),
-                    CustomerType = table.Column<int>(type: "int", nullable: false),
-                    AllowMail = table.Column<bool>(type: "bit", nullable: true),
-                    AllowEmail = table.Column<bool>(type: "bit", nullable: true),
-                    AllowSms = table.Column<bool>(type: "bit", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customer", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Vehicle",
-                schema: "dbo",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    VIN = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Year = table.Column<int>(type: "int", nullable: false),
-                    Make = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Model = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CustomerId = table.Column<long>(type: "bigint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Vehicle", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Vehicle_Customer_CustomerId",
-                        column: x => x.CustomerId,
-                        principalSchema: "dbo",
-                        principalTable: "Customer",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Email",
                 schema: "dbo",
                 columns: table => new
@@ -768,13 +947,26 @@ namespace Menominee.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Address = table.Column<string>(type: "nvarchar(254)", maxLength: 254, nullable: false),
                     IsPrimary = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    OrganizationId = table.Column<long>(type: "bigint", nullable: true),
+                    BusinessId = table.Column<long>(type: "bigint", nullable: true),
+                    CustomerId = table.Column<long>(type: "bigint", nullable: true),
                     PersonId = table.Column<long>(type: "bigint", nullable: true),
                     VendorId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Email", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Email_Business_BusinessId",
+                        column: x => x.BusinessId,
+                        principalSchema: "dbo",
+                        principalTable: "Business",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Email_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalSchema: "dbo",
+                        principalTable: "Customer",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -788,7 +980,13 @@ namespace Menominee.Api.Migrations
                     Hired = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Exited = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CompanyEmployeeId = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: true),
-                    Notes = table.Column<string>(type: "nvarchar(max)", maxLength: 10000, nullable: true)
+                    Notes = table.Column<string>(type: "nvarchar(max)", maxLength: 10000, nullable: true),
+                    SSN = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: true),
+                    CertificationNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    PrintedName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ExpenseCategory = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    BenefitLoad = table.Column<double>(type: "float", nullable: false, defaultValue: 0.0)
                 },
                 constraints: table =>
                 {
@@ -843,26 +1041,6 @@ namespace Menominee.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Organization",
-                schema: "dbo",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    ContactId = table.Column<long>(type: "bigint", nullable: true),
-                    Notes = table.Column<string>(type: "nvarchar(max)", maxLength: 10000, nullable: true),
-                    AddressLine = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    AddressCity = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    AddressState = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true),
-                    AddressPostalCode = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Organization", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Person",
                 schema: "dbo",
                 columns: table => new
@@ -880,10 +1058,11 @@ namespace Menominee.Api.Migrations
                     DriversLicenseState = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true),
                     VendorId = table.Column<long>(type: "bigint", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AddressLine = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    AddressLine1 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    AddressLine2 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     AddressCity = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     AddressState = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true),
-                    AddressPostalCode = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true)
+                    AddressPostalCode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -900,7 +1079,8 @@ namespace Menominee.Api.Migrations
                     Number = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     PhoneType = table.Column<int>(type: "int", nullable: false),
                     IsPrimary = table.Column<bool>(type: "bit", nullable: false),
-                    OrganizationId = table.Column<long>(type: "bigint", nullable: true),
+                    BusinessId = table.Column<long>(type: "bigint", nullable: true),
+                    CustomerId = table.Column<long>(type: "bigint", nullable: true),
                     PersonId = table.Column<long>(type: "bigint", nullable: true),
                     VendorId = table.Column<long>(type: "bigint", nullable: true)
                 },
@@ -908,10 +1088,16 @@ namespace Menominee.Api.Migrations
                 {
                     table.PrimaryKey("PK_Phone", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Phone_Organization_OrganizationId",
-                        column: x => x.OrganizationId,
+                        name: "FK_Phone_Business_BusinessId",
+                        column: x => x.BusinessId,
                         principalSchema: "dbo",
-                        principalTable: "Organization",
+                        principalTable: "Business",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Phone_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalSchema: "dbo",
+                        principalTable: "Customer",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Phone_Person_PersonId",
@@ -960,10 +1146,11 @@ namespace Menominee.Api.Migrations
                     DefaultPaymentMethodAutoCompleteDocuments = table.Column<bool>(type: "bit", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", maxLength: 10000, nullable: true),
-                    AddressLine = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    AddressLine1 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    AddressLine2 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     AddressCity = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     AddressState = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true),
-                    AddressPostalCode = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true)
+                    AddressPostalCode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1118,22 +1305,40 @@ namespace Menominee.Api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Customer_OrganizationId",
+                name: "IX_Business_ContactId",
                 schema: "dbo",
-                table: "Customer",
-                column: "OrganizationId");
+                table: "Business",
+                column: "ContactId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Customer_PersonId",
+                name: "IX_Company_BusinessId",
+                schema: "dbo",
+                table: "Company",
+                column: "BusinessId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BusinessId",
+                schema: "dbo",
+                table: "Customer",
+                column: "BusinessId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PersonId",
                 schema: "dbo",
                 table: "Customer",
                 column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Email_OrganizationId",
+                name: "IX_Email_BusinessId",
                 schema: "dbo",
                 table: "Email",
-                column: "OrganizationId");
+                column: "BusinessId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Email_CustomerId",
+                schema: "dbo",
+                table: "Email",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Email_PersonId",
@@ -1152,6 +1357,24 @@ namespace Menominee.Api.Migrations
                 schema: "dbo",
                 table: "Employee",
                 column: "PersonalDetailsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExciseFee_InventoryItemPartId",
+                schema: "dbo",
+                table: "ExciseFee",
+                column: "InventoryItemPartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExciseFee_InventoryItemTireId",
+                schema: "dbo",
+                table: "ExciseFee",
+                column: "InventoryItemTireId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExciseFee_RepairOrderItemPartId",
+                schema: "dbo",
+                table: "ExciseFee",
+                column: "RepairOrderItemPartId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExciseFee_SalesTaxId",
@@ -1232,22 +1455,22 @@ namespace Menominee.Api.Migrations
                 column: "InventoryItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Organization_ContactId",
-                schema: "dbo",
-                table: "Organization",
-                column: "ContactId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Person_VendorId",
                 schema: "dbo",
                 table: "Person",
                 column: "VendorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Phone_OrganizationId",
+                name: "IX_Phone_BusinessId",
                 schema: "dbo",
                 table: "Phone",
-                column: "OrganizationId");
+                column: "BusinessId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Phone_CustomerId",
+                schema: "dbo",
+                table: "Phone",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Phone_PersonId",
@@ -1274,28 +1497,58 @@ namespace Menominee.Api.Migrations
                 column: "SaleCodeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RepairOrder_CustomerId",
+                schema: "dbo",
+                table: "RepairOrder",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RepairOrder_VehicleId",
+                schema: "dbo",
+                table: "RepairOrder",
+                column: "VehicleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RepairOrderItem_LaborId",
+                schema: "dbo",
+                table: "RepairOrderItem",
+                column: "LaborId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RepairOrderItem_ManufacturerId",
+                schema: "dbo",
+                table: "RepairOrderItem",
+                column: "ManufacturerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RepairOrderItem_PartId",
+                schema: "dbo",
+                table: "RepairOrderItem",
+                column: "PartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RepairOrderItem_ProductCodeId",
+                schema: "dbo",
+                table: "RepairOrderItem",
+                column: "ProductCodeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RepairOrderItem_SaleCodeId",
+                schema: "dbo",
+                table: "RepairOrderItem",
+                column: "SaleCodeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RepairOrderItemTax_RepairOrderLineItemId",
                 schema: "dbo",
                 table: "RepairOrderItemTax",
                 column: "RepairOrderLineItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderLineItem_Item_ManufacturerId",
+                name: "IX_RepairOrderLineItem_ItemId",
                 schema: "dbo",
                 table: "RepairOrderLineItem",
-                column: "Item_ManufacturerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderLineItem_Item_ProductCodeId",
-                schema: "dbo",
-                table: "RepairOrderLineItem",
-                column: "Item_ProductCodeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderLineItem_Item_SaleCodeId",
-                schema: "dbo",
-                table: "RepairOrderLineItem",
-                column: "Item_SaleCodeId");
+                column: "ItemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RepairOrderLineItem_RepairOrderServiceId",
@@ -1450,12 +1703,12 @@ namespace Menominee.Api.Migrations
                 column: "VendorInvoiceId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Customer_Organization_OrganizationId",
+                name: "FK_Business_Person_ContactId",
                 schema: "dbo",
-                table: "Customer",
-                column: "OrganizationId",
+                table: "Business",
+                column: "ContactId",
                 principalSchema: "dbo",
-                principalTable: "Organization",
+                principalTable: "Person",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
@@ -1465,15 +1718,6 @@ namespace Menominee.Api.Migrations
                 column: "PersonId",
                 principalSchema: "dbo",
                 principalTable: "Person",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Email_Organization_OrganizationId",
-                schema: "dbo",
-                table: "Email",
-                column: "OrganizationId",
-                principalSchema: "dbo",
-                principalTable: "Organization",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
@@ -1499,15 +1743,6 @@ namespace Menominee.Api.Migrations
                 schema: "dbo",
                 table: "Employee",
                 column: "PersonalDetailsId",
-                principalSchema: "dbo",
-                principalTable: "Person",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Organization_Person_ContactId",
-                schema: "dbo",
-                table: "Organization",
-                column: "ContactId",
                 principalSchema: "dbo",
                 principalTable: "Person",
                 principalColumn: "Id");
@@ -1555,6 +1790,10 @@ namespace Menominee.Api.Migrations
                 name: "FK_VendorInvoicePaymentMethod_Vendor_ReconcilingVendorId",
                 schema: "dbo",
                 table: "VendorInvoicePaymentMethod");
+
+            migrationBuilder.DropTable(
+                name: "Company",
+                schema: "dbo");
 
             migrationBuilder.DropTable(
                 name: "CreditCard",
@@ -1622,7 +1861,11 @@ namespace Menominee.Api.Migrations
                 name: "RoleAssignment");
 
             migrationBuilder.DropTable(
-                name: "Vehicle",
+                name: "SellingPriceName",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "Setting",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -1647,10 +1890,6 @@ namespace Menominee.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Employee",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
-                name: "Customer",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -1686,7 +1925,7 @@ namespace Menominee.Api.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "ProductCode",
+                name: "RepairOrderItem",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -1694,11 +1933,15 @@ namespace Menominee.Api.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "Organization",
+                name: "ProductCode",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "Manufacturer",
+                name: "RepairOrderItemLabor",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "RepairOrderItemPart",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -1706,15 +1949,31 @@ namespace Menominee.Api.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
+                name: "Manufacturer",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
                 name: "SaleCode",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "Vehicle",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "SaleCodeShopSupplies");
+
+            migrationBuilder.DropTable(
+                name: "Customer",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "Business",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
                 name: "Person",
                 schema: "dbo");
-
-            migrationBuilder.DropTable(
-                name: "SaleCodeShopSupplies");
 
             migrationBuilder.DropTable(
                 name: "Vendor",

@@ -32,7 +32,7 @@ namespace Menominee.Shared.Models.RepairOrders.Techs
             ?? new List<RepairOrderServiceTechnicianToRead>();
         }
 
-        public static List<RepairOrderServiceTechnicianToWrite> CovertReadToWriteDtos(IList<RepairOrderServiceTechnicianToRead> techs)
+        public static List<RepairOrderServiceTechnicianToWrite> ConvertReadToWriteDtos(IList<RepairOrderServiceTechnicianToRead> techs)
         {
             {
                 return techs?.Select(
@@ -71,7 +71,7 @@ namespace Menominee.Shared.Models.RepairOrders.Techs
             ?? new List<RepairOrderServiceTechnician>();
         }
 
-        internal static List<RepairOrderServiceTechnicianToWrite> CovertToWriteDtos(IReadOnlyList<RepairOrderServiceTechnician> technicians)
+        internal static List<RepairOrderServiceTechnicianToWrite> ConvertToWriteDtos(IReadOnlyList<RepairOrderServiceTechnician> technicians)
         {
             return technicians?.Select(
                 technician =>

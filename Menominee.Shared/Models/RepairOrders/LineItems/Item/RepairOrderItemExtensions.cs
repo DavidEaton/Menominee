@@ -1,12 +1,13 @@
 ﻿using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
 using Menominee.Shared.Models.Taxes;
 
 namespace Menominee.Shared.Models.RepairOrders.LineItems.Item
 {
     public static class RepairOrderItemExtensions
     {
-        public static RepairOrderItemPartToWrite ToWriteDto(this RepairOrderItemPart part) =>
+        public static RepairOrderItemPartToWrite ToRequest(this RepairOrderItemPart part) =>
             part is null ? new RepairOrderItemPartToWrite() : new RepairOrderItemPartToWrite
             {
                 Core = part.Core,
@@ -17,17 +18,35 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems.Item
                 List = part.List,
                 Retail = part.Retail,
                 SubLineCode = part.SubLineCode,
-                TechAmount = part.TechAmount,
+                TechAmount = new TechAmountToRead()
+                {
+                    Amount = part.TechAmount.Amount,
+                    PayType = part.TechAmount.Type,
+                    SkillLevel = part.TechAmount.SkillLevel
+                },
                 ExciseFees = ExciseFeeHelper.ConvertToWriteDtos(part.ExciseFees)
             };
 
-        public static RepairOrderItemLaborToWrite ToWriteDto(this RepairOrderItemLabor labor) =>
-            labor is null ? new RepairOrderItemLaborToWrite() : new RepairOrderItemLaborToWrite
-            {
-                Id = labor.Id,
-                LaborAmount = labor.LaborAmount,
-                TechAmount = labor.TechAmount
-            };
+        public static RepairOrderItemLaborToWrite ToRequest(this RepairOrderItemLabor labor)
+        {
+            return labor is null
+                ? new()
+                : new()
+                {
+                    Id = labor.Id,
+                    LaborAmount = new LaborAmountToWrite
+                    {
+                        Amount = labor.LaborAmount.Amount,
+                        PayType = labor.LaborAmount.Type
+                    },
+                    TechAmount = new TechAmountToWrite
+                    {
+                        Amount = labor.TechAmount.Amount,
+                        PayType = labor.TechAmount.Type,
+                        SkillLevel = labor.TechAmount.SkillLevel
+                    }
+                };
+        }
 
         public static RepairOrderItemPart ToEntity(this RepairOrderItemPartToWrite itemPart) =>
             itemPart is null
@@ -37,7 +56,10 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems.Item
                     itemPart.Cost,
                     itemPart.Core,
                     itemPart.Retail,
-                    (TechAmount)LaborAmount.Create(itemPart.TechAmount?.Type ?? default, itemPart.TechAmount?.Amount ?? default).Value,
+                    (TechAmount)LaborAmount.Create(
+                        itemPart.TechAmount?.PayType ?? default,
+                        itemPart.TechAmount?.Amount ?? default)
+                    .Value,
                     itemPart.Fractional,
                     itemPart.LineCode,
                     itemPart.SubLineCode,
@@ -48,8 +70,13 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems.Item
             labor is null
                 ? null
                 : RepairOrderItemLabor.Create(
-                    labor.LaborAmount,
-                    labor.TechAmount
-                ).Value;
+                    LaborAmount.Create(
+                        labor.LaborAmount.PayType,
+                        labor.LaborAmount.Amount).Value,
+                    TechAmount.Create(
+                        labor.TechAmount.PayType,
+                        labor.TechAmount.Amount,
+                        labor.TechAmount.SkillLevel).Value
+                    ).Value;
     }
 }

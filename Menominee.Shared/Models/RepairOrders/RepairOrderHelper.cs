@@ -203,8 +203,8 @@ namespace Menominee.Shared.Models.RepairOrders
                 Id = repairOrder.Id,
                 RepairOrderNumber = repairOrder.RepairOrderNumber,
                 InvoiceNumber = repairOrder.InvoiceNumber,
-                Customer = repairOrder.Customer,
-                Vehicle = repairOrder.Vehicle,
+                Customer = CustomerHelper.ConvertReadToWriteDto(repairOrder.Customer),
+                Vehicle = VehicleHelper.ConvertReadToWriteDto(repairOrder.Vehicle),
                 PartsTotal = repairOrder.PartsTotal,
                 LaborTotal = repairOrder.LaborTotal,
                 DiscountTotal = repairOrder.DiscountTotal,
@@ -214,10 +214,10 @@ namespace Menominee.Shared.Models.RepairOrders
                 Total = repairOrder.Total,
                 DateCreated = repairOrder.DateCreated,
                 DateModified = repairOrder.DateModified,
-                Statuses = StatusHelper.CovertReadToWriteDtos(repairOrder.Statuses),
+                Statuses = StatusHelper.ConvertReadToWriteDtos(repairOrder.Statuses),
                 Services = ServiceHelper.ConvertReadToWriteDtos(repairOrder.Services),
-                Payments = PaymentHelper.CovertReadToWriteDtos(repairOrder.Payments),
-                Taxes = RepairOrderTaxHelper.CovertReadToWriteDtos(repairOrder.Taxes)
+                Payments = PaymentHelper.ConvertReadToWriteDtos(repairOrder.Payments),
+                Taxes = RepairOrderTaxHelper.ConvertReadToWriteDtos(repairOrder.Taxes)
             };
         }
 

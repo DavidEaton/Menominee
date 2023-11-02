@@ -1,14 +1,19 @@
 ﻿using CSharpFunctionalExtensions;
+using Menominee.Api.Businesses;
 using Menominee.Api.Common;
 using Menominee.Api.Customers;
 using Menominee.Api.Employees;
 using Menominee.Api.Manufacturers;
+using Menominee.Api.Persons;
 using Menominee.Api.ProductCodes;
 using Menominee.Api.SaleCodes;
 using Menominee.Api.Vehicles;
 using Menominee.Common.Http;
 using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Shared.Models.Businesses;
+using Menominee.Shared.Models.Customers;
+using Menominee.Shared.Models.Persons;
 using Menominee.Shared.Models.ProductCodes;
 using Menominee.Shared.Models.RepairOrders;
 using Menominee.Shared.Models.RepairOrders.LineItems.Item;
@@ -16,6 +21,7 @@ using Menominee.Shared.Models.RepairOrders.Payments;
 using Menominee.Shared.Models.RepairOrders.Services;
 using Menominee.Shared.Models.RepairOrders.Statuses;
 using Menominee.Shared.Models.RepairOrders.Taxes;
+using Menominee.Shared.Models.Vehicles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -34,6 +40,8 @@ namespace Menominee.Api.RepairOrders
         private readonly ISaleCodeRepository saleCodeRepository;
         private readonly IManufacturerRepository manufacturersRepository;
         private readonly IEmployeeRepository employeeRepository;
+        private readonly IBusinessRepository businessRepository;
+        private readonly IPersonRepository personRepository;
 
         public RepairOrdersController(
             IRepairOrderRepository repository,
@@ -43,6 +51,8 @@ namespace Menominee.Api.RepairOrders
             ISaleCodeRepository saleCodeRepository,
             IManufacturerRepository manufacturersRepository,
             IEmployeeRepository employeeRepository,
+            IBusinessRepository businessRepository,
+            IPersonRepository personRepository,
             ILogger<RepairOrdersController> logger) : base(logger)
         {
             this.repository = repository ??
@@ -65,6 +75,12 @@ namespace Menominee.Api.RepairOrders
 
             this.employeeRepository = employeeRepository ??
                 throw new ArgumentNullException(nameof(employeeRepository));
+
+            this.businessRepository = businessRepository ??
+                throw new ArgumentNullException(nameof(businessRepository));
+
+            this.personRepository = personRepository ??
+                throw new ArgumentNullException(nameof(personRepository));
         }
 
         [HttpGet("listing")]
@@ -123,7 +139,7 @@ namespace Menominee.Api.RepairOrders
         {
             foreach (var status in repairOrderFromCaller?.Statuses)
             {
-                var editableStatus = repairOrderFromRepository.Statuses.FirstOrDefault(oStatus => oStatus.Id == status.Id);
+                var editableStatus = repairOrderFromRepository.Statuses.FirstOrDefault(orderStatus => orderStatus.Id == status.Id);
                 if (editableStatus is null)
                     continue;
                 // TODO: Take advantage of Result returned from Set{PropertyName}() methods;
@@ -310,45 +326,76 @@ namespace Menominee.Api.RepairOrders
         [HttpPost]
         public async Task<ActionResult<PostResponse>> AddAsync(RepairOrderToWrite repairOrderToAdd)
         {
-            if (repairOrderToAdd.Customer is null || repairOrderToAdd.Vehicle is null)
-                return BadRequest("Customer and Vehicle are required.");
-
-            var customer = await customerRepository.GetEntityAsync(repairOrderToAdd.Customer.Id);
-            var vehicle = await vehicleRepository.GetEntityAsync(repairOrderToAdd.Vehicle.Id);
-            var repairOrderNumbers = await repository.GetTodaysRepairOrderNumbersAsync();
-            var saleCodeIds = repairOrderToAdd.Services.Select(service => service.SaleCode.Id).ToList();
-            var saleCodes = await saleCodeRepository.GetSaleCodeEntitiesAsync(saleCodeIds, all: true);
-            var services = repairOrderToAdd.Services;
-            var allLineItems = services.SelectMany(service => service.LineItems).ToList();
-
-            var allProductCodes = await productCodeRepository.GetEntitiesAsync();
-            var allLineItemManufacturerIds = allLineItems.Select(lineItem => lineItem.Item.Id);
-            //var manufacturers = await manufacturersRepository.GetManufacturerEntitiesAsync((List<long>)manufacturerIds); // We haven't saved yet, so LineItem.Item.Id == 0;
-            var allLineItemManufacturers = await manufacturersRepository.GetEntitiesAsync();
-            // TODO: Find the manufacturers, saleCodes and productCodes in repairOrderToAdd.Services => LineItems
-
-
-            var employees = await employeeRepository.GetEntitiesAsync();
-            var itemParts = new List<RepairOrderItemPart>();
+            var (customer, vehicle) = await HandleCustomerAndVehicleAsync(repairOrderToAdd);
+            //var saleCodeIds = repairOrderToAdd.Services.Select(service => service.SaleCode.Id).ToList();
+            //var saleCodes = await saleCodeRepository.GetSaleCodeEntitiesAsync(saleCodeIds, all: true);
             var lastInvoiceNumberOrSeed = repository.GetLastInvoiceNumberOrSeed();
+
             var repairOrder = RepairOrder.Create(
                 customer: customer,
                 vehicle: vehicle,
                 accountingDate: repairOrderToAdd.AccountingDate,
-                repairOrderNumbers: repairOrderNumbers,
+                repairOrderNumbers: await repository.GetTodaysRepairOrderNumbersAsync(),
                 lastInvoiceNumber: lastInvoiceNumberOrSeed,
                 statuses: StatusHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Statuses),
-                //services: ServiceHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Services, saleCodes, productCodes, manufacturers, itemParts, employees),
                 taxes: RepairOrderTaxHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Taxes),
                 payments: PaymentHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Payments)
-                ).Value;
+            ).Value;
 
             repository.Add(repairOrder);
             await repository.SaveChangesAsync();
 
-            return Created(new Uri($"api/RepairOrders/{repairOrder.Id}",
-                UriKind.Relative),
-                new { repairOrder.Id });
+            return Created(new Uri($"api/RepairOrders/{repairOrder.Id}", UriKind.Relative), new { repairOrder.Id });
+        }
+
+        private async Task<(Customer?, Vehicle?)> HandleCustomerAndVehicleAsync(RepairOrderToWrite repairOrderToAdd)
+        {
+            if (repairOrderToAdd.Customer.Id is not 0)
+            {
+                return (null, null);
+            }
+
+            var businessTask = HandleBusinessAsync(repairOrderToAdd.Customer);
+            var personTask = HandlePersonAsync(repairOrderToAdd.Customer);
+            var vehicleTask = HandleVehicleAsync(repairOrderToAdd.Vehicle);
+
+            await Task.WhenAll(businessTask, personTask, vehicleTask);
+
+            var customer = repairOrderToAdd.Customer.IsBusiness
+                ? Customer.Create(await businessTask, repairOrderToAdd.Customer.CustomerType, repairOrderToAdd.Customer.Code).Value
+                : Customer.Create(await personTask, repairOrderToAdd.Customer.CustomerType, repairOrderToAdd.Customer.Code).Value;
+
+            customerRepository.Add(customer);
+            await customerRepository.SaveChangesAsync();
+
+            return (customer, await vehicleTask);
+        }
+
+        private Task<Business?> HandleBusinessAsync(CustomerToWrite customerToWrite)
+        {
+            if (!customerToWrite.IsBusiness || customerToWrite.Business.Id is not 0) return Task.FromResult<Business?>(null);
+
+            var business = BusinessHelper.ConvertWriteDtoToEntity(customerToWrite.Business);
+            businessRepository.Add(business);
+            return businessRepository.SaveChangesAsync().ContinueWith(t => business);
+        }
+
+        private Task<Person?> HandlePersonAsync(CustomerToWrite customerToWrite)
+        {
+            if (!customerToWrite.IsPerson || customerToWrite.Person.Id is not 0) return Task.FromResult<Person?>(null);
+
+            var person = PersonHelper.ConvertWriteDtoToEntity(customerToWrite.Person);
+            personRepository.Add(person);
+            return personRepository.SaveChangesAsync().ContinueWith(t => person);
+        }
+
+        private Task<Vehicle?> HandleVehicleAsync(VehicleToWrite vehicleToWrite)
+        {
+            if (vehicleToWrite.Id != 0) return Task.FromResult<Vehicle?>(null);
+
+            var vehicle = VehicleHelper.ConvertWriteDtoToEntity(vehicleToWrite);
+            vehicleRepository.Add(vehicle);
+            return vehicleRepository.SaveChangesAsync().ContinueWith(t => vehicle);
         }
 
         [HttpDelete("{id:long}")]

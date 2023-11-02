@@ -9,7 +9,7 @@ namespace Menominee.Client.Components.Vehicles;
 public partial class VehicleEditor
 {
     [Parameter]
-    public VehicleToRead Vehicle { get; set; }
+    public VehicleToWrite Vehicle { get; set; }
 
     [Parameter]
     public FormMode FormMode { get; set; }
@@ -39,10 +39,10 @@ public partial class VehicleEditor
             });
         }
         StateProvinceEnumData = StateProvinceEnumData.OrderBy(state => state.DisplayText).ToList();
-        
+
         if (FormMode.Equals(FormMode.Edit))
         {
-            VehicleModel = VehicleHelper.ConvertReadToWriteDto(Vehicle);
+            VehicleModel = Vehicle;
         }
 
         EditContext = new EditContext(VehicleModel);

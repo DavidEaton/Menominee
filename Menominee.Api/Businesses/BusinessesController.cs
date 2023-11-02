@@ -14,7 +14,6 @@ namespace Menominee.Api.Businesses
     {
         private readonly IBusinessRepository repository;
         private readonly IPersonRepository personsRepository;
-        private readonly PersonsController personsController;
         // This is the only production code file that I prefer to keep comments in. - DE
 
         // TODO: Dependency Injection: Avoid injecting one controller into another
@@ -23,14 +22,11 @@ namespace Menominee.Api.Businesses
         // application services for shared functionality instead.
         public BusinessesController(
             IBusinessRepository repository,
-             PersonsController personsController,
-             IPersonRepository personsRepository,
-             ILogger<BusinessesController> logger) : base(logger)
+            IPersonRepository personsRepository,
+            ILogger<BusinessesController> logger) : base(logger)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));
-            this.personsController = personsController ??
-                throw new ArgumentNullException(nameof(personsController));
             this.personsRepository = personsRepository ??
                 throw new ArgumentNullException(nameof(personsRepository));
         }
@@ -83,7 +79,7 @@ namespace Menominee.Api.Businesses
                 return NotFound($"Could not find Business to update: {businessFromCaller.Name}");
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            Updaters.UpdateBusiness(businessFromCaller, businessFromRepository);
+            ContactDetailUpdaters.UpdateBusiness(businessFromCaller, businessFromRepository);
 
             // 3) Save changes to wherever the repository is pointing
             await repository.SaveChangesAsync();

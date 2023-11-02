@@ -57,7 +57,7 @@ namespace Menominee.Api.Persons
             if (personFromRepository is null)
                 return NotFound($"Could not find {personFromCaller.Name.FirstName} {personFromCaller.Name.LastName} to update");
 
-            Updaters.UpdatePerson(personFromCaller, personFromRepository, repository);
+            ContactDetailUpdaters.UpdatePerson(personFromCaller, personFromRepository);
 
             await repository.SaveChangesAsync();
 
