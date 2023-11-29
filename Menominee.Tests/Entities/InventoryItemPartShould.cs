@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Menominee.Api.Common;
+using Menominee.Api.Features.Taxes;
 using Menominee.Common.Enums;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.Taxes;

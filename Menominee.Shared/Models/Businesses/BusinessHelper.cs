@@ -19,7 +19,7 @@ namespace Menominee.Shared.Models.Businesses
             List<Email> emails = new();
             BusinessName businessName;
 
-            businessName = BusinessName.Create(business.Name).Value;
+            businessName = BusinessName.Create(business.Name.Name).Value;
             if (business?.Address is not null)
             {
                 var result = Address.Create(
@@ -54,7 +54,7 @@ namespace Menominee.Shared.Models.Businesses
             return business is not null
                 ? new()
                 {
-                    Name = business.Name,
+                    Name = new BusinessNameRequest() { Name = business.Name },
                     Notes = business?.Notes,
                     Address = AddressHelper.ConvertReadToWriteDto(business?.Address),
                     Phones = PhoneHelper.ConvertReadToWriteDtos(business.Phones),
@@ -110,7 +110,7 @@ namespace Menominee.Shared.Models.Businesses
                 ? new()
                 {
                     Id = business.Id,
-                    Name = business.Name.Name,
+                    Name = new BusinessNameRequest() { Name = business.Name.Name },
                     Notes = business.Notes,
                     Contact = PersonHelper.ConvertToWriteDto(business?.Contact),
                     Address = AddressHelper.ConvertToWriteDto(business?.Address),
@@ -126,7 +126,7 @@ namespace Menominee.Shared.Models.Businesses
                 ? new()
                 {
                     Id = business.Id,
-                    Name = business.Name,
+                    Name = new BusinessNameRequest() { Name = business.Name },
                     Notes = business.Notes,
                     Contact = PersonHelper.ConvertReadToWriteDto(business?.Contact),
                     Address = AddressHelper.ConvertReadToWriteDto(business?.Address),
@@ -142,7 +142,7 @@ namespace Menominee.Shared.Models.Businesses
                 ? new()
                 {
                     Id = business.Id,
-                    Name = business.Name,
+                    Name = business.Name.Name,
                     Notes = business.Notes,
                     Contact = PersonHelper.ConvertWriteToReadDto(business?.Contact),
                     Address = AddressHelper.ConvertWriteToReadDto(business?.Address),

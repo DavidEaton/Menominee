@@ -8,7 +8,8 @@ namespace Menominee.Common.ValueObjects
     {
         public static readonly int MinimumLength = 2;
         public static readonly int MaximumLength = 255;
-        public static readonly string InvalidMessage = $"Business Name must be between {MinimumLength} and {MaximumLength} character(s) in length.";
+        public static readonly string InvalidLengthMessage = $"Business Name must be between {MinimumLength} and {MaximumLength} character(s) in length.";
+        public static readonly string RequiredMessage = $"Business Name is required.";
 
         public string Name { get; private set; }
 
@@ -22,7 +23,7 @@ namespace Menominee.Common.ValueObjects
             name = (name ?? string.Empty).Trim();
 
             if (name.Length < MinimumLength || name.Length > MaximumLength)
-                return Result.Failure<BusinessName>($"{InvalidMessage} You entered {name.Length} character(s).");
+                return Result.Failure<BusinessName>($"{InvalidLengthMessage} You entered {name.Length} character(s).");
 
             return Result.Success(new BusinessName(name));
         }
@@ -32,7 +33,7 @@ namespace Menominee.Common.ValueObjects
             name = (name ?? string.Empty).Trim();
 
             if (name.Length < MinimumLength || name.Length > MaximumLength)
-                return Result.Failure<BusinessName>($"{InvalidMessage} You entered {name.Length} character(s).");
+                return Result.Failure<BusinessName>($"{InvalidLengthMessage} You entered {name.Length} character(s).");
 
             return Result.Success(new BusinessName(name));
         }

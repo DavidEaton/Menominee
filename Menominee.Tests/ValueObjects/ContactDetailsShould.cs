@@ -1,5 +1,4 @@
 ﻿using Bogus;
-using Menominee.Api.Common;
 using Menominee.Domain.BaseClasses;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
@@ -7,6 +6,7 @@ using FluentAssertions;
 using System.Linq;
 using TestingHelperLibrary;
 using Xunit;
+using Menominee.Api.Features.Contactables;
 
 namespace Menominee.Tests.ValueObjects
 {

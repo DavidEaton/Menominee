@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Menominee.Client.Features.Contactables.Addresses;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Client.Shared;
 using Menominee.Client.Shared.Models;
@@ -97,7 +98,7 @@ public partial class VendorEditor : ComponentBase
         {
             return;
         }
-            
+
         if (!AddressIsValid(Vendor.Address))
         {
             Vendor.Address = null;
@@ -134,7 +135,7 @@ public partial class VendorEditor : ComponentBase
             return false;
         }
 
-        var validator = new AddressValidator();
+        var validator = new AddressRequestValidator();
 
         return validator.Validate(address).IsValid;
     }

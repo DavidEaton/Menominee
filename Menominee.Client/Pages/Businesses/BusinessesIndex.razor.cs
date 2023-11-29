@@ -86,7 +86,7 @@ namespace Menominee.Client.Pages.Businesses
 
             Business = new BusinessToWrite
             {
-                Name = business.Name,
+                Name = new BusinessNameRequest() { Name = business.Name },
                 Notes = business.Notes,
                 Address = business.Address is not null
                 ? new AddressToWrite
@@ -130,7 +130,7 @@ namespace Menominee.Client.Pages.Businesses
 
         protected async Task HandleAddSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(Business.Name))
+            if (!string.IsNullOrWhiteSpace(Business.Name.Name))
             {
                 await BusinessDataService.AddAsync(Business);
                 await EndAddEditAsync();
@@ -139,7 +139,7 @@ namespace Menominee.Client.Pages.Businesses
 
         protected async Task HandleEditSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(Business.Name))
+            if (!string.IsNullOrWhiteSpace(Business.Name.Name))
             {
                 await BusinessDataService.UpdateAsync(Business);
                 await EndAddEditAsync();
@@ -148,7 +148,7 @@ namespace Menominee.Client.Pages.Businesses
 
         protected async Task SubmitHandlerAsync()
         {
-            if (!string.IsNullOrWhiteSpace(Business.Name))
+            if (!string.IsNullOrWhiteSpace(Business.Name.Name))
             {
                 if (BusinessFormMode == FormMode.Add)
                     await HandleAddSubmit();

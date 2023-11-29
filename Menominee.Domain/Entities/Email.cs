@@ -13,6 +13,7 @@ namespace Menominee.Domain.Entities
         public static readonly string MinimumLengthMessage = $"Email address cannot be less than {MinimumLength} character(s) in length.";
         public static readonly string MaximumLengthMessage = $"Email address cannot be over {MaximumLength} characters in length.";
         public static readonly string EmptyMessage = $"Email address cannot be empty.";
+        public static readonly string DuplicateMessage = $"Email address already in use. Please enter a unique email.";
 
         public string Address { get; private set; }
         public bool IsPrimary { get; private set; }

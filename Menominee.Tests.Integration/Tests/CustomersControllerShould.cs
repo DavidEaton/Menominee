@@ -203,7 +203,7 @@ public class CustomersControllerShould : IntegrationTestBase
         var customerFromEndpoint = await HttpClient
             .GetFromJsonAsync<CustomerToRead>($"{Route}/{customerToUpdate.Id}");
         customerFromEndpoint.Should().NotBeNull();
-        customerFromEndpoint.Business?.Name.Should().Be(customerToUpdate.Business.Name);
+        customerFromEndpoint.Business?.Name.Should().Be(customerToUpdate.Business.Name.Name);
         customerFromEndpoint.Code.Should().Be(customerToUpdate.Code);
         customerFromEndpoint.CustomerType.Should().Be(updatedCustomerType);
     }
@@ -364,7 +364,7 @@ public class CustomersControllerShould : IntegrationTestBase
         var updatedVehicleCount = customerFromEndpoint.Vehicles.Count;
         customerToUpdate = CustomerHelper.ConvertReadToWriteDto(customerFromEndpoint);
 
-        response = await HttpClient.PutAsJsonAsync($"{Route}/{customerToUpdate.Id}", customerFromEndpoint);
+        response = await HttpClient.PutAsJsonAsync($"{Route}/{customerToUpdate.Id}", customerToUpdate);
 
         response.EnsureSuccessStatusCode();
         customerFromEndpoint = await HttpClient

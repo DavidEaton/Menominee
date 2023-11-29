@@ -1,5 +1,4 @@
 ﻿using Bogus;
-using Menominee.Api.Common;
 using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.Payables;
@@ -15,6 +14,7 @@ using TestingHelperLibrary.Fakers;
 using TestingHelperLibrary.Payables;
 using Xunit;
 using static Menominee.Tests.Utilities;
+using Menominee.Api.Features.Contactables;
 
 namespace Menominee.Tests.Entities
 {

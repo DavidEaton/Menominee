@@ -2,7 +2,7 @@
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
-using Menominee.Shared.Models.DriversLicenses;
+using Menominee.Shared.Models.Persons.DriversLicenses;
 using Menominee.Shared.Models.Persons.PersonNames;
 using System.Collections.Generic;
 using System.Linq;

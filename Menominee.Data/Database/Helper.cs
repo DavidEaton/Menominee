@@ -60,7 +60,7 @@ namespace Menominee.Data.Database
 
                 try
                 {
-                    Api.Customers.Helper.SetShadowProperties(context, customer);
+                    Api.Features.Customers.Helper.SetShadowProperties(context, customer);
                     context.SaveChanges();
                     savedCustomers++;
                 }

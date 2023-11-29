@@ -1,6 +1,8 @@
-﻿namespace Menominee.Shared.Models.Contactable
+﻿using Menominee.Domain.Interfaces;
+
+namespace Menominee.Shared.Models.Contactable
 {
-    public class EmailToWrite
+    public class EmailToWrite : IHasPrimary
     {
         public long Id { get; set; }
         public string Address { get; set; } = string.Empty;

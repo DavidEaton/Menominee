@@ -22,7 +22,7 @@ public partial class VehicleEditor
 
     private string Title => $"{FormMode} Vehicle";
     private EditContext EditContext { get; set; } = default!;
-    private VehicleValidator VehicleValidator { get; set; } = new();
+    private VehicleRequestValidator VehicleValidator { get; set; } = new();
     private VehicleToWrite VehicleModel { get; set; } = new();
     private static IEnumerable<int> Years => Enumerable.Range(1896, DateTime.Now.Year - 1896 + 1).Reverse();
     List<StateProvinceEnumModel> StateProvinceEnumData { get; set; } = new List<StateProvinceEnumModel>();

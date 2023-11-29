@@ -18,6 +18,7 @@
 		<PackageReference Include="FluentAssertions" Version="6.7.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.12" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+		<PackageReference Include="Moq" Version="4.20.70" />
 		<PackageReference Include="xunit" Version="2.4.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
 			<PrivateAssets>all</PrivateAssets>
@@ -33,6 +34,10 @@
 		<ProjectReference Include="..\Menominee.Api\Menominee.Api.csproj" />
 		<ProjectReference Include="..\Menominee.Domain\Menominee.Domain.csproj" />
 		<ProjectReference Include="..\TestingHelperLibrary\Menominee.TestingHelperLibrary.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Validators\Client\" />
 	</ItemGroup>
 
 	<ProjectExtensions>

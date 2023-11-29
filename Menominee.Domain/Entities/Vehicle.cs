@@ -112,19 +112,20 @@ public class Vehicle : Entity
 
     private static Result ValidateVin(string vin)
     {
-        if (vin is null) return Result.Success();
-
-        return vin.Length.Equals(VinLength)
+        return
+            vin is null
+            ? Result.Success()
+            : vin.Length.Equals(VinLength)
             ? Result.Success()
             : Result.Failure(InvalidVinMessage);
     }
 
     private static Result ValidateYear(int? year)
     {
-        if (year > DateTime.Today.Year + 1 || year < YearMinimum)
-            return Result.Failure(InvalidYearMessage);
-
-        return Result.Success();
+        return
+            year > DateTime.Today.Year + 1 || year < YearMinimum
+            ? Result.Failure(InvalidYearMessage)
+            : Result.Success();
     }
 
     private static Result ValidatePlate(string plate)

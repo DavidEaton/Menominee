@@ -26,13 +26,13 @@
             </TableHeader>
             <RowTemplate>
                 <td>
-                    @phone.ToString()
+                    @Phone.ToString()
                 </td>
                 <td>
-                    @phone.PhoneType
+                    @Phone.PhoneType
                 </td>
                 <td>
-                    <TelerikCheckBox @bind-Value="@phone.IsPrimary" Enabled="false"></TelerikCheckBox>
+                    <TelerikCheckBox @bind-Value="@Phone.IsPrimary" Enabled="false"></TelerikCheckBox>
                 </td>
             </RowTemplate>
         </ContactableTemplate>

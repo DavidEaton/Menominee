@@ -82,7 +82,7 @@ namespace Menominee.Tests.ValueObjects
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.AddressMinimumLengthMessage);
+            addressOrError.Error.Should().Be(Address.AddressLengthMessage);
         }
 
         [Fact]
@@ -96,7 +96,7 @@ namespace Menominee.Tests.ValueObjects
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.AddressMaximumLengthMessage);
+            addressOrError.Error.Should().Be(Address.AddressLengthMessage);
         }
 
         [Fact]
@@ -111,7 +111,7 @@ namespace Menominee.Tests.ValueObjects
             var addressOrError = Address.Create(addressLine, city, state, postalCode, addressLine2);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.AddressMaximumLengthMessage);
+            addressOrError.Error.Should().Be(Address.AddressLengthMessage);
         }
 
         [Fact]
@@ -153,7 +153,7 @@ namespace Menominee.Tests.ValueObjects
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.CityMinimumLengthMessage);
+            addressOrError.Error.Should().Be(Address.CityLengthMessage);
         }
 
         [Fact]
@@ -167,7 +167,7 @@ namespace Menominee.Tests.ValueObjects
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.CityMaximumLengthMessage);
+            addressOrError.Error.Should().Be(Address.CityLengthMessage);
         }
 
         [Fact]
@@ -223,7 +223,7 @@ namespace Menominee.Tests.ValueObjects
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.PostalCodeMinimumLengthMessage);
+            addressOrError.Error.Should().Be(Address.PostalCodeInvalidMessage);
         }
 
         [Fact]
@@ -237,7 +237,7 @@ namespace Menominee.Tests.ValueObjects
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.PostalCodeMaximumLengthMessage);
+            addressOrError.Error.Should().Be(Address.PostalCodeInvalidMessage);
         }
 
         [Fact]
@@ -410,7 +410,7 @@ namespace Menominee.Tests.ValueObjects
             var result = address.NewPostalCode(invalidPostalCode);
 
             result.IsFailure.Should().BeTrue();
-            result.Error.Should().Contain("length");
+            result.Error.Should().Be(Address.PostalCodeInvalidMessage);
         }
 
         [Fact]

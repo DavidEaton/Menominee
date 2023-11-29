@@ -1,21 +1,25 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Api.Businesses;
-using Menominee.Api.Company;
-using Menominee.Api.Configurations;
-using Menominee.Api.Configurations.CreditCards;
-using Menominee.Api.Configurations.Inventory;
-using Menominee.Api.Configurations.Payables;
-using Menominee.Api.Configurations.RepairOrders;
-using Menominee.Api.Configurations.Settings;
-using Menominee.Api.Configurations.Taxes;
-using Menominee.Api.Customers;
-using Menominee.Api.Emails;
-using Menominee.Api.Employees;
-using Menominee.Api.Persons;
-using Menominee.Api.Phones;
-using Menominee.Api.SellingPriceNames;
-using Menominee.Api.Users;
-using Menominee.Api.Vehicles;
+using Menominee.Api.Features.Company;
+using Menominee.Api.Features.Contactables.Businesses;
+using Menominee.Api.Features.Contactables.Emails;
+using Menominee.Api.Features.Contactables.Persons;
+using Menominee.Api.Features.Contactables.Phones;
+using Menominee.Api.Features.CreditCards;
+using Menominee.Api.Features.Customers;
+using Menominee.Api.Features.Employees;
+using Menominee.Api.Features.Inventory;
+using Menominee.Api.Features.Manufacturers;
+using Menominee.Api.Features.Payables.Invoices;
+using Menominee.Api.Features.Payables.Vendors;
+using Menominee.Api.Features.ProductCodes;
+using Menominee.Api.Features.RepairOrders.Configurations;
+using Menominee.Api.Features.RepairOrders.Configurations.Settings;
+using Menominee.Api.Features.RepairOrders.Iterms;
+using Menominee.Api.Features.SaleCodes;
+using Menominee.Api.Features.SellingPriceNames;
+using Menominee.Api.Features.Taxes;
+using Menominee.Api.Features.Users;
+using Menominee.Api.Features.Vehicles;
 using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.Payables;
@@ -29,7 +33,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Data.SqlClient;
 using System.Linq;
-using Entities = Menominee.Domain.Entities;
 
 namespace Menominee.Api.Data
 {
@@ -209,7 +212,7 @@ namespace Menominee.Api.Data
         }
 
         #region -------------------- DbSets -----------------------------
-        public DbSet<Entities.Company> Companies { get; set; }
+        public DbSet<Company> Companies { get; set; }
         public DbSet<Person> Persons { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Business> Businesses { get; set; }
@@ -225,7 +228,7 @@ namespace Menominee.Api.Data
 
         public DbSet<RepairOrder> RepairOrders { get; set; }
 
-        // ONLY CREATE DbSet<> FOR AGGREGATE ROOT 
+        // ONLY CREATE DbSet<> FOR AGGREGATE ROOT TODO: Remove non-root entities
         //public DbSet<RepairOrderService> RepairOrderServices { get; set; }
         public DbSet<RepairOrderItem> RepairOrderItems { get; set; }
         public DbSet<RepairOrderLineItem> RepairOrderLineItems { get; set; }
@@ -252,6 +255,11 @@ namespace Menominee.Api.Data
 
         // Selling Price Names
         public DbSet<SellingPriceName> SellingPriceNames { get; set; }
+
+        // non-root entities requiring uniqueness checks
+        public DbSet<Email> Emails { get; set; }
+        public DbSet<Phone> Phones { get; set; }
+
         #endregion
     }
 

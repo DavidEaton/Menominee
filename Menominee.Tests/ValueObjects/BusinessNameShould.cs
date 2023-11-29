@@ -25,7 +25,7 @@ namespace Menominee.Tests.ValueObjects
             var businessNameOrError = BusinessName.Create(name);
 
             businessNameOrError.IsFailure.Should().BeTrue();
-            businessNameOrError.Error.Should().Contain(BusinessName.InvalidMessage);
+            businessNameOrError.Error.Should().Contain(BusinessName.InvalidLengthMessage);
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace Menominee.Tests.ValueObjects
             var businessNameOrError = BusinessName.Create(name);
 
             businessNameOrError.IsFailure.Should().BeTrue();
-            businessNameOrError.Error.Should().Contain(BusinessName.InvalidMessage);
+            businessNameOrError.Error.Should().Contain(BusinessName.InvalidLengthMessage);
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace Menominee.Tests.ValueObjects
             var businessNameOrError = BusinessName.Create(name);
 
             businessNameOrError.IsFailure.Should().BeTrue();
-            businessNameOrError.Error.Should().Contain(BusinessName.InvalidMessage);
+            businessNameOrError.Error.Should().Contain(BusinessName.InvalidLengthMessage);
 
         }
 
@@ -74,7 +74,7 @@ namespace Menominee.Tests.ValueObjects
             var result = businessName.NewBusinessName(newBusinessName);
 
             result.IsFailure.Should().BeTrue();
-            result.Error.Should().Contain(BusinessName.InvalidMessage);
+            result.Error.Should().Contain(BusinessName.InvalidLengthMessage);
         }
 
         [Fact]
@@ -85,7 +85,7 @@ namespace Menominee.Tests.ValueObjects
             var businessNameOrError = BusinessName.Create(name);
 
             businessNameOrError.IsFailure.Should().BeTrue();
-            businessNameOrError.Error.Should().Contain(BusinessName.InvalidMessage);
+            businessNameOrError.Error.Should().Contain(BusinessName.InvalidLengthMessage);
 
         }
 

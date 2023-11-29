@@ -1,7 +1,7 @@
 ﻿using Menominee.Common.Enums;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
-using Menominee.Shared.Models.DriversLicenses;
+using Menominee.Shared.Models.Persons.DriversLicenses;
 using System;
 using System.Collections.Generic;
 

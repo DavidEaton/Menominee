@@ -127,7 +127,7 @@ public partial class VendorInvoiceEditPage : ComponentBase
 
     private bool Valid()
     {
-        return new VendorInvoiceValidator()
+        return new VendorInvoiceRequestValidator()
             .Validate(Invoice)
             .IsValid;
     }

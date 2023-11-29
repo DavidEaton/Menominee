@@ -61,7 +61,7 @@ namespace Menominee.Domain.Entities
                 return Result.Failure<Person>(InvalidValueMessage);
 
             if (birthday.HasValue)
-                if (!IsValidAge(birthday))
+                if (!IsValidAgeOn(birthday))
                     return Result.Failure<Person>(InvalidValueMessage);
 
             return Result.Success(new Person(name, gender, notes, address, emails, phones, birthday, driversLicense));
@@ -85,7 +85,7 @@ namespace Menominee.Domain.Entities
 
         public Result<DateTime?> SetBirthday(DateTime? birthday)
         {
-            if (!IsValidAge(birthday))
+            if (!IsValidAgeOn(birthday))
                 return Result.Failure<DateTime?>(InvalidValueMessage);
 
             return Result.Success(Birthday = birthday);
@@ -99,7 +99,7 @@ namespace Menominee.Domain.Entities
             return Result.Success(DriversLicense = driversLicense);
         }
 
-        protected static bool IsValidAge(DateTime? birthDate)
+        public static bool IsValidAgeOn(DateTime? birthDate)
         {
             if (birthDate is null)
                 return false;

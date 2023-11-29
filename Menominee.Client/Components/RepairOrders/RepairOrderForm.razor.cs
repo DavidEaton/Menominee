@@ -28,7 +28,7 @@ public partial class RepairOrderForm
         {
             var title = $"RO #{RandomInt()}";
 
-            if ((RepairOrderToEdit?.Customer?.IsBusiness ?? false) && RepairOrderToEdit?.Customer?.Business?.Name.Length > 0)
+            if ((RepairOrderToEdit?.Customer?.IsBusiness ?? false) && RepairOrderToEdit?.Customer?.Business?.Name.Name.Length > 0)
             {
                 title += $"   ~   {RepairOrderToEdit?.Customer?.Business.Name}";
             }

@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Menominee.Api.Common;
+using Menominee.Api.Features.Contactables;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
@@ -52,7 +52,7 @@ namespace Menominee.Tests.Entities
             var businessNameOrError = BusinessName.Create(name);
 
             businessNameOrError.IsFailure.Should().BeTrue();
-            businessNameOrError.Error.Should().Contain(BusinessName.InvalidMessage);
+            businessNameOrError.Error.Should().Contain(BusinessName.InvalidLengthMessage);
         }
 
         [Fact]
