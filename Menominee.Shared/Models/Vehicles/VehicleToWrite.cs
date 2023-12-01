@@ -15,6 +15,13 @@ namespace Menominee.Shared.Models.Vehicles
         public string Color { get; set; }
         public bool Active { get; set; } = true;
         public bool NonTraditionalVehicle { get; set; } = false;
+        public bool IsEmpty() =>
+            string.IsNullOrWhiteSpace(VIN)
+            && string.IsNullOrWhiteSpace(Make)
+            && string.IsNullOrWhiteSpace(Model)
+            && string.IsNullOrWhiteSpace(Plate)
+            && string.IsNullOrWhiteSpace(UnitNumber)
+            && string.IsNullOrWhiteSpace(Color);
 
         public override string ToString()
         {

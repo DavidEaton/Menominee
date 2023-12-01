@@ -4,5 +4,6 @@
       <Value>AspNetTestHostCompatibility</Value>
       <Value>MissingOrIgnoredProjectReference</Value>
     </HiddenComponentWarnings>
+    <IgnoreThisComponentCompletely>False</IgnoreThisComponentCompletely>
   </Settings>
 </ProjectConfiguration>

@@ -10,6 +10,10 @@ namespace Menominee.Client.Components.Vehicles
             ClassLevelCascadeMode = CascadeMode.Continue;
 
             RuleFor(vehicles => vehicles)
+                .NotNull()
+                .WithMessage("Vehicles list cannot be null");
+
+            RuleFor(vehicles => vehicles)
                 .ForEach(vehicle =>
                 {
                     vehicle.SetValidator(new VehicleRequestValidator());

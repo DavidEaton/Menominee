@@ -12,9 +12,10 @@ namespace Menominee.Client.Features.Contactables.Persons.DriversLicenses
 
             RuleFor(driversLicense => driversLicense.Number)
                 .NotEmpty().WithMessage(DriversLicense.RequiredMessage)
-                .MaximumLength(DriversLicense.MinimumLength)
+                .MaximumLength(DriversLicense.MaximumLength)
                 .WithMessage(DriversLicense.OverMaximumLengthMessage)
-                .MinimumLength(DriversLicense.MinimumLength);
+                .MinimumLength(DriversLicense.MinimumLength)
+                .WithMessage(DriversLicense.UnderMinimumLengthMessage);
 
             RuleFor(driversLicense => driversLicense.State)
                 .IsInEnum().WithMessage(DriversLicense.StateInvalidMessage);

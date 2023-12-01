@@ -26,7 +26,7 @@ public class Vehicle : Entity
     public int? Year { get; private set; }
     public string Make { get; private set; }
     public string Model { get; private set; }
-    public bool NonTraditionalVehicle { get; private set; } = false; // We need to allow for non-traditional vehicles. For example, they may be servicing a trailer and just type in TRAILER for the make and nothing else.
+    public bool NonTraditionalVehicle { get; private set; } = false; // We need to allow for non-traditional vehicles. For example, they may be servicing a trailer and just type in TRAILER for the Make and nothing else.
     public string Plate { get; private set; }
     public State? PlateStateProvince { get; private set; }
     public string UnitNumber { get; private set; }
@@ -60,7 +60,7 @@ public class Vehicle : Entity
         unitNumber = (unitNumber ?? string.Empty).Trim();
         color = (color ?? string.Empty).Trim();
 
-        var vinResult = ValidateVin(vin);
+        var vinResult = ValidateVin(vin, nonTraditionalVehicle);
         if (vinResult.IsFailure)
             return Result.Failure<Vehicle>(vinResult.Error);
 
@@ -110,11 +110,14 @@ public class Vehicle : Entity
         return Result.Success();
     }
 
-    private static Result ValidateVin(string vin)
+    private static Result ValidateVin(string vin, bool nonTraditionalVehicle)
     {
+        // Allows null VINs only for non-traditional vehicles. For all other cases, the VIN must match the expected length (VinLength) to be considered valid
         return
-            vin is null
+            vin is null && nonTraditionalVehicle
             ? Result.Success()
+            : vin is null && !nonTraditionalVehicle
+            ? Result.Failure(InvalidVinMessage)
             : vin.Length.Equals(VinLength)
             ? Result.Success()
             : Result.Failure(InvalidVinMessage);
@@ -230,9 +233,9 @@ public class Vehicle : Entity
 
     public Result<string> SetColor(string color)
     {
-        if (string.IsNullOrWhiteSpace(color)) return Result.Success(Color = color);
-
-        return color.Length <= MaximumColorLength
+        return string.IsNullOrWhiteSpace(color)
+            ? Result.Success(Color = color)
+            : color.Length <= MaximumColorLength
             ? Result.Success(Color = color)
             : Result.Failure<string>(InvalidMaximumLengthMessage(MaximumColorLength));
     }
@@ -244,6 +247,7 @@ public class Vehicle : Entity
 
     public Result<bool> SetNonTraditionalVehicle(bool nonTraditionalVehicle)
     {
+        // TODO: MUST update properties to be valid if the vehicle is now a non-traditional vehicle
         return Result.Success(NonTraditionalVehicle = nonTraditionalVehicle);
     }
 

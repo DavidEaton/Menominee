@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Vehicles;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Menominee.Api.Features.Vehicles
 {
@@ -24,6 +26,13 @@ namespace Menominee.Api.Features.Vehicles
                         vehicle.Color,
                         vehicle.Active,
                         vehicle.NonTraditionalVehicle));
+        }
+
+        // This method is useful for debugging, but is not used by any application components.
+        public List<string> ValidateAndGetErrors(VehicleToWrite vehicle)
+        {
+            var result = Validate(vehicle);
+            return result.Errors.Select(e => e.ErrorMessage).ToList();
         }
     }
 }

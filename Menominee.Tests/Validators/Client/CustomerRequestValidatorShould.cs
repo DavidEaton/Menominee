@@ -1,27 +1,23 @@
 ﻿using FluentAssertions;
-using Menominee.Api.Data;
-using Menominee.Api.Features.Customers;
+using Menominee.Client.Components.Customers;
 using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.Vehicles;
-using Microsoft.EntityFrameworkCore;
-using Moq;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Menominee.Tests.Validators.Domain
+namespace Menominee.Tests.Validators.Client
 {
     public class CustomerRequestValidatorShould
     {
         private readonly CustomerRequestValidator validator;
-        private readonly Mock<ApplicationDbContext> contextMock;
 
         public CustomerRequestValidatorShould()
         {
-            contextMock = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
-            validator = new CustomerRequestValidator(contextMock.Object);
+            validator = new CustomerRequestValidator();
         }
+
 
         [Fact]
         public void Validate_With_Valid_PersonRequest()
@@ -161,7 +157,7 @@ namespace Menominee.Tests.Validators.Domain
                 Code = "12345",
                 Vehicles = new List<VehicleToWrite>
                 {
-                    new() { } // Invalid vehice details
+                    new() { } // Invalid vehicle details
                 }
             };
 
@@ -184,5 +180,6 @@ namespace Menominee.Tests.Validators.Domain
             var result = validator.Validate(customer);
             result.IsValid.Should().BeTrue();
         }
+
     }
 }

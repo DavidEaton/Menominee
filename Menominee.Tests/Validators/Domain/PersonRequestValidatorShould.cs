@@ -259,6 +259,5 @@ namespace Menominee.Tests.Validators.Domain
 
             result.IsValid.Should().BeFalse();
         }
-
     }
 }

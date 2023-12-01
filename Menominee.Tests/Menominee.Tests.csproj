@@ -32,12 +32,9 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Menominee.Api\Menominee.Api.csproj" />
+		<ProjectReference Include="..\Menominee.Client\Menominee.Client.csproj" />
 		<ProjectReference Include="..\Menominee.Domain\Menominee.Domain.csproj" />
 		<ProjectReference Include="..\TestingHelperLibrary\Menominee.TestingHelperLibrary.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Validators\Client\" />
 	</ItemGroup>
 
 	<ProjectExtensions>

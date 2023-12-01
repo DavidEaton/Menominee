@@ -14,26 +14,32 @@ namespace Menominee.Client.Features.Contactables.Businesses
         {
             ClassLevelCascadeMode = CascadeMode.Continue;
 
-            RuleFor(business => business.Name)
-                .SetValidator(new BusinessNameRequestValidator());
+            var resultName = RuleFor(business => business.Name)
+                .NotEmpty()
+                .WithMessage(Contactable.RequiredMessage)
+                .DependentRules(() =>
+                {
+                    RuleFor(business => business.Name)
+                        .SetValidator(new BusinessNameRequestValidator());
+                });
 
-            RuleFor(business => business.Contact)
+            var resultContact = RuleFor(business => business.Contact)
                 .SetValidator(new PersonRequestValidator())
                 .When(business => business.Contact is not null);
 
-            RuleFor(business => business.Address)
+            var resultAddress = RuleFor(business => business.Address)
                 .SetValidator(new AddressRequestValidator())
                 .When(business => business.Address is not null);
 
-            RuleFor(business => business.Emails)
+            var resultEmails = RuleFor(business => business.Emails)
                 .SetValidator(new EmailsRequestValidator())
                 .When(business => business.Emails is not null);
 
-            RuleFor(business => business.Phones)
+            var resultPhones = RuleFor(business => business.Phones)
                 .SetValidator(new PhonesRequestValidator())
                 .When(business => business.Phones is not null);
 
-            RuleFor(business => business.Notes)
+            var resultNotes = RuleFor(business => business.Notes)
                 .Length(1, Contactable.NoteMaximumLength)
                 .WithMessage(Contactable.NoteMaximumLengthMessage)
                 .When(business => !string.IsNullOrWhiteSpace(business.Notes));
