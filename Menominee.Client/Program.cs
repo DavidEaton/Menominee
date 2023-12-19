@@ -66,11 +66,18 @@ builder.Services.AddLogging(builder => builder.AddSerilog(dispose: true));
 
 builder.Services.Configure<UriBuilderConfiguration>(builder.Configuration.GetSection("UriBuilderConfiguration"));
 builder.Services.AddSingleton<UriBuilderFactory>();
-builder.Services.AddHttpClient("Menominee.ServerAPI"
-        , client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-    .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
-builder.Services.AddScoped(sp =>
-    sp.GetRequiredService<IHttpClientFactory>().CreateClient("Menominee.ServerAPI"));
+
+var uriBuilderConfig = builder.Configuration.GetSection("UriBuilderConfiguration");
+var scheme = uriBuilderConfig["Scheme"];
+var host = uriBuilderConfig["Host"];
+var port = uriBuilderConfig["Port"];
+var baseAddress = new Uri($"{scheme}://{host}:{port}/");
+
+builder.Services.AddHttpClient("Menominee.ServerAPI", client =>
+    client.BaseAddress = baseAddress).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+
+builder.Services.AddScoped(serviceProvider =>
+    serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("Menominee.ServerAPI"));
 
 builder.Services.AddMsalAuthentication(options =>
 {
@@ -123,8 +130,6 @@ builder.Services.AddAuthorizationCore(authorizationOptions =>
         Policies.IsTechnician,
         Policies.TechnicianUserPolicy());
 });
-
-var baseAddress = new Uri(builder.HostEnvironment.BaseAddress);
 
 builder.Services.AddHttpClient<IUserDataService, UserDataService>(
     client => client.BaseAddress = baseAddress)

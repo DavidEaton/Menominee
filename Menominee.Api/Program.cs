@@ -145,12 +145,6 @@ try
     services.TryAddScoped<ISellingPriceNameRepository, SellingPriceNameRepository>();
 
     services.AddHealthChecks();
-    services.AddCors(o => o.AddPolicy("AllowAll", policyBuilder =>
-    {
-        policyBuilder.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    }));
 
     if (builder.Environment.IsProduction() || builder.Environment.IsStaging())
     {
@@ -207,7 +201,20 @@ try
             });
     }
 
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("SpecificOrigins",
+        builder =>
+        {
+            builder.WithOrigins("https://localhost:44307")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+    });
+
     var app = builder.Build();
+    app.UseCors("SpecificOrigins");
+
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
@@ -237,14 +244,6 @@ try
 
     app.UseAuthentication();
     app.UseAuthorization();
-
-    app.UseCors();
-    // TODO: check how this should be best applied in relation to the use setup above...
-    // app.UseCors(cors => cors.WithOrigins(builder.Configuration.GetSection($"Clients:AllowedOrigins").Get<string>().Split(";"))
-    //     .AllowAnyMethod()
-    //     .AllowAnyHeader()
-    // //    .WithHeaders(HeaderNames.ContentType)
-    // );
 
     var options = new RewriteOptions()
         .AddRedirectToHttps();
