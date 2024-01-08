@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Taxes;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Invoices;
 using Menominee.Shared.Models.Payables.Invoices.Taxes;
 using Menominee.Shared.Models.Taxes;

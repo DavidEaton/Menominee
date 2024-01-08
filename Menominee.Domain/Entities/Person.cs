@@ -1,9 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Enums;
-using Menominee.Common.Extensions;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
+using Menominee.Domain.Enums;
+using Menominee.Domain.Extensions;
 using Menominee.Domain.Interfaces;
+using Menominee.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 
@@ -15,7 +15,6 @@ namespace Menominee.Domain.Entities
         // Always test all concrete classes; don’t test abstract classes directly (like Contactable)
 
         public PersonName Name { get; private set; }
-        public Gender Gender { get; private set; }
         public DateTime? Birthday { get; private set; }
         public DriversLicense DriversLicense { get; private set; }
         public override string ToString() => Name.ToString();
@@ -24,7 +23,6 @@ namespace Menominee.Domain.Entities
 
         internal Person(
             PersonName name,
-            Gender gender,
             string notes,
             Address address,
             IReadOnlyList<Email> emails,
@@ -34,14 +32,12 @@ namespace Menominee.Domain.Entities
             : base(notes, address, phones, emails)
         {
             Name = name;
-            Gender = gender;
             Birthday = birthday;
             DriversLicense = driversLicense;
         }
 
         public static Result<Person> Create(
             PersonName name,
-            Gender gender,
             string notes,
             DateTime? birthday = null,
             IReadOnlyList<Email> emails = null,
@@ -57,14 +53,11 @@ namespace Menominee.Domain.Entities
             if (!string.IsNullOrWhiteSpace(notes) && notes.Length > NoteMaximumLength)
                 return Result.Failure<Person>(NoteMaximumLengthMessage);
 
-            if (!Enum.IsDefined(typeof(Gender), gender))
-                return Result.Failure<Person>(InvalidValueMessage);
-
             if (birthday.HasValue)
                 if (!IsValidAgeOn(birthday))
                     return Result.Failure<Person>(InvalidValueMessage);
 
-            return Result.Success(new Person(name, gender, notes, address, emails, phones, birthday, driversLicense));
+            return Result.Success(new Person(name, notes, address, emails, phones, birthday, driversLicense));
         }
 
         public Result<PersonName> SetName(PersonName name)
@@ -73,14 +66,6 @@ namespace Menominee.Domain.Entities
                 return Result.Failure<PersonName>(RequiredMessage);
 
             return Result.Success(Name = name);
-        }
-
-        public Result<Gender> SetGender(Gender gender)
-        {
-            if (!Enum.IsDefined(typeof(Gender), gender))
-                return Result.Failure<Gender>(RequiredMessage);
-
-            return Result.Success(Gender = gender);
         }
 
         public Result<DateTime?> SetBirthday(DateTime? birthday)

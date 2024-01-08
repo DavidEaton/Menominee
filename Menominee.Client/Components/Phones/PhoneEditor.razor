@@ -1,66 +1,74 @@
-﻿<EditForm Model="Phone">
-    <TelerikWindow Visible="true"
-                   Modal="true"
-                   Class="popupWindowClass">
-        <WindowTitle>
-            @Title
-        </WindowTitle>
-        <WindowContent>
-            @if (Phone is not null)
-            {
-                <div class="form-row">
-                    <div class="form-group col-12">
-                        <label class="k-label">Number</label>
-                        <TelerikMaskedTextBox @bind-Value="@Phone.Number"
-                                              Mask="(999) 000-0000"
-                                              Id="phoneNumber">
-                        </TelerikMaskedTextBox>
+﻿<TelerikWindow Visible="true"
+               Modal="true"
+               Class="popupWindowClass">
+    <WindowTitle>
+        @Title
+    </WindowTitle>
+    <WindowContent>
+        @if (Phone is not null)
+        {
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="k-label">Number</label>
+                    <TelerikMaskedTextBox @bind-Value="@Phone.Number"
+                                          Mask="(999) 000-0000"
+                                          Id="phoneNumber"
+                                          OnBlur="@Validate">
+                    </TelerikMaskedTextBox>
+                    <div class="validation-message">
+                        <label class="validation-error">@validationMessage</label>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group col-12">
-                        <label class="k-label">Type</label>
-                        <TelerikDropDownList @bind-Value="@Phone.PhoneType"
-                                             Data="PhoneTypeEnumData"
-                                             Width="100%"
-                                             TextField="DisplayText"
-                                             ValueField="Value">
-                        </TelerikDropDownList>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="k-label">Type</label>
+                    <TelerikDropDownList @bind-Value="@Phone.PhoneType"
+                                         Data="PhoneTypeEnumData"
+                                         Width="100%"
+                                         TextField="DisplayText"
+                                         ValueField="Value"
+                                         OnBlur="@Validate">
+                    </TelerikDropDownList>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <div>
+                        <label>
+                            <TelerikCheckBox @bind-Value="@Phone.IsPrimary" OnBlur="@Validate"></TelerikCheckBox>
+                            <span class="k-label">Primary</span>
+                        </label>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group col-12">
-                        <div>
-                            <label>
-                                <TelerikCheckBox @bind-Value="@Phone.IsPrimary"></TelerikCheckBox>
-                                <span class="k-label">Primary</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
+            </div>
 
-                <hr id="divider">
-                <div class="form-row">
-                    <div class="form-group col-12 mb-0">
-                        <TelerikButton OnClick="OnSave"
-                                       ButtonType="ButtonType.Button"
-                                       ThemeColor="primary"
-                                       Class="dialog-button">
-                            <i class="fas fa-check"></i> Save
-                        </TelerikButton>
-                        <TelerikButton OnClick="OnCancel"
-                                       ButtonType="ButtonType.Button"
-                                       Class="dialog-button">
-                            <i class="fas fa-times"></i> Discard
-                        </TelerikButton>
-                    </div>
+            <hr id="divider">
+            <div class="form-row">
+                <div class="form-group col-12 mb-0">
+                    <TelerikButton OnClick="Save"
+                                   ButtonType="ButtonType.Button"
+                                   ThemeColor="primary"
+                                   Class="dialog-button"
+                                   Enabled="IsValid">
+                        <i class="fas fa-check"></i> Save
+                    </TelerikButton>
+                    <TelerikButton OnClick="OnCancel"
+                                   ButtonType="ButtonType.Button"
+                                   Class="dialog-button">
+                        <i class="fas fa-times"></i> Discard
+                    </TelerikButton>
                 </div>
-            }
-        </WindowContent>
-    </TelerikWindow>
-</EditForm>
+            </div>
+        }
+    </WindowContent>
+</TelerikWindow>
 
 <style>
+    .popupWindowClass {
+        width: 300px;
+    }
+
     #divider {
         margin-top: 0;
         border-color: darkgrey;

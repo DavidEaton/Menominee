@@ -1,4 +1,4 @@
-﻿using Menominee.Common;
+﻿using Menominee.Domain.BaseClasses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

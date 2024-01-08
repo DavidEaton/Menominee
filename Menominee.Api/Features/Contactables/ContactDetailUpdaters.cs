@@ -1,5 +1,5 @@
-﻿using Menominee.Common.ValueObjects;
-using Menominee.Domain.Entities;
+﻿using Menominee.Domain.Entities;
+using Menominee.Domain.ValueObjects;
 using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Persons;
 using System.Linq;
@@ -36,11 +36,10 @@ namespace Menominee.Api.Features.Contactables
             UpdateName(personFromCaller, personFromRepository);
 
             var contactDetails = ContactDetailsFactory
-                .Create(personFromCaller.Phones.ToList(), personFromCaller.Emails.ToList(), personFromCaller.Address).Value;
+                .Create(personFromCaller.Phones.ToList(), personFromCaller.Emails.ToList(), personFromCaller?.Address).Value;
 
             personFromRepository.UpdateContactDetails(contactDetails);
             personFromRepository.SetNotes(personFromCaller.Notes);
-            personFromRepository.SetGender(personFromCaller.Gender);
             personFromRepository.SetBirthday(personFromCaller.Birthday);
             UpdateDriversLicense(personFromCaller, personFromRepository);
 

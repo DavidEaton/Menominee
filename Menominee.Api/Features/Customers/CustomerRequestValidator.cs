@@ -4,10 +4,10 @@ using Menominee.Api.Data;
 using Menominee.Api.Features.Contactables.Businesses;
 using Menominee.Api.Features.Contactables.Persons;
 using Menominee.Api.Features.Vehicles;
-using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Menominee.Domain.Interfaces;
+using Menominee.Domain.ValueObjects;
 using Menominee.Shared.Models.Customers;
 using System;
 
@@ -24,10 +24,12 @@ public class CustomerRequestValidator : AbstractValidator<CustomerToWrite>
         ClassLevelCascadeMode = CascadeMode.Continue;
 
         RuleFor(customer => customer.EntityType)
-            .IsInEnum();
+            .IsInEnum()
+            .WithMessage(Customer.UnknownEntityTypeMessage);
 
         RuleFor(customer => customer.CustomerType)
-            .IsInEnum();
+            .IsInEnum()
+            .WithMessage(Customer.UnknownCustomerTypeMessage);
 
         RuleFor(customer => customer.Person)
             .SetValidator(new PersonRequestValidator(context))
@@ -59,7 +61,6 @@ public class CustomerRequestValidator : AbstractValidator<CustomerToWrite>
 
                         var personResult = Person.Create(
                             personNameResult.Value,
-                            customer.Person.Gender,
                             customer.Person.Notes,
                             customer.Person.Birthday);
 

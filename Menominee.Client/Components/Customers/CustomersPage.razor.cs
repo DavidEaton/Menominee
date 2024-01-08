@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
+using FluentValidation;
 using Menominee.Client.Services.Customers;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.Persons;
 using Microsoft.AspNetCore.Components;
@@ -11,28 +12,40 @@ namespace Menominee.Client.Components.Customers
     public partial class CustomersPage : ComponentBase
     {
         [Inject]
-        public ICustomerDataService CustomerDataService { get; set; }
+        public ICustomerDataService? CustomerDataService { get; set; }
 
         [Inject]
         public ILogger<CustomersPage> Logger { get; set; }
 
-        public IReadOnlyList<CustomerToReadInList> Customers;
+        [Inject]
+        private IValidator<CustomerToWrite>? CustomerValidator { get; set; }
+
+        public IReadOnlyList<CustomerToReadInList>? Customers;
         public FormMode FormMode { get; set; } = FormMode.View;
-        private CustomerToWrite Customer { get; set; }
+
+        private CustomerToWrite Customer = new();
         private long Id { get; set; }
         private string Caption { get; set; } = string.Empty;
-        List<CustomerTypeEnumModel> CustomerTypeEnumData { get; set; } = new List<CustomerTypeEnumModel>();
-        List<EntityTypeEnumModel> EntityTypeEnumData { get; set; } = new List<EntityTypeEnumModel>();
+        private List<CustomerTypeEnumModel> CustomerTypeEnumData { get; set; } = new List<CustomerTypeEnumModel>();
+        private List<EntityTypeEnumModel> EntityTypeEnumData { get; set; } = new List<EntityTypeEnumModel>();
 
         protected override async Task OnInitializedAsync()
         {
             await GetCustomers();
 
             foreach (CustomerType item in Enum.GetValues(typeof(CustomerType)))
+            {
                 CustomerTypeEnumData.Add(new CustomerTypeEnumModel { DisplayText = item.ToString(), Value = item });
+            }
 
             foreach (EntityType item in Enum.GetValues(typeof(EntityType)))
+            {
                 EntityTypeEnumData.Add(new EntityTypeEnumModel { DisplayText = item.ToString(), Value = item });
+            }
+
+            // TODO: Remove invalid rows added for validation during development after feature is Done
+            CustomerTypeEnumData.Add(new CustomerTypeEnumModel { DisplayText = "Invalid", Value = (CustomerType)999 });
+            EntityTypeEnumData.Add(new EntityTypeEnumModel { DisplayText = "Invalid", Value = (EntityType)999 });
         }
 
         private async Task GetCustomers()
@@ -61,16 +74,20 @@ namespace Menominee.Client.Components.Customers
             Customer = CustomerHelper.ConvertReadToWriteDto(customerResult.Value);
 
             if (customerResult.Value.EntityType == EntityType.Person)
-                Caption = $"Editing Customer: {customerResult.Value.Person.Name.ToString}";
+            {
+                Caption = $"Editing Customer: {customerResult.Value.Person.Name}";
+            }
 
             if (customerResult.Value.EntityType == EntityType.Business)
+            {
                 Caption = $"Editing Customer: {customerResult.Value.Business.Name}";
+            }
         }
 
         private void Add()
         {
             Caption = "Adding new Customer";
-            Customers = null;
+            Customers = new List<CustomerToReadInList>();
             var name = new PersonNameToWrite();
             Customer = new()
             {
@@ -85,63 +102,31 @@ namespace Menominee.Client.Components.Customers
             FormMode = FormMode.Add;
         }
 
-        private void EntityTypeChanged()
+        protected async Task Submit(CustomerToWrite customer)
         {
-            if (Customer.EntityType == EntityType.Business)
+            if (FormMode == FormMode.Add)
             {
-                if (Customer.Business is null)
-                    Customer.Business = new();
-
-                Customer.Person = null;
+                await CustomerDataService.AddAsync(customer);
+            }
+            else if (FormMode == FormMode.Edit)
+            {
+                await CustomerDataService.UpdateAsync(customer);
             }
 
-            if (Customer.EntityType == EntityType.Person)
-            {
-                var name = new PersonNameToWrite();
-
-                if (Customer.Person is null)
-                {
-                    Customer.Person = new();
-                }
-
-                Customer.Person.Name = name;
-                Customer.Business = null;
-            }
-        }
-
-        protected async Task AddSubmit()
-        {
-            await CustomerDataService.AddAsync(Customer);
             await Close();
         }
 
-        protected async Task EditSubmit()
-        {
-            await CustomerDataService.UpdateAsync(Customer);
-            await EndEditAsync();
-        }
-
-        protected async Task Submit()
-        {
-            if (FormMode == FormMode.Add)
-                await AddSubmit();
-
-            if (FormMode == FormMode.Edit)
-                await EditSubmit();
-        }
-
-        protected async Task EndEditAsync()
-        {
-            Caption = string.Empty;
-            await GetCustomers();
-            FormMode = FormMode.View;
-        }
+        //protected async Task EndEditAsync()
+        //{
+        //    Caption = string.Empty;
+        //    await GetCustomers();
+        //    FormMode = FormMode.View;
+        //}
 
         protected async Task Close()
         {
-            Customer = null;
             FormMode = FormMode.View;
-            Caption = string.Empty;
+            Customer = new CustomerToWrite();
             await GetCustomers();
         }
 

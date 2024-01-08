@@ -1,6 +1,6 @@
 ﻿using Menominee.Api.Data;
-using Menominee.Common.Enums;
 using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Inventory.InventoryItems;
 using Microsoft.EntityFrameworkCore;
 using System;

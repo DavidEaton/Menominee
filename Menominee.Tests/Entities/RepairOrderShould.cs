@@ -2,18 +2,19 @@
 using CSharpFunctionalExtensions;
 using FluentAssertions;
 using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.RepairOrders.Payments;
 using Menominee.Shared.Models.RepairOrders.Services;
 using Menominee.Shared.Models.RepairOrders.Statuses;
 using Menominee.Shared.Models.RepairOrders.Taxes;
 using Menominee.Shared.Models.SaleCodes;
+using Menominee.TestingHelperLibrary.Fakers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using TestingHelperLibrary.Fakers;
 using TestingHelperLibrary.RepairOrders;
 using Xunit;
-using Menominee.TestingHelperLibrary.Fakers;
 
 namespace Menominee.Tests.Entities
 {
@@ -672,7 +673,7 @@ namespace Menominee.Tests.Entities
             var repairOrder = new RepairOrderFaker(true, paymentsCount: paymentsCount).Generate();
             // Faker randomly selects PaymentMethod in Payments so reset to known:
             foreach (var payment in repairOrder.Payments)
-                payment.SetPaymentMethod(Menominee.Common.Enums.PaymentMethod.Card);
+                payment.SetPaymentMethod(PaymentMethod.Card);
 
             var originalPayments = repairOrder.Payments.Select(payment =>
             {

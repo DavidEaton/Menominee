@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Http;
+using Menominee.Shared.Models.Http;
 using System.Net.Http.Json;
 
 namespace Menominee.Client.Services.Shared

@@ -1,6 +1,6 @@
 ﻿using Menominee.Api.Data;
-using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.Pagination;
 using Microsoft.EntityFrameworkCore;

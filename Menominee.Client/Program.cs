@@ -1,6 +1,16 @@
 using Blazored.Toast;
+using FluentValidation;
 using Menominee.Client;
+using Menominee.Client.Components.Customers;
 using Menominee.Client.Components.RepairOrders;
+using Menominee.Client.Components.Settings;
+using Menominee.Client.Components.Vehicles;
+using Menominee.Client.Features.Contactables.Addresses;
+using Menominee.Client.Features.Contactables.Businesses;
+using Menominee.Client.Features.Contactables.Emails;
+using Menominee.Client.Features.Contactables.Persons;
+using Menominee.Client.Features.Contactables.Persons.DriversLicenses;
+using Menominee.Client.Features.Contactables.Phones;
 using Menominee.Client.MessageHandlers;
 using Menominee.Client.Services;
 using Menominee.Client.Services.Businesses;
@@ -18,6 +28,14 @@ using Menominee.Client.Services.Shared;
 using Menominee.Client.Services.Taxes;
 using Menominee.Client.Services.Vehicles;
 using Menominee.Shared;
+using Menominee.Shared.Models.Addresses;
+using Menominee.Shared.Models.Businesses;
+using Menominee.Shared.Models.Contactable;
+using Menominee.Shared.Models.Customers;
+using Menominee.Shared.Models.Payables.Invoices.Payments;
+using Menominee.Shared.Models.Persons;
+using Menominee.Shared.Models.Persons.DriversLicenses;
+using Menominee.Shared.Models.Vehicles;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -206,5 +224,21 @@ builder.Services.AddHttpClient<ISettingDataService, SettingDataService>(
 builder.Services.AddHttpClient<IVehicleDataService, VehicleDataService>(
     client => client.BaseAddress = baseAddress)
     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
+// Manually register validators to preserve performance; prevent scanning assemblies
+// via component declaration: <FluentValidationValidator DisableAssemblyScanning="@true" />
+builder.Services.AddTransient<IValidator<CustomerToWrite>, CustomerRequestValidator>();
+builder.Services.AddTransient<IValidator<PersonToWrite>, PersonRequestValidator>();
+builder.Services.AddTransient<IValidator<PersonNameToWrite>, PersonNameRequestValidator>();
+builder.Services.AddTransient<IValidator<DriversLicenseToWrite>, DriversLicenseRequestValidator>();
+builder.Services.AddTransient<IValidator<AddressToWrite>, AddressRequestValidator>();
+builder.Services.AddTransient<IValidator<PhoneToWrite>, PhoneRequestValidator>();
+builder.Services.AddTransient<IValidator<EmailToWrite>, EmailRequestValidator>();
+builder.Services.AddTransient<IValidator<List<PhoneToWrite>>, PhonesRequestValidator>();
+builder.Services.AddTransient<IValidator<List<EmailToWrite>>, EmailsRequestValidator>();
+builder.Services.AddTransient<IValidator<BusinessToWrite>, BusinessRequestValidator>();
+builder.Services.AddTransient<IValidator<BusinessNameRequest>, BusinessNameRequestValidator>();
+builder.Services.AddTransient<IValidator<List<VehicleToWrite>>, VehiclesRequestValidator>();
+builder.Services.AddTransient<IValidator<VendorInvoicePaymentMethodRequest>, VendorInvoicePaymentMethodRequestValidator>();
 
 await builder.Build().RunAsync();

@@ -2,14 +2,14 @@
 using Menominee.Api.Features.Contactables;
 using Menominee.Api.Features.Contactables.Businesses;
 using Menominee.Api.Features.Contactables.Persons;
-using Menominee.Common.Enums;
-using Menominee.Common.Http;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
+using Menominee.Domain.ValueObjects;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Customers;
+using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.Pagination;
 using Menominee.Shared.Models.Persons;
 using Menominee.Shared.Models.Persons.DriversLicenses;
@@ -76,7 +76,9 @@ namespace Menominee.Api.Features.Customers
         private async Task<Maybe<CustomerToRead>> GetCustomer(long id)
         {
             if (id == 0)
+            {
                 return Maybe<CustomerToRead>.None;
+            }
 
             var customer = await customerRepository.GetAsync(id);
 
@@ -337,7 +339,6 @@ namespace Menominee.Api.Features.Customers
         {
             var newPerson = Person.Create(
                 PersonName.Create(personToAdd.Name.LastName, personToAdd.Name.FirstName, personToAdd.Name.MiddleName).Value,
-                personToAdd.Gender,
                 personToAdd.Notes,
                 personToAdd.Birthday).Value;
 
@@ -358,7 +359,7 @@ namespace Menominee.Api.Features.Customers
         }
         private static void SetAddress(AddressToWrite addressToAdd, Person newPerson)
         {
-            if (addressToAdd is not null)
+            if (addressToAdd is not null && addressToAdd.IsNotEmpty)
             {
                 var address = Address.Create(
                     addressToAdd.AddressLine1,
@@ -374,7 +375,7 @@ namespace Menominee.Api.Features.Customers
 
         public static void SetDriversLicense(DriversLicenseToWrite driversLicenseToAdd, Person newPerson)
         {
-            if (driversLicenseToAdd is not null)
+            if (driversLicenseToAdd is not null && driversLicenseToAdd.IsNotEmpty)
             {
                 var range = DateTimeRange.Create(driversLicenseToAdd.Issued, driversLicenseToAdd.Expiry).Value;
 
@@ -393,8 +394,12 @@ namespace Menominee.Api.Features.Customers
             return Business.Create(
                 BusinessName.Create(businessToAdd.Name.Name).Value,
                 businessToAdd.Notes,
-                null,
-                CreateAddress(businessToAdd),
+                businessToAdd.Contact.IsNotEmpty
+                    ? CreateNewPerson(businessToAdd.Contact)
+                    : null,
+                businessToAdd.Address.IsNotEmpty
+                    ? CreateAddress(businessToAdd)
+                    : null,
                 CreateEmails(businessToAdd.Emails),
                 CreatePhones(businessToAdd.Phones)
                 ).Value;

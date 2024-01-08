@@ -120,7 +120,15 @@ namespace Menominee.Api.Features.RepairOrders
         public async Task<IReadOnlyList<RepairOrderToReadInList?>> GetListAsync()
         {
             _logger.LogInformation("GetRepairOrderListAsync");
-            IReadOnlyList<RepairOrder?> repairOrders = await context.RepairOrders.ToListAsync();
+            var repairOrders = await context.RepairOrders
+                .Include(repairOrder => repairOrder.Customer)
+                .Include(repairOrder => repairOrder.Vehicle)
+                .ToListAsync();
+
+            foreach (var repairOrder in repairOrders)
+            {
+                await Helper.LoadCustomerEntity(repairOrder.Customer, context);
+            }
 
             return repairOrders
                 .Select(repairOrder =>

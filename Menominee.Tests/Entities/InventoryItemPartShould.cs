@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Menominee.Api.Features.Taxes;
-using Menominee.Common.Enums;
 using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Taxes;
 using Menominee.Tests.Helpers.Fakers;
 using System.Collections.Generic;

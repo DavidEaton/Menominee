@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Vehicles;
 
 namespace Menominee.Client.Components.Vehicles

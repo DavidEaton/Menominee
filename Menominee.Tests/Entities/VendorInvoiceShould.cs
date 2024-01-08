@@ -1,11 +1,12 @@
-﻿using Menominee.Domain.Entities.Payables;
+﻿using FluentAssertions;
+using Menominee.Domain.Entities.Payables;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Invoices.LineItems;
 using Menominee.Shared.Models.Payables.Invoices.LineItems.Items;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Shared.Models.Payables.Invoices.Taxes;
 using Menominee.Shared.Models.Taxes;
-using FluentAssertions;
-using Menominee.Common.Enums;
+using Menominee.TestingHelperLibrary.Fakers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

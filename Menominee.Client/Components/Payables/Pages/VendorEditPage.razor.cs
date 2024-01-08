@@ -1,5 +1,5 @@
 ﻿using Menominee.Client.Services.Payables.Vendors;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Components;
 

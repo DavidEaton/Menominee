@@ -1,6 +1,6 @@
 ﻿using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.Taxes;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 
 namespace TestingHelperLibrary
 {

@@ -1,0 +1,79 @@
+﻿@using Blazored.FluentValidation
+@using Menominee.Domain.Entities
+@inherits TestContext
+
+@code {
+
+    [Fact]
+    public void Render_Title_correctly_Add_Customer()
+    {
+        // Arrange
+        ComponentSetup(FormMode.Add, out var customerRequest, out var expectedTitle);
+
+        // Act
+        var renderedComponent = RenderCustomerEditor(customerRequest, FormMode.Add);
+
+        // Assert
+        var titleElement = renderedComponent.Find("div.k-window-title");
+        expectedTitle.Should().Be(titleElement.TextContent.Trim());
+
+    }
+
+    [Fact]
+    public void Render_Title_correctly_Edit_Customer()
+    {
+        ComponentSetup(FormMode.Edit, out var customerRequest, out var expectedTitle);
+
+        var renderedComponent = RenderCustomerEditor(customerRequest, FormMode.Edit);
+
+        var titleElement = renderedComponent.Find("div.k-window-title");
+        expectedTitle.Should().Be(titleElement.TextContent.Trim());
+    }
+
+    [Fact]
+    public void Validation_Fails_When_Code_Exceeds_Maximum_Length()
+    {
+        ComponentSetup(FormMode.Add, out var customerRequest, out _);
+        customerRequest.Code = new string('a', Customer.MaximumCodeLength + 1);
+        var validator = new CustomerRequestValidator();
+
+        var validationResult = validator.Validate(customerRequest);
+
+        validationResult.IsValid.Should().BeFalse();
+        validationResult.Errors
+            .Where(failure => failure.PropertyName == nameof(CustomerToWrite.Code))
+            .Select(failure => failure.ErrorCode)
+            .Should().BeEquivalentTo(ValidationErrorCode.MaximumLength);
+    }
+
+    private void ComponentSetup(FormMode formMode, out CustomerToWrite customerRequest, out string expectedTitle)
+    {
+        // Mock all Telerik JSRuntime calls
+        JSInterop.Mode = JSRuntimeMode.Loose;
+        JSInterop.SetupVoid("TelerikBlazor.invokeComponentMethod", _ => true);
+        JSInterop.SetupVoid("TelerikBlazor.initCheckBox", _ => true);
+        JSInterop.SetupVoid("TelerikBlazor.initComponentLoaderContainer", _ => true);
+
+        // Add validator
+        Services.AddSingleton<IValidator<CustomerToWrite>, CustomerRequestValidator>();
+
+        // Setup Customer Request and Expected Title
+        customerRequest = new CustomerToWrite
+            {
+                EntityType = EntityType.Person,
+                CustomerType = CustomerType.Retail,
+                Person = TestDataFactory.CreatePersonRequest(),
+                Code = "12345",
+                Vehicles = TestDataFactory.CreateVehiclesList()
+            };
+        expectedTitle = $"{formMode} Customer";
+    }
+
+    private IRenderedComponent<TestLayout> RenderCustomerEditor(CustomerToWrite customerRequest, FormMode formMode)
+    {
+        return RenderComponent<TestLayout>(parameters => parameters
+            .AddChildContent<CustomerEditor>(editorParams => editorParams
+                .Add(editor => editor.Customer, customerRequest)
+                .Add(editor => editor.FormMode, formMode)));
+    }
+}

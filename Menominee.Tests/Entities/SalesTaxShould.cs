@@ -1,6 +1,6 @@
-﻿using Menominee.Domain.Entities.Taxes;
-using FluentAssertions;
-using Menominee.Common.Enums;
+﻿using FluentAssertions;
+using Menominee.Domain.Entities.Taxes;
+using Menominee.Domain.Enums;
 using System.Collections.Generic;
 using TestingHelperLibrary.Payables;
 using Xunit;

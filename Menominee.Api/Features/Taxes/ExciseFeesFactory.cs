@@ -1,4 +1,4 @@
-﻿using Menominee.Common;
+﻿using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities.Taxes;
 using Menominee.Shared.Models.Taxes;
 using System.Collections.Generic;

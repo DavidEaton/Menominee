@@ -1,8 +1,8 @@
-﻿using Menominee.Shared.Models.Payables.Invoices.LineItems;
+﻿using Menominee.Domain.Enums;
+using Menominee.Shared.Models.Payables.Invoices.LineItems;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Shared.Models.Payables.Invoices.Taxes;
 using Menominee.Shared.Models.Payables.Vendors;
-using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 

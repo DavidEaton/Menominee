@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Enums;
-using Menominee.Common.Http;
+using Menominee.Domain.Enums;
+using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.Vehicles;
 
 namespace Menominee.Client.Services.Vehicles;

@@ -3,7 +3,7 @@ using Menominee.Client.Features.Contactables.Addresses;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Client.Shared;
 using Menominee.Client.Shared.Models;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Shared.Models.Payables.Vendors;

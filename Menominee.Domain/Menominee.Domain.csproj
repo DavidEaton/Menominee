@@ -5,15 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Menominee.Common\Menominee.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EditorConfigFiles Remove="C:\Users\david\source\repos\menominee\CustomerVehicleManagement.Domain\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="C:\Users\david\source\repos\menominee\CustomerVehicleManagement.Domain\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.23.0" />
   </ItemGroup>
 
 </Project>

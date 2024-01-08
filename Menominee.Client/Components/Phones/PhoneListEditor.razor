@@ -1,5 +1,4 @@
-﻿@using Menominee.Shared.Models.Contactable;
-@if (Phones is null)
+﻿@if (Phones is null)
 {
     <p><em>Loading...</em></p>
 }
@@ -7,11 +6,10 @@
 @if (Phones is not null)
 {
     <TelerikGrid Data="Phones"
-                 OnRowClick="@OnRowSelected"
+                 OnRowClick="@SelectRow"
                  OnRowDoubleClick="@OnEdit"
-                 SelectedItems="@SelectedPhones"
                  SelectionMode="GridSelectionMode.Single"
-                 Class="max-phone-grid-height"
+                 Class="max-phone-grid-height grid-no-scroll"
                  Id="phoneGrid"
                  @ref="@Grid">
         <GridColumns>
@@ -49,37 +47,33 @@
         </NoDataTemplate>
     </TelerikGrid>
 
-    @if (PhoneToModify is not null)
+    @if (SelectedPhone is not null && PhoneFormMode == FormMode.Edit || PhoneFormMode == FormMode.Add)
     {
-        <PhoneEditor Phone="PhoneToModify"
-                     FormMode="PhoneFormMode"
-                     OnSave="OnSaveEdit"
-                     OnCancel="OnCancelEdit" />
+        <PhoneEditor Phone="@SelectedPhone"
+                     FormMode="@PhoneFormMode"
+                     OnSave="@OnSaveEdit"
+                     OnCancel="@OnCancelEdit" />
     }
 
-    @if (CanEdit)
+    @if (CanAddEditDelete)
     {
-        <EditNewDeleteIconButtons OnEdit="OnEdit"
+        <EditNewDeleteIconButtons OnEdit="@OnEdit"
                                   OnNew="OnNew"
-                                  OnDelete="OnDelete"
+                                  OnDelete="@OnDelete"
                                   ShowDivider="false"
-                                  CanAdd="CanEdit"
-                                  CanEdit="CanEditPhone"
-                                  CanDelete="CanDeletePhone" />
+                                  CanAdd="CanAddEditDelete"
+                                  CanEdit="CanAddEditDelete"
+                                  CanDelete="CanAddEditDelete" />
     }
     else
     {
         <EditNewDeleteIconButtons OnEdit="OnEdit"
                                   ShowDivider="false"
-                                  CanEdit="CanEditPhone" />
+                                  CanEdit="CanAddEditDelete" />
     }
 }
 
 <style>
-    .green-check {
-        color: green;
-    }
-
     .max-phone-grid-height {
         max-height: 163px !important;
     }
@@ -90,5 +84,19 @@
 
     #phoneGrid .k-table-thead {
         display: none;
+    }
+
+    .grid-no-scroll .k-grid-content {
+        overflow-y: auto;
+    }
+
+    .grid-no-scroll .k-grid-header,
+    .grid-no-scroll .k-grid-footer {
+        padding-right: 0; /* version 2.26 and older requires !important here */
+    }
+
+    .grid-no-scroll .k-grid-header-wrap,
+    .grid-no-scroll .k-grid-footer-wrap {
+        border-right-width: 0;
     }
 </style>

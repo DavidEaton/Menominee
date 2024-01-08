@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Contactable;
-using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace Menominee.Client.Features.Contactables.Phones
 {
@@ -18,10 +18,10 @@ namespace Menominee.Client.Features.Contactables.Phones
                 .WithMessage(Phone.InvalidMessage);
         }
 
-        private bool BeAValidPhoneNumber(string number)
+        private static readonly Func<string, bool> BeAValidPhoneNumber = number =>
         {
-            var phoneAttribute = new PhoneAttribute();
-            return phoneAttribute.IsValid(number);
-        }
+            return !string.IsNullOrEmpty(number) && Regex.IsMatch(number, @"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$");
+        };
+
     }
 }

@@ -1,12 +1,14 @@
 ﻿using Bogus;
+using FluentAssertions;
+using Menominee.Api.Features.Contactables;
 using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.Payables;
+using Menominee.Domain.Enums;
+using Menominee.Domain.ValueObjects;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
-using FluentAssertions;
-using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
+using Menominee.TestingHelperLibrary.Fakers;
 using System.Collections.Generic;
 using System.Linq;
 using TestingHelperLibrary;
@@ -14,7 +16,6 @@ using TestingHelperLibrary.Fakers;
 using TestingHelperLibrary.Payables;
 using Xunit;
 using static Menominee.Tests.Utilities;
-using Menominee.Api.Features.Contactables;
 
 namespace Menominee.Tests.Entities
 {

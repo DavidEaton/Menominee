@@ -1,5 +1,5 @@
 ﻿using Menominee.Api.Data;
-using Menominee.Common;
+using Menominee.Domain.BaseClasses;
 using Menominee.Tests.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;

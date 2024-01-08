@@ -1,6 +1,6 @@
-﻿using Menominee.Domain.Entities.Inventory;
-using FluentAssertions;
-using Menominee.Common.Enums;
+﻿using FluentAssertions;
+using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Enums;
 using Xunit;
 
 namespace Menominee.Tests.ValueObjects

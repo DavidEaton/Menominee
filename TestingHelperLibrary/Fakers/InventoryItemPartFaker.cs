@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using CSharpFunctionalExtensions;
 using Menominee.Domain.Entities.Inventory;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using TestingHelperLibrary;
 using TestingHelperLibrary.Fakers;
 

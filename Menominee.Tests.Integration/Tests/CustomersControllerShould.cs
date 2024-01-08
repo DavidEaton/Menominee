@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.Pagination;
@@ -102,7 +102,6 @@ public class CustomersControllerShould : IntegrationTestBase
         customerFromEndpoint.Person.Id.Should().BeGreaterThan(0);
         customerFromEndpoint.Person.Name.Should().BeEquivalentTo(request.Person.Name, options => options.ExcludingMissingMembers());
         customerFromEndpoint.Person.Birthday.Should().Be(request.Person.Birthday);
-        customerFromEndpoint.Person.Gender.Should().Be(request.Person.Gender);
         customerFromEndpoint.Person.Address.Should().BeEquivalentTo(request.Person.Address, options => options.ExcludingMissingMembers());
         foreach (var email in request.Person.Emails)
             customerFromEndpoint.Person.Emails.Should().ContainEquivalentOf(email, options => options.Excluding(c => c.Id));
@@ -411,7 +410,6 @@ public class CustomersControllerShould : IntegrationTestBase
         customerToUpdate.Person.Address.PostalCode.Should().Be(customer.Person.Address.PostalCode);
         customerToUpdate.Person.Address.State.Should().Be(customer.Person.Address.State);
         customerToUpdate.Person.Birthday.Should().Be(customer.Person.Birthday);
-        customerToUpdate.Person.Gender.Should().Be(customer.Person.Gender);
     }
 
     private async Task<CustomerToWrite> CreateBusinessCustomerRequestAsync()

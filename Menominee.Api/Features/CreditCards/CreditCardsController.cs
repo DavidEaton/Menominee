@@ -1,6 +1,6 @@
-﻿using Menominee.Common.Http;
-using Menominee.Domain.Entities;
+﻿using Menominee.Domain.Entities;
 using Menominee.Shared.Models.CreditCards;
+using Menominee.Shared.Models.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;

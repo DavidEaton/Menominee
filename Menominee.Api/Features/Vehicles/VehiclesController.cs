@@ -1,5 +1,5 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Domain.Entities;
+﻿using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Vehicles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

@@ -2,8 +2,8 @@
 using Menominee.Api.Common;
 using Menominee.Api.Features.Manufacturers;
 using Menominee.Api.Features.ProductCodes;
-using Menominee.Common.Http;
 using Menominee.Domain.Entities.Inventory;
+using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.Inventory.InventoryItems;
 using Menominee.Shared.Models.Inventory.InventoryItems.Part;
 using Microsoft.AspNetCore.Mvc;

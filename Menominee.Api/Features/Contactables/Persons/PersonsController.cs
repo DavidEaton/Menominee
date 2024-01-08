@@ -1,4 +1,4 @@
-﻿using Menominee.Common.Http;
+﻿using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.Persons;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

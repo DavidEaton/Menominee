@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Domain.Entities.Inventory;
-using Entity = Menominee.Common.Entity;
+using Entity = Menominee.Domain.BaseClasses.Entity;
 
 namespace Menominee.Domain.Entities.RepairOrders
 {

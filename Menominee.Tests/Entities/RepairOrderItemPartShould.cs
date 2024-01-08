@@ -1,9 +1,9 @@
 ﻿using Bogus;
+using FluentAssertions;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.RepairOrders;
 using Menominee.Domain.Entities.Taxes;
-using FluentAssertions;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using TestingHelperLibrary.Fakers;

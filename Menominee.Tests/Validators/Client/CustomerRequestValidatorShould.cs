@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
 using Menominee.Client.Components.Customers;
-using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.Vehicles;
+using Menominee.TestingHelperLibrary;
 using System.Collections.Generic;
 using Xunit;
 

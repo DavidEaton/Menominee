@@ -1,5 +1,5 @@
-﻿using Menominee.Shared.Models.Payables.Vendors;
-using Menominee.Common.Enums;
+﻿using Menominee.Domain.Enums;
+using Menominee.Shared.Models.Payables.Vendors;
 
 namespace Menominee.Shared.Models.Payables.Invoices.Payments
 {

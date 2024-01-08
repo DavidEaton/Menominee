@@ -2,7 +2,7 @@
 using Menominee.Domain.Entities.Taxes;
 using System.Collections.Generic;
 using System.Linq;
-using Entity = Menominee.Common.Entity;
+using Entity = Menominee.Domain.BaseClasses.Entity;
 
 namespace Menominee.Domain.Entities.Inventory
 {

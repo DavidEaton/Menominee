@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Http;
+using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.Inventory.InventoryItems;
 
 namespace Menominee.Client.Services.Inventory

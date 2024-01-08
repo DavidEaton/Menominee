@@ -7,5 +7,10 @@
         {
             return $"{Name}";
         }
+
+        public static implicit operator string(BusinessNameRequest businessNameRequest)
+        {
+            return businessNameRequest?.ToString() ?? string.Empty;
+        }
     }
 }

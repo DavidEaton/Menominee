@@ -1,10 +1,11 @@
 ﻿using Bogus;
 using FluentAssertions;
-using Menominee.Common.Enums;
 using Menominee.Domain.Entities.Payables;
 using Menominee.Domain.Entities.Taxes;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Invoices;
 using Menominee.Shared.Models.Payables.Vendors;
+using Menominee.TestingHelperLibrary.Fakers;
 using System;
 using System.Linq;
 using System.Net.Http;

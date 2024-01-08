@@ -1,7 +1,7 @@
 ﻿using Blazored.Toast.Services;
 using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Shared;
-using Menominee.Common.Http;
+using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using System.Net.Http.Json;
 
@@ -59,7 +59,7 @@ namespace Menominee.Client.Services.Payables.PaymentMethods
             }
         }
 
-        public async Task<Result<PostResponse>> AddAsync(VendorInvoicePaymentMethodToWrite fromCaller)
+        public async Task<Result<PostResponse>> AddAsync(VendorInvoicePaymentMethodRequest fromCaller)
         {
             var entityType = "Business";
             try
@@ -84,7 +84,7 @@ namespace Menominee.Client.Services.Payables.PaymentMethods
             }
         }
 
-        public async Task<Result> UpdateAsync(VendorInvoicePaymentMethodToWrite fromCaller)
+        public async Task<Result> UpdateAsync(VendorInvoicePaymentMethodRequest fromCaller)
         {
             return await httpClient.UpdateAsync(
                 UriSegment,

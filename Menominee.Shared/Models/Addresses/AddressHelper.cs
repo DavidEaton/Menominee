@@ -1,4 +1,4 @@
-﻿using Menominee.Common.ValueObjects;
+﻿using Menominee.Domain.ValueObjects;
 
 namespace Menominee.Shared.Models.Addresses
 {

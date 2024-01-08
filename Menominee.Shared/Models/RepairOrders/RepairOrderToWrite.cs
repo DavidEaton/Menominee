@@ -14,7 +14,7 @@ namespace Menominee.Shared.Models.RepairOrders
         public long Id { get; set; }
         public long RepairOrderNumber { get; set; } = 0;
         public long InvoiceNumber { get; set; } = 0;
-        public CustomerToWrite Customer { get; set; }
+        public CustomerToWrite Customer { get; set; } = new();
         public VehicleToWrite Vehicle { get; set; }
         public double PartsTotal { get; set; } = 0.0;
         public double LaborTotal { get; set; } = 0.0;

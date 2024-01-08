@@ -1,7 +1,7 @@
 ﻿using Menominee.Api.Data;
-using Menominee.Common;
-using Menominee.Common.Enums;
+using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Menominee.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Serilog;

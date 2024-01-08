@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using Menominee.Domain.Entities.Payables;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
+using Menominee.TestingHelperLibrary.Fakers;
 
 namespace TestingHelperLibrary.Fakers
 {
@@ -29,7 +30,7 @@ namespace TestingHelperLibrary.Fakers
 
                 var payments = paymentsCount <= 0
                     ? null
-                    : generateId 
+                    : generateId
                         ? Utilities.GenerateRandomUniqueLongValues(paymentsCount)
                             .Select(id => new VendorInvoicePaymentFaker(generateId: false, id: id).Generate())
                             .ToList()
@@ -63,6 +64,43 @@ namespace TestingHelperLibrary.Fakers
             var prefix = faker.Random.AlphaNumeric(3).ToUpper();
             var sequenceNumber = faker.Random.Number(1000, 9999);
             return $"{prefix}-{DateTime.Today.Day:00}{DateTime.Today.Month:00}{DateTime.Today.Year}-{sequenceNumber}";
+        }
+
+        public static List<VendorInvoice> MakeVendorInvoiceFakes(
+            int invoicesToGenerateCount,
+            IReadOnlyList<Vendor> vendors,
+            IReadOnlyList<string> vendorInvoiceNumbers)
+        {
+            var retries = 10;
+            var success = false;
+            var random = new Random();
+
+            while (!success && retries > 0)
+            {
+                try
+                {
+                    return new Faker<VendorInvoice>()
+
+                        .CustomInstantiator(faker =>
+                        {
+                            return VendorInvoice.Create(
+                                vendor: vendors[random.Next(0, vendors.Count - 1)],
+                                status: faker.PickRandom<VendorInvoiceStatus>(),
+                                documentType: faker.PickRandom<VendorInvoiceDocumentType>(),
+                                total: faker.Random.Double(),
+                                vendorInvoiceNumbers: vendorInvoiceNumbers,
+                                invoiceNumber: faker.Commerce.Ean8()
+                            ).Value;
+
+                        }).Generate(invoicesToGenerateCount);
+                }
+                catch (Exception)
+                {
+                    retries--;
+                }
+            }
+
+            return new List<VendorInvoice>();
         }
     }
 }

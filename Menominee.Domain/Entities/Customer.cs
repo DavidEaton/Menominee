@@ -1,11 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
+using Menominee.Domain.Enums;
 using Menominee.Domain.Interfaces;
+using Menominee.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Entity = Menominee.Common.Entity;
+using Entity = Menominee.Domain.BaseClasses.Entity;
 
 namespace Menominee.Domain.Entities
 {
@@ -13,13 +13,14 @@ namespace Menominee.Domain.Entities
     {
         public static readonly int MaximumCodeLength = 20;
         public static readonly string DuplicateItemMessagePrefix = $"Customer already has this ";
-        public static readonly string UnknownEntityTypeMessage = $"Customer is unknown entity type.";
+        public static readonly string UnknownEntityTypeMessage = $"Unknown entity type.";
+        public static readonly string UnknownCustomerTypeMessage = $"Unknown type.";
         public static readonly string RequiredMessage = "Please include all required items.";
         public static readonly string InvalidCodeLengthMessage = $"Code must be {MaximumCodeLength} characters or less.";
         public static readonly string UnsupportedMessage = "Unsupported customer entity type.";
 
         public CustomerType CustomerType { get; private set; }
-        public string Code { get; private set; }
+        public string Code { get; private set; } //optional
         public ContactPreferences ContactPreferences { get; private set; }
         public ICustomerEntity CustomerEntity { get; private set; }
         public EntityType EntityType => CustomerEntity.EntityType;
@@ -45,12 +46,12 @@ namespace Menominee.Domain.Entities
                 return Result.Failure<Customer>(RequiredMessage);
 
             if (!Enum.IsDefined(typeof(CustomerType), customerType))
-                return Result.Failure<Customer>(RequiredMessage);
+                return Result.Failure<Customer>(UnknownCustomerTypeMessage);
 
             code = code?.Trim() ?? string.Empty;
 
-            if (string.IsNullOrWhiteSpace(code))
-                return Result.Failure<Customer>(RequiredMessage);
+            if (code.Length > MaximumCodeLength)
+                return Result.Failure<Customer>(InvalidCodeLengthMessage);
 
             return Result.Success(new Customer(entity, customerType, code));
         }
@@ -187,9 +188,6 @@ namespace Menominee.Domain.Entities
         public Result<string> SetCode(string code)
         {
             code = code?.Trim() ?? string.Empty;
-
-            if (string.IsNullOrWhiteSpace(code))
-                return Result.Failure<string>(RequiredMessage);
 
             return code.Length <= MaximumCodeLength
                 ? Result.Success(Code = code)

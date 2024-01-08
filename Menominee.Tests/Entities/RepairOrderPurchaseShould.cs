@@ -1,7 +1,8 @@
 ﻿using Bogus;
+using FluentAssertions;
 using Menominee.Domain.Entities.Payables;
 using Menominee.Domain.Entities.RepairOrders;
-using FluentAssertions;
+using Menominee.TestingHelperLibrary.Fakers;
 using System;
 using System.Collections.Generic;
 using TestingHelperLibrary.Fakers;

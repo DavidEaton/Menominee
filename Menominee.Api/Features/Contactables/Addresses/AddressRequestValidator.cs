@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Menominee.Common.ValueObjects;
+using Menominee.Domain.ValueObjects;
 using Menominee.Shared.Models.Addresses;
 
 namespace Menominee.Api.Features.Contactables.Addresses

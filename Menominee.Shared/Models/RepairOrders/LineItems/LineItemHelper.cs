@@ -1,6 +1,7 @@
 ﻿using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
 using Menominee.Shared.Models.Manufacturers;
 using Menominee.Shared.Models.ProductCodes;
@@ -128,12 +129,12 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems
                     item.SellingPrice,
                     item.LaborAmount is not null
                     ? LaborAmount.Create(item.LaborAmount.PayType, item.LaborAmount.Amount).Value
-                    : LaborAmount.Create(Common.Enums.ItemLaborType.None, default(double)).Value,
+                    : LaborAmount.Create(ItemLaborType.None, default(double)).Value,
                     item.Cost,
                     item.Core,
                     item.DiscountAmount is not null
                         ? DiscountAmount.Create(item.DiscountAmount.DiscountType, item.DiscountAmount.Amount).Value
-                        : DiscountAmount.Create(Common.Enums.ItemDiscountType.None, default(double)).Value
+                        : DiscountAmount.Create(ItemDiscountType.None, default(double)).Value
                 ).Value
             ).ToList() ?? new List<RepairOrderLineItem>();
         }

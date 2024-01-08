@@ -1,9 +1,10 @@
 ﻿using Blazored.Toast.Services;
 using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Shared;
-using Menominee.Common.Http;
+using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.Persons;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Menominee.Client.Services
 {
@@ -51,10 +52,21 @@ namespace Menominee.Client.Services
         public async Task<Result<IReadOnlyList<PersonToReadInList>>> GetAllAsync()
         {
             var errorMessage = "Failed to get Persons";
+            var requestUrl = $"{UriSegment}/list";
 
             try
             {
-                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<PersonToReadInList>>($"{UriSegment}/list");
+                var httpResponse = await httpClient.GetAsync(requestUrl);
+
+                if (!httpResponse.IsSuccessStatusCode)
+                {
+                    Logger.LogError($"{errorMessage}. HTTP status code: {httpResponse.StatusCode}");
+                    return Result.Failure<IReadOnlyList<PersonToReadInList>>(errorMessage);
+                }
+
+                var responseContent = await httpResponse.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<IReadOnlyList<PersonToReadInList>>(responseContent);
+
                 return result is not null
                     ? Result.Success(result)
                     : Result.Failure<IReadOnlyList<PersonToReadInList>>(errorMessage);
@@ -65,6 +77,7 @@ namespace Menominee.Client.Services
                 return Result.Failure<IReadOnlyList<PersonToReadInList>>(errorMessage);
             }
         }
+
 
         public async Task<Result<PersonToRead>> GetAsync(long id)
         {

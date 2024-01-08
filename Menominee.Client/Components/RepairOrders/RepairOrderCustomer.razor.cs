@@ -1,4 +1,4 @@
-﻿using Menominee.Common.Enums;
+﻿using Menominee.Domain.Enums;
 using Menominee.Shared.Models.RepairOrders;
 using Microsoft.AspNetCore.Components;
 

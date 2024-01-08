@@ -1,4 +1,4 @@
-﻿using Menominee.Common.Enums;
+﻿using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Persons;
 using Menominee.Shared.Models.Vehicles;
@@ -9,7 +9,12 @@ namespace Menominee.Shared.Models.Customers;
 public class CustomerToRead
 {
     public long Id { get; set; }
-    public string Name;
+    public string Name => EntityType switch
+    {
+        EntityType.Business => Business?.Name ?? string.Empty,
+        EntityType.Person => Person?.Name ?? string.Empty,
+        _ => string.Empty
+    };
     public EntityType EntityType { get; set; }
     public CustomerType CustomerType { get; set; }
     public PersonToRead Person { get; set; }

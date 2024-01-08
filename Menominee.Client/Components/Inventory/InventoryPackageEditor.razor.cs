@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Inventory.InventoryItems;
 using Menominee.Shared.Models.Inventory.InventoryItems.Package;
 using Menominee.Shared.Models.ProductCodes;

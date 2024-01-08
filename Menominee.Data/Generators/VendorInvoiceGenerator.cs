@@ -1,7 +1,7 @@
 ﻿using Menominee.Data.Database;
-using Menominee.Data.Fakers;
 using Menominee.Data.Results;
 using Menominee.Domain.Entities.Payables;
+using TestingHelperLibrary.Fakers;
 
 namespace Menominee.Data.Generators
 {

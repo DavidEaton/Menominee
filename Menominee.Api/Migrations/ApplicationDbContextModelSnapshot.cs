@@ -103,7 +103,6 @@ namespace Menominee.Api.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Code")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -800,9 +799,6 @@ namespace Menominee.Api.Migrations
 
                     b.Property<DateTime?>("Birthday")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("Gender")
-                        .HasColumnType("int");
 
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
@@ -1574,26 +1570,7 @@ namespace Menominee.Api.Migrations
                         .WithMany()
                         .HasForeignKey("ContactId");
 
-                    b.OwnsOne("Menominee.Common.ValueObjects.BusinessName", "Name", b1 =>
-                        {
-                            b1.Property<long>("BusinessId")
-                                .HasColumnType("bigint");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasMaxLength(255)
-                                .HasColumnType("nvarchar(255)")
-                                .HasColumnName("Name");
-
-                            b1.HasKey("BusinessId");
-
-                            b1.ToTable("Business", "dbo");
-
-                            b1.WithOwner()
-                                .HasForeignKey("BusinessId");
-                        });
-
-                    b.OwnsOne("Menominee.Common.ValueObjects.Address", "Address", b1 =>
+                    b.OwnsOne("Menominee.Domain.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<long>("BusinessId")
                                 .HasColumnType("bigint");
@@ -1614,8 +1591,8 @@ namespace Menominee.Api.Migrations
                                 .HasColumnName("AddressCity");
 
                             b1.Property<string>("PostalCode")
-                                .HasMaxLength(10)
-                                .HasColumnType("nvarchar(10)")
+                                .HasMaxLength(9)
+                                .HasColumnType("nvarchar(9)")
                                 .HasColumnName("AddressPostalCode");
 
                             b1.Property<string>("State")
@@ -1623,6 +1600,25 @@ namespace Menominee.Api.Migrations
                                 .HasMaxLength(2)
                                 .HasColumnType("nvarchar(2)")
                                 .HasColumnName("AddressState");
+
+                            b1.HasKey("BusinessId");
+
+                            b1.ToTable("Business", "dbo");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BusinessId");
+                        });
+
+                    b.OwnsOne("Menominee.Domain.ValueObjects.BusinessName", "Name", b1 =>
+                        {
+                            b1.Property<long>("BusinessId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("Name");
 
                             b1.HasKey("BusinessId");
 
@@ -1658,7 +1654,7 @@ namespace Menominee.Api.Migrations
                         .WithMany()
                         .HasForeignKey("PersonId");
 
-                    b.OwnsOne("Menominee.Common.ValueObjects.ContactPreferences", "ContactPreferences", b1 =>
+                    b.OwnsOne("Menominee.Domain.ValueObjects.ContactPreferences", "ContactPreferences", b1 =>
                         {
                             b1.Property<long>("CustomerId")
                                 .HasColumnType("bigint");
@@ -2091,7 +2087,7 @@ namespace Menominee.Api.Migrations
                             b1.Navigation("PaymentMethod");
                         });
 
-                    b.OwnsOne("Menominee.Common.ValueObjects.Address", "Address", b1 =>
+                    b.OwnsOne("Menominee.Domain.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<long>("VendorId")
                                 .HasColumnType("bigint");
@@ -2112,8 +2108,8 @@ namespace Menominee.Api.Migrations
                                 .HasColumnName("AddressCity");
 
                             b1.Property<string>("PostalCode")
-                                .HasMaxLength(10)
-                                .HasColumnType("nvarchar(10)")
+                                .HasMaxLength(9)
+                                .HasColumnType("nvarchar(9)")
                                 .HasColumnName("AddressPostalCode");
 
                             b1.Property<string>("State")
@@ -2241,7 +2237,46 @@ namespace Menominee.Api.Migrations
                         .WithMany("Contacts")
                         .HasForeignKey("VendorId");
 
-                    b.OwnsOne("Menominee.Common.ValueObjects.DriversLicense", "DriversLicense", b1 =>
+                    b.OwnsOne("Menominee.Domain.ValueObjects.Address", "Address", b1 =>
+                        {
+                            b1.Property<long>("PersonId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<string>("AddressLine1")
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("AddressLine1");
+
+                            b1.Property<string>("AddressLine2")
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("AddressLine2");
+
+                            b1.Property<string>("City")
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("AddressCity");
+
+                            b1.Property<string>("PostalCode")
+                                .HasMaxLength(9)
+                                .HasColumnType("nvarchar(9)")
+                                .HasColumnName("AddressPostalCode");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasMaxLength(2)
+                                .HasColumnType("nvarchar(2)")
+                                .HasColumnName("AddressState");
+
+                            b1.HasKey("PersonId");
+
+                            b1.ToTable("Person", "dbo");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PersonId");
+                        });
+
+                    b.OwnsOne("Menominee.Domain.ValueObjects.DriversLicense", "DriversLicense", b1 =>
                         {
                             b1.Property<long>("PersonId")
                                 .HasColumnType("bigint");
@@ -2264,7 +2299,7 @@ namespace Menominee.Api.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("PersonId");
 
-                            b1.OwnsOne("Menominee.Common.ValueObjects.DateTimeRange", "ValidDateRange", b2 =>
+                            b1.OwnsOne("Menominee.Domain.ValueObjects.DateTimeRange", "ValidDateRange", b2 =>
                                 {
                                     b2.Property<long>("DriversLicensePersonId")
                                         .HasColumnType("bigint");
@@ -2288,7 +2323,7 @@ namespace Menominee.Api.Migrations
                             b1.Navigation("ValidDateRange");
                         });
 
-                    b.OwnsOne("Menominee.Common.ValueObjects.PersonName", "Name", b1 =>
+                    b.OwnsOne("Menominee.Domain.ValueObjects.PersonName", "Name", b1 =>
                         {
                             b1.Property<long>("PersonId")
                                 .HasColumnType("bigint");
@@ -2309,45 +2344,6 @@ namespace Menominee.Api.Migrations
                                 .HasMaxLength(255)
                                 .HasColumnType("nvarchar(255)")
                                 .HasColumnName("MiddleName");
-
-                            b1.HasKey("PersonId");
-
-                            b1.ToTable("Person", "dbo");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PersonId");
-                        });
-
-                    b.OwnsOne("Menominee.Common.ValueObjects.Address", "Address", b1 =>
-                        {
-                            b1.Property<long>("PersonId")
-                                .HasColumnType("bigint");
-
-                            b1.Property<string>("AddressLine1")
-                                .HasMaxLength(255)
-                                .HasColumnType("nvarchar(255)")
-                                .HasColumnName("AddressLine1");
-
-                            b1.Property<string>("AddressLine2")
-                                .HasMaxLength(255)
-                                .HasColumnType("nvarchar(255)")
-                                .HasColumnName("AddressLine2");
-
-                            b1.Property<string>("City")
-                                .HasMaxLength(255)
-                                .HasColumnType("nvarchar(255)")
-                                .HasColumnName("AddressCity");
-
-                            b1.Property<string>("PostalCode")
-                                .HasMaxLength(10)
-                                .HasColumnType("nvarchar(10)")
-                                .HasColumnName("AddressPostalCode");
-
-                            b1.Property<string>("State")
-                                .IsRequired()
-                                .HasMaxLength(2)
-                                .HasColumnType("nvarchar(2)")
-                                .HasColumnName("AddressState");
 
                             b1.HasKey("PersonId");
 

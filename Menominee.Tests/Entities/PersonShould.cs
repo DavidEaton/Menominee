@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Extensions;
-using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
+using Menominee.Domain.ValueObjects;
 using System;
 using TestingHelperLibrary;
 using Xunit;
@@ -23,7 +23,7 @@ namespace Menominee.Tests.Entities
 
             // Act
             var name = PersonName.Create(lastName, firstName).Value;
-            var resultOrError = Person.Create(name, Gender.Female, notes);
+            var resultOrError = Person.Create(name, notes);
 
             // Assert
             resultOrError.Value.Should().BeOfType<Person>();
@@ -40,7 +40,7 @@ namespace Menominee.Tests.Entities
             var notes = Utilities.LoremIpsum(100);
             var birthday = DateTime.Today.AddYears(-50);
 
-            var resultOrError = Person.Create(name, Gender.Female, notes, birthday);
+            var resultOrError = Person.Create(name, notes, birthday);
 
             resultOrError.Value.Should().BeOfType<Person>();
             resultOrError.IsFailure.Should().BeFalse();
@@ -55,7 +55,7 @@ namespace Menominee.Tests.Entities
             var notes = Utilities.LoremIpsum(100);
             var address = ContactableTestHelper.CreateAddress();
 
-            var resultOrError = Person.Create(name, Gender.Female, notes, address: address);
+            var resultOrError = Person.Create(name, notes, address: address);
 
             resultOrError.Value.Should().BeOfType<Person>();
             resultOrError.IsFailure.Should().BeFalse();
@@ -65,7 +65,7 @@ namespace Menominee.Tests.Entities
         public void Return_Failure_On_Create_With_Null_Name()
         {
             var notes = Utilities.LoremIpsum(100);
-            var person = Person.Create(null, Gender.Female, notes);
+            var person = Person.Create(null, notes);
 
             person.IsFailure.Should().BeTrue();
             person.Error.Should().Be(Contactable.RequiredMessage);
@@ -80,13 +80,13 @@ namespace Menominee.Tests.Entities
             var name = PersonName.Create(lastName, firstName).Value;
             DateTime? invalidBirthday = DateTime.MinValue;
 
-            var personOrError = Person.Create(name, Gender.Female, notes, invalidBirthday);
+            var personOrError = Person.Create(name, notes, invalidBirthday);
 
             personOrError.IsFailure.Should().BeTrue();
             personOrError.Error.Should().NotBeNull();
 
             invalidBirthday = DateTime.MaxValue;
-            personOrError = Person.Create(name, Gender.Female, notes, invalidBirthday);
+            personOrError = Person.Create(name, notes, invalidBirthday);
 
             personOrError.IsFailure.Should().BeTrue();
             personOrError.Error.Should().NotBeNull();
@@ -99,24 +99,10 @@ namespace Menominee.Tests.Entities
             PersonName name = null;
             var notes = Utilities.LoremIpsum(100);
 
-            var personOrError = Person.Create(name, Gender.Female, notes);
+            var personOrError = Person.Create(name, notes);
 
             personOrError.IsFailure.Should().BeTrue();
             personOrError.Error.Should().NotBeNull();
-        }
-
-        [Fact]
-        public void Return_Failure_On_Create_With_Invalid_Gender()
-        {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = PersonName.Create(lastName, firstName).Value;
-            Gender invaidGender = (Gender)(-1);
-            var notes = Utilities.LoremIpsum(100);
-            var resultOrError = Person.Create(name, invaidGender, notes);
-
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
@@ -279,7 +265,7 @@ namespace Menominee.Tests.Entities
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
             var notes = Utilities.LoremIpsum(100);
-            var person = Person.Create(name, Gender.Female, notes).Value;
+            var person = Person.Create(name, notes).Value;
             firstName = "Jill";
             lastName = "Done";
             name = PersonName.Create(lastName, firstName).Value;
@@ -297,33 +283,12 @@ namespace Menominee.Tests.Entities
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
             var notes = Utilities.LoremIpsum(100);
-            var person = Person.Create(name, Gender.Female, notes).Value;
+            var person = Person.Create(name, notes).Value;
 
             var result = person.SetName(null);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Contactable.RequiredMessage);
-        }
-
-        [Fact]
-        public void SetGender()
-        {
-            var person = ContactableTestHelper.CreatePerson();
-
-            person.Gender.Should().Be(Gender.Female);
-            person.SetGender(Gender.Male);
-
-            person.Gender.Should().Be(Gender.Male);
-        }
-
-        [Fact]
-        public void SetGender_Failure()
-        {
-            var person = ContactableTestHelper.CreatePerson();
-
-            var result = person.SetGender((Gender)(-1));
-
-            result.IsFailure.Should().BeTrue(Contactable.RequiredMessage);
         }
 
         [Fact]

@@ -1,5 +1,5 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Domain.Entities;
+﻿using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

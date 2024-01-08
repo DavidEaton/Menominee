@@ -1,9 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Enums;
-using Menominee.Common.Extensions;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
+using Menominee.Domain.Enums;
+using Menominee.Domain.Extensions;
 using Menominee.Domain.Interfaces;
+using Menominee.Domain.ValueObjects;
 using System.Collections.Generic;
 
 namespace Menominee.Domain.Entities

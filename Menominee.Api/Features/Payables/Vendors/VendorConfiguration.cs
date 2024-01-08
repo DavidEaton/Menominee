@@ -1,6 +1,6 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
-using Menominee.Domain.Entities.Payables;
+﻿using Menominee.Domain.Entities.Payables;
+using Menominee.Domain.Enums;
+using Menominee.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;

@@ -1,5 +1,5 @@
 ﻿using Menominee.Domain.Entities.Payables;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

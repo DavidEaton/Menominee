@@ -1,6 +1,6 @@
 ﻿using Blazored.Toast.Services;
 using Menominee.Client.Services.SaleCodes;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.SaleCodes;
 using Microsoft.AspNetCore.Components;
 using Telerik.Blazor.Components;

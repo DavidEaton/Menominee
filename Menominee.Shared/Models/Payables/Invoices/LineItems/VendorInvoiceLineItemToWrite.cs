@@ -1,5 +1,5 @@
-﻿using Menominee.Shared.Models.Payables.Invoices.LineItems.Items;
-using Menominee.Common.Enums;
+﻿using Menominee.Domain.Enums;
+using Menominee.Shared.Models.Payables.Invoices.LineItems.Items;
 using System;
 
 namespace Menominee.Shared.Models.Payables.Invoices.LineItems

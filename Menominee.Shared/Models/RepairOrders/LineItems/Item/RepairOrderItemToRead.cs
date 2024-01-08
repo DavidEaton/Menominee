@@ -1,7 +1,7 @@
-﻿using Menominee.Shared.Models.Manufacturers;
+﻿using Menominee.Domain.Enums;
+using Menominee.Shared.Models.Manufacturers;
 using Menominee.Shared.Models.ProductCodes;
 using Menominee.Shared.Models.SaleCodes;
-using Menominee.Common.Enums;
 
 namespace Menominee.Shared.Models.RepairOrders.LineItems.Item
 {

@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using FluentValidation;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.Interfaces;
+using Menominee.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 
@@ -29,7 +29,7 @@ namespace Menominee.Api.Features
         public static IRuleBuilderOptions<T, TElement> MustBeEntity<T, TElement, TEntity>(
             this IRuleBuilder<T, TElement> ruleBuilder,
             Func<TElement, Result<TEntity>> factoryMethod)
-            where TEntity : Menominee.Common.Entity
+            where TEntity : Domain.BaseClasses.Entity
         {
             return (IRuleBuilderOptions<T, TElement>)ruleBuilder.Custom((value, context) =>
             {

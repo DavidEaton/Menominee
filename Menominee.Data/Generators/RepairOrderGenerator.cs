@@ -1,9 +1,9 @@
 ﻿using Bogus;
-using Menominee.Common.Enums;
 using Menominee.Data.Database;
 using Menominee.Data.Results;
 using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Domain.Enums;
 using Menominee.TestingHelperLibrary.Fakers;
 using TestingHelperLibrary.Fakers;
 

@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
+using Menominee.Domain.ValueObjects;
 using System.Collections.Generic;
 using TestingHelperLibrary;
 using Xunit;
@@ -22,7 +22,7 @@ namespace Menominee.Tests.Entities
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
             var notes = Utilities.LoremIpsum(100);
-            var person = Person.Create(name, Gender.Female, notes).Value;
+            var person = Person.Create(name, notes).Value;
 
             // Act
             var customer = Customer.Create(person, CustomerType.Retail, Code).Value;
@@ -61,7 +61,7 @@ namespace Menominee.Tests.Entities
             var result = Customer.Create(person, invalidCustomerType, Code);
 
             result.IsFailure.Should().BeTrue();
-            result.Error.Should().Be(Customer.RequiredMessage);
+            result.Error.Should().Be(Customer.UnknownCustomerTypeMessage);
         }
 
         [Fact]
@@ -84,7 +84,7 @@ namespace Menominee.Tests.Entities
             var result = Customer.Create(business, invalidCustomerType, Code);
 
             result.IsFailure.Should().BeTrue();
-            result.Error.Should().Be(Customer.RequiredMessage);
+            result.Error.Should().Be(Customer.UnknownCustomerTypeMessage);
         }
 
         [Theory]
@@ -139,7 +139,7 @@ namespace Menominee.Tests.Entities
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
             var notes = Utilities.LoremIpsum(100);
-            var person = Person.Create(name, Gender.Female, notes).Value;
+            var person = Person.Create(name, notes).Value;
             var business = ContactableTestHelper.CreateBusiness();
             business.SetContact(person);
 

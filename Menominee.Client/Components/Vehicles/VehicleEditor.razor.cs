@@ -1,5 +1,5 @@
 ﻿using Menominee.Client.Shared.Models;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Vehicles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;

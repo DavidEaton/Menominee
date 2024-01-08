@@ -1,8 +1,8 @@
-﻿using Menominee.Domain.Entities.Payables;
+﻿using FluentAssertions;
+using Menominee.Domain.Entities.Payables;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Invoices;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
-using FluentAssertions;
-using Menominee.Common.Enums;
 using System.Collections.Generic;
 using TestingHelperLibrary.Payables;
 using Xunit;

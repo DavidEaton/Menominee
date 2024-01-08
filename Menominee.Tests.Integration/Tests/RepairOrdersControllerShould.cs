@@ -1,8 +1,8 @@
 ﻿using Bogus;
 using FluentAssertions;
-using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.RepairOrders;
 using Menominee.Shared.Models.RepairOrders.Payments;

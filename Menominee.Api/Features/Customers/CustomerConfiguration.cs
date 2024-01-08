@@ -12,8 +12,7 @@ namespace Menominee.Api.Features.Customers
             builder.ToTable("Customer", "dbo");
 
             builder.Property(customer => customer.Code)
-                .HasMaxLength(Customer.MaximumCodeLength)
-                .IsRequired();
+                .HasMaxLength(Customer.MaximumCodeLength);
 
             builder.Property(customer => customer.CustomerType)
                 .IsRequired();

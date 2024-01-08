@@ -1,8 +1,9 @@
 ﻿using FluentAssertions;
 using Menominee.Client.Components.Vehicles;
-using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Vehicles;
+using Menominee.TestingHelperLibrary;
 using System.Linq;
 using Xunit;
 

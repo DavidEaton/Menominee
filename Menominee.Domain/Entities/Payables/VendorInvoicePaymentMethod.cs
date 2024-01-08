@@ -1,9 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Entity = Menominee.Common.Entity;
+using Entity = Menominee.Domain.BaseClasses.Entity;
 
 namespace Menominee.Domain.Entities.Payables
 {

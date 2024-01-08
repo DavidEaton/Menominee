@@ -1,8 +1,8 @@
 ﻿using Bogus;
 using FluentAssertions;
-using Menominee.Common.Enums;
-using Menominee.Common.Extensions;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
+using Menominee.Domain.Extensions;
 using System;
 using TestingHelperLibrary.Fakers;
 using Xunit;

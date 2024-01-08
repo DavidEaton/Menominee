@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Http;
 using Menominee.Shared.Models.Businesses;
+using Menominee.Shared.Models.Http;
 
 namespace Menominee.Client.Services.Businesses
 {

@@ -1,5 +1,5 @@
 using Menominee.Api.Features.Users;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System;

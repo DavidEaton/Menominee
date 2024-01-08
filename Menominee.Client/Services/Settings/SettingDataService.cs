@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Shared;
-using Menominee.Common.Http;
 using Menominee.Domain.Entities.Settings;
+using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.Settings;
 using System.Net.Http.Json;
 

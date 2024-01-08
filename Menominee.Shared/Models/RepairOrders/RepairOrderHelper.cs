@@ -1,5 +1,5 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Domain.Entities.RepairOrders;
+﻿using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.RepairOrders.Items;
 using Menominee.Shared.Models.RepairOrders.LineItems.Item;

@@ -2,7 +2,7 @@
 using Menominee.Client.Components.Settings;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Vendors;
 using Menominee.Shared.Models.RepairOrders.Purchases;
 using Microsoft.AspNetCore.Components;

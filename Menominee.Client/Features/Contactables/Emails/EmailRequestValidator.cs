@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Contactable;
+using System.Text.RegularExpressions;
 
 namespace Menominee.Client.Features.Contactables.Emails
 {
@@ -13,8 +14,14 @@ namespace Menominee.Client.Features.Contactables.Emails
             RuleFor(email => email.Address)
                 .NotEmpty()
                 .WithMessage(Email.EmptyMessage)
-                .EmailAddress()
+                .Must(BeAValidEmail)
                 .WithMessage(Email.InvalidMessage);
         }
+
+        private bool BeAValidEmail(string emailAddress)
+        {
+            return !string.IsNullOrEmpty(emailAddress) && Regex.IsMatch(emailAddress, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        }
+
     }
 }

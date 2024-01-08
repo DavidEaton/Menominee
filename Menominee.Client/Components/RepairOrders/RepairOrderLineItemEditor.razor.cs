@@ -1,10 +1,8 @@
 ﻿using Menominee.Shared.Models.RepairOrders.Items;
 using Menominee.Shared.Models.RepairOrders.LineItems;
 using Menominee.Client.Shared;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
 
 namespace Menominee.Client.Components.RepairOrders
 {

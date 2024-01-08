@@ -1,12 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Extensions;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Extensions;
 using Menominee.Domain.Interfaces;
+using Menominee.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Entity = Menominee.Common.Entity;
 
 namespace Menominee.Domain.BaseClasses
 {

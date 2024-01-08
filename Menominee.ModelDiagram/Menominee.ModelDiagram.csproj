@@ -9,7 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Menominee.Api\Menominee.Api.csproj" />
     <ProjectReference Include="..\Menominee.Domain\Menominee.Domain.csproj" />
-    <ProjectReference Include="..\Menominee.Common\Menominee.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

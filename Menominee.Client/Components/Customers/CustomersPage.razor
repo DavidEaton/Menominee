@@ -15,9 +15,9 @@
             {
                 <div class="pb-3">
                     <TelerikButton OnClick="Add"
-                               ThemeColor="primary"
-                               Icon="@FontIcon.Plus"
-                               title="Add New Customer">
+                                   ThemeColor="primary"
+                                   Icon="@FontIcon.Plus"
+                                   title="Add New Customer">
                         Add Customer
                     </TelerikButton>
                 </div>
@@ -25,8 +25,8 @@
             @if (FormMode == FormMode.View && Customers?.Count > 0)
             {
                 <CustomersGrid CustomersList="Customers"
-                           OnAddAsync="Add"
-                           OnRowClicked="EditAsync"></CustomersGrid>
+                               OnAddAsync="Add"
+                               OnRowClicked="EditAsync"></CustomersGrid>
             }
             @if ((FormMode == FormMode.Add || FormMode == FormMode.Edit && Customer is not null))
             {
@@ -34,49 +34,11 @@
                 {
                     <img src="/assets/loader-blue-purple.gif" />
                 }
-                <EditForm Model="Customer">
-                    <label class="k-label" for="customerType">Customer Type</label>
-                    <div class="m-form-control-group" for="customerType">
-                        <TelerikDropDownList @bind-Value="Customer.CustomerType"
-                                         Data="CustomerTypeEnumData"
-                                         Width="100%"
-                                         TextField="DisplayText"
-                                         ValueField="Value"
-                                         Id="customerType">
-                        </TelerikDropDownList>
-                    </div>
-                    <div>
-                        <label class="k-label mt-2" for="entityType">Customer is a(n)</label>
-                        <div class="m-form-control-group" for="entityType">
-
-                            <TelerikDropDownList @bind-Value="Customer.EntityType"
-                                             Data="EntityTypeEnumData"
-                                             OnChange="EntityTypeChanged"
-                                             Width="100%"
-                                             TextField="DisplayText"
-                                             ValueField="Value"
-                                             Id="entityType">
-                            </TelerikDropDownList>
-                        </div>
-                    </div>
-                    <div class="editor mt-2">
-                        @if (Customer.EntityType == Common.Enums.EntityType.Person)
-                        {
-                            <PersonContactableEditor Person="Customer.Person"
-                                             FormMode="FormMode"
-                                             Save="Submit"
-                                             Close="Close" />
-                        }
-
-                        @if (Customer.EntityType == Common.Enums.EntityType.Business)
-                        {
-                            <BusinessContactableEditor Business="Customer.Business"
-                                                   FormMode="FormMode"
-                                                   Save="Submit"
-                                                   Close="Close" />
-                        }
-                    </div>
-                </EditForm>
+                <CustomerEditor Customer="@Customer"
+                                FormMode="@FormMode"
+                                OnDiscard="Close"
+                                OnSave="Submit">
+                </CustomerEditor>
             }
 
         </Content>

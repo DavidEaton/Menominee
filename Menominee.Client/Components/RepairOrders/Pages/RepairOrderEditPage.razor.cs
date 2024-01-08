@@ -28,9 +28,21 @@ public partial class RepairOrderEditPage : ComponentBase
     protected override async Task OnParametersSetAsync()
     {
         if (parametersSet)
+        {
             return;
+        }
+
         parametersSet = true;
         MainLayout?.ToggleRepairOrderEditMenuDisplay(true);
+
+        if (Id == 0)
+        {
+            repairOrderToEdit = new()
+            {
+                DateCreated = DateTime.Today
+            };
+            return;
+        }
 
         var result = await DataService.GetAsync(Id);
 

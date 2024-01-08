@@ -55,8 +55,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Menominee.Shared\Menominee.Shared.csproj" />
-		<ProjectReference Include="..\Menominee.Common\Menominee.Common.csproj" />
-		<ProjectReference Include="..\Menominee.Client\Menominee.Client.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

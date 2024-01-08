@@ -1,6 +1,6 @@
-﻿using Menominee.Shared.Models.RepairOrders.SerialNumbers;
-using Menominee.Client.Shared;
-using Menominee.Common.Enums;
+﻿using Menominee.Client.Shared;
+using Menominee.Domain.Enums;
+using Menominee.Shared.Models.RepairOrders.SerialNumbers;
 using Microsoft.AspNetCore.Components;
 
 namespace Menominee.Client.Components.RepairOrders

@@ -50,7 +50,6 @@ namespace Menominee.Shared.Models.RepairOrders.Techs
                                     LastName = technician.Employee.PersonalDetails.Name.LastName,
                                     MiddleName = technician.Employee.PersonalDetails.Name?.MiddleName
                                 },
-                                Gender = technician.Employee.PersonalDetails.Gender
                             },
                             Hired = technician.Employee.Hired,
                             Exited = technician.Employee.Exited
@@ -88,7 +87,6 @@ namespace Menominee.Shared.Models.RepairOrders.Techs
                                 LastName = technician.Employee.PersonalDetails.Name.LastName,
                                 MiddleName = technician.Employee.PersonalDetails.Name?.MiddleName
                             },
-                            Gender = technician.Employee.PersonalDetails.Gender
                         },
                         Hired = technician.Employee.Hired,
                         Exited = technician.Employee.Exited

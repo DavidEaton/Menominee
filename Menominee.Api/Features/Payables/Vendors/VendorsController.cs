@@ -1,7 +1,7 @@
 ﻿using Menominee.Api.Features.Contactables;
 using Menominee.Api.Features.Payables.PaymentMethods;
-using Menominee.Common.Http;
 using Menominee.Domain.Entities.Payables;
+using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Mvc;

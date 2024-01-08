@@ -1,0 +1,77 @@
+﻿@inherits TestContext
+@code {
+    [Fact]
+    public void Render_Title_correctly_on_Add_Phone()
+    {
+        // Arrange
+        ComponentTestFixture.ComponentSetup<PhoneRequestValidator, PhoneToWrite>(this, FormMode.Add, out var emailRequest, out var expectedTitle);
+
+        // Act
+        var renderedComponent = ComponentTestFixture.RenderComponent<PhoneEditor, PhoneToWrite>(this, emailRequest, FormMode.Add);
+
+        // Assert
+        var titleElement = renderedComponent.Find("div.k-window-title");
+        expectedTitle.Should().Be(titleElement.TextContent.Trim());
+    }
+
+
+    [Fact]
+    public void Render_Title_correctly_on_Edit_Phone()
+    {
+        ComponentTestFixture.ComponentSetup<PhoneRequestValidator, PhoneToWrite>(this, FormMode.Edit, out var emailRequest, out var expectedTitle);
+
+        var renderedComponent = ComponentTestFixture.RenderComponent<PhoneEditor, PhoneToWrite>(this, emailRequest, FormMode.Edit);
+
+        var titleElement = renderedComponent.Find("div.k-window-title");
+        expectedTitle.Should().Be(titleElement.TextContent.Trim());
+    }
+
+    [Fact]
+    public void Validation_Fails_When_Phone_Is_Empty()
+    {
+        ComponentTestFixture.ComponentSetup<PhoneRequestValidator, PhoneToWrite>(this, FormMode.Add, out var phoneRequest, out _);
+        phoneRequest.Number = "";
+        var validator = new PhoneRequestValidator();
+
+        var validationResult = validator.Validate(phoneRequest);
+
+        validationResult.IsValid.Should().BeFalse();
+        validationResult.Errors
+            .Where(failure => failure.PropertyName == nameof(PhoneToWrite.Number))
+            .Select(failure => failure.ErrorCode)
+            .Should().Contain(ValidationErrorCode.Predicate, ValidationErrorCode.NotEmpty);
+    }
+
+    [Fact]
+    public void Validation_Fails_When_Phone_Is_Null()
+    {
+        ComponentTestFixture.ComponentSetup<PhoneRequestValidator, PhoneToWrite>(this, FormMode.Add, out var phoneRequest, out _);
+        phoneRequest.Number = null;
+        var validator = new PhoneRequestValidator();
+
+        var validationResult = validator.Validate(phoneRequest);
+
+        validationResult.IsValid.Should().BeFalse();
+        validationResult.Errors
+            .Where(failure => failure.PropertyName == nameof(PhoneToWrite.Number))
+            .Select(failure => failure.ErrorCode)
+            .Should().Contain(ValidationErrorCode.Predicate, ValidationErrorCode.NotEmpty);
+    }
+
+    [Fact]
+    public void Validation_Fails_When_Phone_Is_Invalid()
+    {
+        ComponentTestFixture.ComponentSetup<PhoneRequestValidator, PhoneToWrite>(this, FormMode.Add, out var phoneRequest, out _);
+        phoneRequest.Number = "5555";
+        var validator = new PhoneRequestValidator();
+
+        var validationResult = validator.Validate(phoneRequest);
+
+        validationResult.IsValid.Should().BeFalse();
+        validationResult.Errors
+            .Where(failure => failure.PropertyName == nameof(PhoneToWrite.Number))
+            .Select(failure => failure.ErrorCode)
+            .Should().Contain(ValidationErrorCode.Predicate);
+    }
+
+}

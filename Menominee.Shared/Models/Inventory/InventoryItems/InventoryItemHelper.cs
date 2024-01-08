@@ -1,5 +1,5 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Domain.Entities.Inventory;
+﻿using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Inventory.InventoryItems.Inspection;
 using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
 using Menominee.Shared.Models.Inventory.InventoryItems.Package;

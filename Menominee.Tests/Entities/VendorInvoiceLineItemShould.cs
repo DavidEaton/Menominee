@@ -1,8 +1,8 @@
-﻿using Menominee.Domain.Entities;
+﻿using FluentAssertions;
+using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.Payables;
-using FluentAssertions;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -15,7 +15,7 @@ namespace Menominee.Tests.Entities
         public void Create_VendorInvoiceLineItem()
         {
             // Arrange
-            var manufacturer = Manufacturer.Create(1,"Manufacturer One", "prod", new List<string>(), new List<long>()).Value;
+            var manufacturer = Manufacturer.Create(1, "Manufacturer One", "prod", new List<string>(), new List<long>()).Value;
             var supplies = SaleCodeShopSupplies.Create(.25, 10, 5, 99999, true, true).Value;
             var saleCode = SaleCode.Create("Sale Code One", "SC1", .25, 100.00, supplies, new List<string>()).Value;
             var item = VendorInvoiceItem.Create("BR549", "a description", manufacturer, saleCode).Value;

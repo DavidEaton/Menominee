@@ -1,4 +1,4 @@
-﻿using Menominee.Common.Enums;
+﻿using Menominee.Domain.Enums;
 using System.Collections.Generic;
 
 namespace Menominee.Shared.Models.Taxes

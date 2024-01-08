@@ -1,33 +1,18 @@
-﻿<PersonNameEditor PersonName="Person.Name" />
-
-<div class="form-group row">
-    <label for="gender" class="k-label">Gender</label>
-    <TelerikComboBox Data="GenderEnumData"
-                     TextField="DisplayText"
-                     ValueField="Value"
-                     @bind-Value="@Person.Gender"
-                     Width="100%"
-                     ClearButton="false"
-                     Placeholder="Select a Gender"
-                     Id="gender"
-                     Enabled="Enabled">
-    </TelerikComboBox>
-</div>
-
-<PersonBirthdayEditor Person="@Person"/>
-
-<style>
-    .k-label {
-        margin-bottom: .2rem !important;
+﻿@if (Person is not null)
+{
+    <PersonNameEditor Name="@Person.Name" />
+    @if (IncludeNotes)
+    {
+        <div>
+            <label for="notes">Notes</label>
+            <TelerikTextBox @bind-Value="@Person.Notes"
+                            Id="notes"
+                            AutoComplete="off"
+                            OnBlur="TrimPersonNotes"
+                            Width="100%">
+            </TelerikTextBox>
+            <ValidationMessage For="@(() => Person.Notes)" />
+        </div>
     }
-
-    .add-item {
-        color: white;
-        background-color: forestgreen;
-    }
-
-    .remove-item {
-        color: white;
-        background-color: indianred;
-    }
-</style>
+    <PersonBirthdayEditor Person="@Person" />
+}

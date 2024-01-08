@@ -1,0 +1,15 @@
+﻿<h3>Inbox</h3>
+
+@if (@MessageCount > 0)
+{
+	<h4>You currently have @MessageCount questions.</h4>
+}
+else
+{
+	<h4>No questions, all good.</h4>
+}
+
+@code {
+	[Parameter]
+	public int MessageCount { get; set; }
+}

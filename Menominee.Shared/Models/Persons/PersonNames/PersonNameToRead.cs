@@ -24,5 +24,10 @@
         {
             return LastFirstMiddleInitial;
         }
+
+        public static implicit operator string(PersonNameToRead personNameToRead)
+        {
+            return personNameToRead?.ToString() ?? string.Empty;
+        }
     }
 }

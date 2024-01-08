@@ -1,5 +1,4 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Shared.Models.Addresses;
+﻿using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Persons.DriversLicenses;
 using System;
@@ -10,12 +9,11 @@ namespace Menominee.Shared.Models.Persons
     public class PersonToWrite
     {
         public long Id { get; set; }
-        public PersonNameToWrite Name { get; set; }
-        public Gender Gender { get; set; }
+        public PersonNameToWrite Name { get; set; } = new();
         public DateTime? Birthday { get; set; }
         public string Notes { get; set; } = string.Empty;
-        public DriversLicenseToWrite DriversLicense { get; set; }
-        public AddressToWrite Address { get; set; }
+        public DriversLicenseToWrite DriversLicense { get; set; } = new();
+        public AddressToWrite Address { get; set; } = new();
         public List<PhoneToWrite> Phones { get; set; } = new List<PhoneToWrite>();
         public List<EmailToWrite> Emails { get; set; } = new List<EmailToWrite>();
         public bool IsEmpty =>

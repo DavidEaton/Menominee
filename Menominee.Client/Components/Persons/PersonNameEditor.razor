@@ -1,31 +1,38 @@
 ﻿<div class="person-name-container">
+
     <div class="row">
         <div class="col-9 pl-0">
-            <label for="firstName" class="k-label">First Name</label>
-            <TelerikTextBox @bind-Value="PersonName.FirstName"
+            <label for="firstName">First Name</label>
+            <TelerikTextBox @bind-Value="@Name.FirstName"
                             Id="firstName"
                             AutoComplete="off"
                             Width="100%">
             </TelerikTextBox>
+            <TelerikValidationMessage For="@(() => Name.FirstName)" />
         </div>
         <div class="col-3 p-0">
-            <label for="middleName" class="k-label">Middle</label>
-            <TelerikTextBox @bind-Value="PersonName.MiddleName"
+            <label for="middleName">Middle</label>
+            <TelerikTextBox @bind-Value="@Name.MiddleName"
                             Id="middleName"
                             AutoComplete="off"
                             Width="100%">
             </TelerikTextBox>
+            <TelerikValidationMessage For="@(() => Name.MiddleName)" />
         </div>
     </div>
-    <div class="row mb-0">
-        <label for="lastName" class="k-label">Last Name</label>
-        <TelerikTextBox @bind-Value="PersonName.LastName"
+
+    <div class="row  mb-0">
+        <label for="lastName">Last Name</label>
+        <TelerikTextBox @bind-Value="@Name.LastName"
                         Id="lastName"
                         AutoComplete="off"
                         Width="100%">
         </TelerikTextBox>
+        <TelerikValidationMessage For="@(() => Name.LastName)" />
     </div>
+
 </div>
+
 
 <style>
     .person-name-container {

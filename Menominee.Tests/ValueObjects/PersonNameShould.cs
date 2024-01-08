@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
-using Menominee.Common.ValueObjects;
+using Menominee.Domain.ValueObjects;
 using Xunit;
 
 namespace Menominee.Tests.ValueObjects

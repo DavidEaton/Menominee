@@ -1,5 +1,4 @@
 ﻿using Menominee.Domain.Entities.Inventory;
-using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -237,7 +236,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Package
         private static List<InventoryItemPackageItemToWrite> ConvertToWriteDtos(List<InventoryItemPackageItem> packages)
         {
             return
-                packages?.Select(package => 
+                packages?.Select(package =>
                 new InventoryItemPackageItemToWrite()
                 {
                     DisplayOrder = package.DisplayOrder,

@@ -1,6 +1,6 @@
-﻿using Menominee.Domain.Entities.Inventory;
-using FluentAssertions;
-using Menominee.Common.Enums;
+﻿using FluentAssertions;
+using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Enums;
 using System.Collections.Generic;
 using TestingHelperLibrary;
 using Xunit;
@@ -172,7 +172,7 @@ namespace Menominee.Tests.Entities
             Manufacturer originalManufacturer = item.Manufacturer;
             Manufacturer newManufacturer = InventoryItemTestHelper.CreateManufacturer();
             item.Manufacturer.Should().Be(originalManufacturer);
-           // item.Manufacturer.Should().NotBe(newManufacturer);
+            // item.Manufacturer.Should().NotBe(newManufacturer);
 
             var resultOrError = item.SetManufacturer(newManufacturer);
 

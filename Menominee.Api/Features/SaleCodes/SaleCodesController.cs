@@ -1,5 +1,5 @@
-﻿using Menominee.Common.Http;
-using Menominee.Domain.Entities;
+﻿using Menominee.Domain.Entities;
+using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.SaleCodes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

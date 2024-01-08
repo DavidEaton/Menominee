@@ -1,5 +1,4 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Shared.Models.Addresses;
+﻿using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Persons.DriversLicenses;
 using Menominee.Shared.Models.Persons.PersonNames;
@@ -12,8 +11,8 @@ namespace Menominee.Shared.Models.Persons
     {
         public long Id { get; set; } = default;
         public PersonNameToRead Name { get; set; } = new();
-        public Gender Gender { get; set; } = Gender.Other;
         public DateTime? Birthday { get; set; }
+        public string Notes { get; set; }
         public DriversLicenseToRead DriversLicense { get; set; } = new();
         public AddressToRead Address { get; set; } = new();
         public List<PhoneToRead> Phones { get; set; } = new List<PhoneToRead>();

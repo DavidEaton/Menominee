@@ -1,13 +1,13 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities;
+using Menominee.Domain.ValueObjects;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Entity = Menominee.Common.Entity;
+using Entity = Menominee.Domain.BaseClasses.Entity;
 
 namespace Menominee.Api.Features.Contactables
 {
@@ -36,16 +36,28 @@ namespace Menominee.Api.Features.Contactables
                 })
                 .ToArray();
 
-            var address = addressToWrite is not null
-                ? Address.Create(
+            var maybeAddress = Maybe<Address>.None;
+            if (addressToWrite is not null && addressToWrite.IsNotEmpty)
+            {
+                var addressResult = Address.Create(
                     addressToWrite.AddressLine1,
                     addressToWrite.City,
                     addressToWrite.State,
                     addressToWrite.PostalCode,
-                    addressToWrite.AddressLine2).Value
-                : null;
+                    addressToWrite.AddressLine2);
 
-            return ContactDetails.Create(phones, emails, address);
+                if (addressResult.IsFailure)
+                {
+                    // TODO: the case where the address creation fails but it's not critical:
+                    // log it and continue
+                }
+                else
+                {
+                    maybeAddress = Maybe<Address>.From(addressResult.Value);
+                }
+            }
+
+            return ContactDetails.Create(phones, emails, maybeAddress);
         }
     }
 }

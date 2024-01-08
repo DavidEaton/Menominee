@@ -1,7 +1,7 @@
 ﻿using AutoBogus;
 using Menominee.Domain.Entities.Payables;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Vendors;
-using Menominee.Common.Enums;
 
 namespace TestingHelperLibrary.Payables
 {

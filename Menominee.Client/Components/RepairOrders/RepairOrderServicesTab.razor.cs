@@ -6,7 +6,7 @@ using Menominee.Shared.Models.RepairOrders.Items;
 using Menominee.Shared.Models.RepairOrders.Services;
 using Menominee.Shared.Models.SaleCodes;
 using Menominee.Client.Services.SaleCodes;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Microsoft.AspNetCore.Components;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;

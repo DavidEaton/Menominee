@@ -46,13 +46,6 @@ public partial class RepairOrderForm
             return title;
         }
     }
-
-    private RepairOrderToWrite BoundRepairOrderToEdit
-    {
-        get => RepairOrderToEdit;
-        set => RepairOrderToEditChanged.InvokeAsync(value);
-    }
-
     List<Inspection> CurrentInspections { get; set; }
     List<Inspection> PreviousInspections { get; set; }
     List<PurchaseListItem> PurchaseList { get; set; } = new();

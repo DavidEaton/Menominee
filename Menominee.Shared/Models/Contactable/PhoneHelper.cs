@@ -1,4 +1,5 @@
-﻿using Menominee.Domain.Entities;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Domain.Entities;
 using Menominee.Domain.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,19 +80,33 @@ namespace Menominee.Shared.Models.Contactable
                 : null;
         }
 
-        public static Phone GetPrimaryPhone(ICustomerEntity entity)
+        public static Result<Phone> GetPrimaryPhone(ICustomerEntity entity)
         {
-            switch (entity)
+            if (entity is null)
             {
-                case Person person when person?.Phones != null && person.Phones.Any():
-                    return person.Phones.FirstOrDefault(phone => phone?.IsPrimary == true) ?? null;
-
-                case Business business when business?.Phones != null && business.Phones.Any():
-                    return business.Phones.FirstOrDefault(phone => phone?.IsPrimary == true) ?? null;
-
-                default:
-                    return null;
+                return Result.Failure<Phone>(Phone.EmptyMessage);
             }
+
+            var phones = entity switch
+            {
+                Person person => person.Phones,
+                Business business => business.Phones,
+                _ => null
+            };
+
+            if (phones is null || !phones.Any())
+            {
+                return Result.Failure<Phone>("No phones available for the entity");
+            }
+
+            var primaryPhone = phones.FirstOrDefault(phone => phone?.IsPrimary is true);
+
+            if (primaryPhone is null)
+            {
+                return Result.Failure<Phone>("No primary phone found");
+            }
+
+            return Result.Success(primaryPhone);
         }
 
         public static Phone GetOrdinalPhone(ICustomerEntity entity, int position)

@@ -1,7 +1,6 @@
 ﻿using Bogus;
-using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
+using Menominee.Domain.ValueObjects;
 using Person = Menominee.Domain.Entities.Person;
 
 namespace TestingHelperLibrary.Fakers
@@ -33,7 +32,6 @@ namespace TestingHelperLibrary.Fakers
         {
             var name = PersonName.Create(faker.Person.LastName, faker.Person.FirstName).Value;
             var notes = faker.Lorem.Sentence(20);
-            var gender = faker.PickRandom<Gender>();
             var birthday = faker.Person.DateOfBirth;
 
             var address = includeAddress ? GenerateAddress() : null;
@@ -41,7 +39,7 @@ namespace TestingHelperLibrary.Fakers
             var emails = GenerateEmails(generateId, emailsCount);
             var phones = GeneratePhones(generateId, phonesCount);
 
-            var result = Person.Create(name, gender, notes, birthday, emails, phones, address, driversLicense);
+            var result = Person.Create(name, notes, birthday, emails, phones, address, driversLicense);
 
             return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
         }

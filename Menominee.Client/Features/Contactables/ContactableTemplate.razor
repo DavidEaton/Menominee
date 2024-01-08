@@ -9,10 +9,22 @@
     <tbody>
         @foreach (var item in Items)
         {
-            <tr @key="item"
-                @onclick="() => EditAsync(item)">
+            <tr class="edit-row" @key="item" @onclick="() => EditAsync(item)">
                 @RowTemplate(item)
+                <td class="edit-icon">
+                    <TelerikFontIcon Icon="@FontIcon.Pencil" />
+                </td>
             </tr>
         }
     </tbody>
 </table>
+
+<style>
+    .edit-row:hover .edit-icon {
+        visibility: visible;
+    }
+
+    .edit-icon {
+        visibility: hidden;
+    }
+</style>

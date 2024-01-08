@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using System;
 using System.Collections.Generic;
 

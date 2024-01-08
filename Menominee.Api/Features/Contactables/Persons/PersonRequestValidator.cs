@@ -6,9 +6,9 @@ using Menominee.Api.Features.Contactables.Emails;
 using Menominee.Api.Features.Contactables.Persons.DriverseLicenses;
 using Menominee.Api.Features.Contactables.Persons.PersonNames;
 using Menominee.Api.Features.Contactables.Phones;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities;
+using Menominee.Domain.ValueObjects;
 using Menominee.Shared.Models.Persons;
 using System;
 
@@ -29,11 +29,11 @@ namespace Menominee.Api.Features.Contactables.Persons
 
             RuleFor(person => person.Address)
                 .SetValidator(new AddressRequestValidator())
-                .When(person => person.Address is not null);
+                .When(person => person.Address is not null && person.Address.IsNotEmpty);
 
             RuleFor(person => person.DriversLicense)
                 .SetValidator(new DriversLicenseRequestValidator())
-                .When(person => person.DriversLicense is not null);
+                .When(person => person.DriversLicense is not null && person.DriversLicense.IsNotEmpty);
 
             RuleFor(person => person.Emails)
                 .SetValidator(new EmailsRequestValidator(context));
@@ -55,7 +55,6 @@ namespace Menominee.Api.Features.Contactables.Persons
                         ? Result.Failure<Person>(nameResult.Error)
                         : Person.Create(
                         nameResult.Value,
-                        person.Gender,
                         person.Notes,
                         person.Birthday);
                 });

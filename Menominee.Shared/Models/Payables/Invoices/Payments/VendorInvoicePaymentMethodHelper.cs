@@ -1,6 +1,6 @@
 ﻿using Menominee.Domain.Entities.Payables;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Vendors;
-using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +8,7 @@ namespace Menominee.Shared.Models.Payables.Invoices.Payments
 {
     public class VendorInvoicePaymentMethodHelper
     {
-        public static VendorInvoicePaymentMethodToWrite ConvertReadToWriteDto(VendorInvoicePaymentMethodToRead payMethod)
+        public static VendorInvoicePaymentMethodRequest ConvertReadToWriteDto(VendorInvoicePaymentMethodToRead payMethod)
         {
             return payMethod is null
                 ? null

@@ -1,10 +1,6 @@
-﻿using Menominee.Shared.Models.Payables.Invoices.LineItems;
-using Menominee.Common.Enums;
+﻿using Menominee.Domain.Enums;
+using Menominee.Shared.Models.Payables.Invoices.LineItems;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
 

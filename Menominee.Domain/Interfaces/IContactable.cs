@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities;
+using Menominee.Domain.ValueObjects;
 using System.Collections.Generic;
 
 namespace Menominee.Domain.Interfaces

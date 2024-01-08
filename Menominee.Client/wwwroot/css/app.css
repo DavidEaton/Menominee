@@ -36,8 +36,20 @@ app {
     display: flex;
 }
 
+.green-check {
+    color: green;
+}
+
+.validation-error {
+    color: red;
+    font-size: 0.8rem;
+}
+
+.validation-message {
+    min-height: 20px;
+}
+
 .content {
-    /*padding-top: 1.1rem;*/
     padding: 1.1rem;
 }
 

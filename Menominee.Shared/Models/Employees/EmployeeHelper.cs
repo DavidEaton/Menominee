@@ -13,7 +13,6 @@ public class EmployeeHelper
             {
                 Id = employee.Id,
                 Name = employee.PersonalDetails.Name.ToString(),
-                Gender = employee.PersonalDetails.Gender,
                 Hired = employee.Hired,
                 SSN = employee.SSN,
                 CertificationNumber = employee.CertificationNumber,

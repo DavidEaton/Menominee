@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Menominee.Common.Http;
+using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.Vehicles;
 using Menominee.TestingHelperLibrary.Fakers;
 using System.Linq;

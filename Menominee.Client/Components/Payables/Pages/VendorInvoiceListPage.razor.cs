@@ -2,7 +2,7 @@
 using Menominee.Client.Services.Payables.Invoices;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared.Models;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Invoices;
 using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Components;

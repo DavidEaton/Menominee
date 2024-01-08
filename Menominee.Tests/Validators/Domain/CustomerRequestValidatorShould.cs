@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
 using Menominee.Api.Data;
 using Menominee.Api.Features.Customers;
-using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.Vehicles;
+using Menominee.TestingHelperLibrary;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System.Collections.Generic;

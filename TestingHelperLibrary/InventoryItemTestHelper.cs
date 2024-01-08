@@ -1,9 +1,9 @@
 ﻿using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
 using Menominee.Shared.Models.Inventory.InventoryItems.Part;
 using Menominee.Shared.Models.Manufacturers;
-using Menominee.Common.Enums;
 using TestingHelperLibrary.Fakers;
 
 namespace TestingHelperLibrary
@@ -189,7 +189,7 @@ namespace TestingHelperLibrary
 
         public static Manufacturer CreateManufacturer()
         {
-            return Manufacturer.Create(100,"Manufacturer One", "M1", new List<string>(), new List<long>()).Value;
+            return Manufacturer.Create(100, "Manufacturer One", "M1", new List<string>(), new List<long>()).Value;
         }
 
         public static List<Manufacturer> CreateManufacturers(int count)

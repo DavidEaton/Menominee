@@ -1,4 +1,4 @@
-﻿using Menominee.Common.Enums;
+﻿using Menominee.Domain.Enums;
 using Microsoft.AspNetCore.Components;
 
 namespace Menominee.Client.Components.Inventory

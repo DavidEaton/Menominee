@@ -1,6 +1,6 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Domain.Entities;
+﻿using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Manufacturers;
 using Menominee.Shared.Models.ProductCodes;
 using System.Collections.Generic;

@@ -1,6 +1,6 @@
 ﻿using Menominee.Api.Data;
-using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Vehicles;
 using Microsoft.EntityFrameworkCore;
 using System;

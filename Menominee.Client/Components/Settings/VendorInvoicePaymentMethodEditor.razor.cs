@@ -1,7 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
+using FluentValidation;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Components;
@@ -13,12 +14,14 @@ namespace Menominee.Client.Components.Settings
     {
         [Inject]
         public IVendorDataService? VendorDataService { get; set; }
+        [Inject]
+        private IValidator<VendorInvoicePaymentMethodRequest>? RequestValidator { get; set; }
 
         [Inject]
         IJSRuntime? JsInterop { get; set; }
 
         [Parameter]
-        public VendorInvoicePaymentMethodToWrite? PaymentMethod { get; set; }
+        public VendorInvoicePaymentMethodRequest? PaymentMethod { get; set; }
 
         [Parameter]
         public EventCallback OnSave { get; set; }

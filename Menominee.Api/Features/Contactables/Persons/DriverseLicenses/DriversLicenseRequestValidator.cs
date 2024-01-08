@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using FluentValidation;
-using Menominee.Common.ValueObjects;
+using Menominee.Domain.ValueObjects;
 using Menominee.Shared.Models.Persons.DriversLicenses;
 
 namespace Menominee.Api.Features.Contactables.Persons.DriverseLicenses

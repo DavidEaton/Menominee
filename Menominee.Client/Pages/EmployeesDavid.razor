@@ -18,7 +18,6 @@ else
                 <tr>
                     <th>Id</th>
                     <th>Name</th>
-                    <th>Gender</th>
                     <th>Hired</th>
                     <th>Shop Role</th>
                 </tr>
@@ -29,7 +28,6 @@ else
                     <tr @onclick="@(e => SetSelectedId(employee.Id))">
                         <td>@employee.Id</td>
                         <td>@employee.Name</td>
-                        <td>@employee.Gender</td>
                         <td>@employee.Hired</td>
                         <td>@employee.ShopRole</td>
                     </tr>

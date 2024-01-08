@@ -1,5 +1,6 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Domain.Entities;
+﻿using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
+using Menominee.Domain.Interfaces;
 using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Persons;
@@ -62,7 +63,6 @@ public class CustomerHelper
             {
                 Id = customer.Id,
                 Code = customer.Code,
-                Name = customer.DisplayName,
                 CustomerType = customer.CustomerType,
                 EntityType = customer.CustomerEntity switch
                 {
@@ -81,32 +81,57 @@ public class CustomerHelper
             };
     }
 
-
     public static CustomerToReadInList ConvertToReadInListDto(Customer customer)
     {
-        return customer is not null
-        ? new()
-        {
-            Id = customer.Id,
-            Code = customer.Code,
-            EntityType = customer.CustomerEntity switch
+        return customer is null
+            ? new()
+            : new()
             {
-                Person => EntityType.Person,
-                Business => EntityType.Business,
-                _ => throw new InvalidOperationException("Unknown customer entity type.")
-            },
-            Name = customer.DisplayName,
-            AddressFull = customer.CustomerEntity?.Address?.AddressFull,
-            CustomerType = customer.CustomerType,
-            PrimaryPhone = PhoneHelper.GetPrimaryPhone(customer.CustomerEntity)?.ToString()
-               ?? PhoneHelper.GetOrdinalPhone(customer.CustomerEntity, 0)?.ToString()
-               ?? default,
-            PrimaryEmail = EmailHelper.GetPrimaryEmail(customer.CustomerEntity)?.ToString()
-            ?? EmailHelper.GetOrdinalEmail(customer.CustomerEntity, 0)?.ToString()
-            ?? default
-        }
-        : new();
+                Id = customer.Id,
+                Code = customer.Code,
+                EntityType = GetEntityType(customer.CustomerEntity),
+                Name = customer.DisplayName,
+                AddressFull = customer.CustomerEntity?.Address?.AddressFull,
+                CustomerType = customer.CustomerType,
+                PrimaryPhone = GetPrimaryPhoneString(customer.CustomerEntity),
+                PrimaryEmail = GetPrimaryEmailString(customer.CustomerEntity)
+            };
     }
+
+    private static EntityType GetEntityType(ICustomerEntity customerEntity)
+    {
+        return customerEntity switch
+        {
+            Person => EntityType.Person,
+            Business => EntityType.Business,
+            _ => throw new InvalidOperationException("Unknown customer entity type.")
+        };
+    }
+
+    private static string GetPrimaryPhoneString(ICustomerEntity entity)
+    {
+        var primaryPhoneResult = PhoneHelper.GetPrimaryPhone(entity);
+        if (primaryPhoneResult.IsSuccess)
+        {
+            return primaryPhoneResult.Value.ToString();
+        }
+
+        var ordinalPhone = PhoneHelper.GetOrdinalPhone(entity, 0);
+        return ordinalPhone?.ToString() ?? default;
+    }
+
+    private static string GetPrimaryEmailString(ICustomerEntity entity)
+    {
+        var primaryEmail = EmailHelper.GetPrimaryEmail(entity);
+        if (!string.IsNullOrEmpty(primaryEmail))
+        {
+            return primaryEmail;
+        }
+
+        var ordinalEmail = EmailHelper.GetOrdinalEmail(entity, 0);
+        return ordinalEmail?.ToString() ?? default;
+    }
+
 
     public static CustomerToWrite ConvertToWriteDto(Customer customer)
     {

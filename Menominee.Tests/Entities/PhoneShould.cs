@@ -1,6 +1,6 @@
-﻿using Menominee.Domain.Entities;
-using FluentAssertions;
-using Menominee.Common.Enums;
+﻿using FluentAssertions;
+using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Xunit;
 
 namespace Menominee.Tests.Entities

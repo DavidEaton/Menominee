@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
-using Entity = Menominee.Common.Entity;
+using Entity = Menominee.Domain.BaseClasses.Entity;
 
 namespace Menominee.Domain.Entities
 {

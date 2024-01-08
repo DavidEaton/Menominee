@@ -1,32 +1,40 @@
-﻿using Menominee.Shared.Models.Contactable;
+﻿using FluentValidation;
 using Menominee.Client.Shared;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
+using Menominee.Shared.Models.Contactable;
 using Microsoft.AspNetCore.Components;
-//using Microsoft.JSInterop;
 
 namespace Menominee.Client.Components.Phones
 {
     public partial class PhoneEditor
     {
-        //[Inject]
-        //private IJSRuntime? JsInterop { get; set; }
+        [Parameter] public PhoneToWrite? Phone { get; set; }
 
-        [Parameter]
-        public PhoneToWrite? Phone { get; set; }
+        [Parameter] public FormMode FormMode { get; set; } = FormMode.Unknown;
 
-        [Parameter]
-        public FormMode FormMode { get; set; } = FormMode.Unknown;
+        [Parameter] public EventCallback OnSave { get; set; }
 
-        [Parameter]
-        public EventCallback OnSave { get; set; }
+        [Parameter] public EventCallback OnCancel { get; set; }
 
-        [Parameter]
-        public EventCallback OnCancel { get; set; }
+        [Inject] private IValidator<PhoneToWrite> Validator { get; set; }
 
         public string Title { get; set; } = string.Empty;
-
         private List<PhoneTypeEnumModel> PhoneTypeEnumData { get; set; } = new List<PhoneTypeEnumModel>();
         private bool parametersSet = false;
+        private string validationMessage = string.Empty;
+        private bool IsValid => string.IsNullOrEmpty(validationMessage);
+
+        public void Save()
+        {
+            Validate();
+
+            if (!IsValid)
+            {
+                return;
+            }
+
+            OnSave.InvokeAsync();
+        }
 
         protected override void OnInitialized()
         {
@@ -39,26 +47,30 @@ namespace Menominee.Client.Components.Phones
             }
         }
 
+        private void Validate()
+        {
+            var validationResult = Validator.Validate(Phone);
+
+            if (!validationResult.IsValid)
+            {
+                validationMessage = $"Please enter a valid phone number";
+                return;
+            }
+
+            validationMessage = string.Empty;
+        }
+
         protected override void OnParametersSet()
         {
+            Title = FormTitle.BuildTitle(FormMode, "Phone");
+
             if (!parametersSet)
             {
                 return;
             }
-            parametersSet = true;
-            Title = FormTitle.BuildTitle(FormMode, "Phone");
-        }
 
-        // TODO: this focuses the element but leaves the cursor at the end
-        //protected override async Task OnAfterRenderAsync(bool firstRender)
-        //{
-        //    await base.OnAfterRenderAsync(firstRender);
-        //    if (firstRender)
-        //    {
-        //        if (JsInterop is not null)
-        //            await JsInterop.InvokeVoidAsync("jsfunction.focusElement", "phoneNumber");
-        //    }
-        //}
+            parametersSet = true;
+        }
 
         internal class PhoneTypeEnumModel
         {

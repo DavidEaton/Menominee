@@ -1,55 +1,70 @@
-﻿@using Blazored.FluentValidation
-@using Telerik.Blazor.Components
-
-<TelerikWindow Visible="true"
+﻿<TelerikWindow Visible="true"
                Modal="true"
-               MaxWidth="1200px"
+               Width="50%"
+               MaxWidth="1440px"
                MaxHeight="100%"
+               MinHeight="90%"
                Resizable="false"
                Class="popupWindowClass">
     <WindowTitle>
         @Title
     </WindowTitle>
     <WindowContent>
-        <TelerikForm EditContext="@EditContext" OnValidSubmit="@HandleSubmit" Columns="12" ColumnSpacing="24px">
-            @* <FormValidation>
-            <FluentValidationValidator Validator="@CustomerValidator"></FluentValidationValidator>
-            </FormValidation> *@
+        <TelerikForm Model="@Customer" OnValidSubmit="@HandleSubmit" Columns="12" ColumnSpacing="24px" @ref="CustomerForm">
+            <FormValidation>
+                <FluentValidationValidator DisableAssemblyScanning="@true" />
+            </FormValidation>
 
             <FormItems>
-                <FormItem Field="@nameof(CustomerModel.CustomerType)" ColSpan="12">
+
+                <FormItem Field="@nameof(Customer.CustomerType)" ColSpan="6">
                     <Template>
                         <label class="k-label" for="customerType">Customer Type</label>
-                        <div class="col-12 col-md-8 col-lg-6 p-0">
-                            <TelerikDropDownList @bind-Value="CustomerModel.CustomerType"
-                                                 Data="CustomerTypeEnumData"
-                                                 OnChange="CustomerTypeChanged"
-                                                 TextField="DisplayText"
-                                                 ValueField="Value"
-                                                 Id="customerType">
-                                <DropDownListSettings>
-                                    <DropDownListPopupSettings Height="198px" />
-                                </DropDownListSettings>
-                            </TelerikDropDownList>
-                        </div>
+                        <TelerikDropDownList @bind-Value="Customer.CustomerType"
+                                             Data="CustomerTypeEnumData"
+                                             OnChange="CustomerTypeChanged"
+                                             TextField="DisplayText"
+                                             ValueField="Value"
+                                             Width="100%"
+                                             Id="customerType">
+                            <DropDownListSettings>
+                                <DropDownListPopupSettings Height="198px" />
+                            </DropDownListSettings>
+                        </TelerikDropDownList>
+                    </Template>
+                </FormItem>
+
+                <FormItem Field="@nameof(Customer.Code)" ColSpan="6">
+                    <Template>
+                        <label class="k-label" for="code">Code</label>
+                        <TelerikTextBox @bind-Value="Customer.Code"
+                                        Id="code"
+                                        AutoComplete="off"
+                                        Width="100%">
+                        </TelerikTextBox>
+                        <TelerikValidationMessage For="@(() => Customer.Code)" />
                     </Template>
                 </FormItem>
 
                 <FormItem ColSpan="12" Class="mt-8">
                     <Template>
-                        @if (CustomerModel.EntityType == Common.Enums.EntityType.Person)
+                        @if (Customer.EntityType == EntityType.Person)
                         {
-                            <PersonNameEditor PersonName="CustomerModel.Person.Name" />
+                            <div class="form-group row">
+                                <PersonNameEditor Name="Customer.Person.Name" />
+                            </div>
                         }
-                        @if (CustomerModel.EntityType == Common.Enums.EntityType.Business)
+
+                        @if (Customer.EntityType == EntityType.Business)
                         {
                             <div class="form-group row">
                                 <label for="name" class="k-label">Name</label>
-                                <TelerikTextBox @bind-Value="CustomerModel.Business.Name.Name"
+                                <TelerikTextBox @bind-Value="Customer.Business.Name.Name"
                                                 Id="name"
                                                 AutoComplete="off"
                                                 Width="100%">
                                 </TelerikTextBox>
+                                <TelerikValidationMessage For="@(() => Customer.Business.Name.Name)" />
                             </div>
                         }
                     </Template>
@@ -63,11 +78,11 @@
                                     <div class="p-0">
                                         <Card Title="Address">
                                             <Content>
-                                                <AddressEditor Address=@((CustomerModel.EntityType == Common.Enums.EntityType.Person)
-                                                               ? CustomerModel.Person.Address 
-                                                               : CustomerModel.Business.Address)
-                                                               Enabled="true"
-                                                               FormMode="FormMode" />
+                                                <AddressEditor Address=@((Customer.EntityType == EntityType.Person)
+                                                               ? Customer.Person.Address
+                                                               : Customer.Business.Address)
+                                                               OnChange="@ValidateCustomerForm"
+                                                               OnDelete="@DeleteAddress" />
                                             </Content>
                                         </Card>
                                     </div>
@@ -75,21 +90,21 @@
                                         <div class="phone-email-card">
                                             <Card Title="Phones">
                                                 <Content>
-                                                    <PhoneListEditor Phones=@((CustomerModel.EntityType == Common.Enums.EntityType.Person)
-                                                                     ? CustomerModel.Person.Phones 
-                                                                     : CustomerModel.Business.Phones)
+                                                    <PhoneListEditor Phones=@((Customer.EntityType == EntityType.Person)
+                                                                     ? Customer.Person.Phones
+                                                                     : Customer.Business.Phones)
                                                                      DefaultPhoneType="@PhoneType.Mobile"
-                                                                     FormMode="FormMode" />
+                                                                     FormMode="@FormMode" />
                                                 </Content>
                                             </Card>
                                         </div>
                                         <div class="phone-email-card">
                                             <Card Title="Emails">
                                                 <Content>
-                                                    <EmailListEditor Emails=@((CustomerModel.EntityType == Common.Enums.EntityType.Person)
-                                                                     ? CustomerModel.Person.Emails 
-                                                                     : CustomerModel.Business.Emails)
-                                                                     FormMode="FormMode" />
+                                                    <EmailListEditor Emails=@((Customer.EntityType == EntityType.Person)
+                                                                     ? Customer.Person.Emails
+                                                                     : Customer.Business.Emails)
+                                                                     FormMode="@FormMode" />
                                                 </Content>
                                             </Card>
                                         </div>
@@ -98,13 +113,13 @@
                             </TabStripTab>
                             <TabStripTab Title="Notes" Class="m-rounded-tab">
                                 <div>
-                                    @if (CustomerModel.Person is not null)
+                                    @if (Customer.Person is not null)
                                     {
-                                        <TelerikTextArea Id="notes" AutoSize="true" @bind-Value="CustomerModel.Person.Notes"></TelerikTextArea>
+                                        <TelerikTextArea Id="notesPerson" AutoSize="true" @bind-Value="Customer.Person.Notes"></TelerikTextArea>
                                     }
-                                    else if (CustomerModel.Business is not null)
+                                    else if (Customer.Business is not null)
                                     {
-                                        <TelerikTextArea Id="notes" AutoSize="true" @bind-Value="CustomerModel.Business.Notes"></TelerikTextArea>
+                                        <TelerikTextArea Id="notesBusiness" AutoSize="true" @bind-Value="Customer.Business.Notes"></TelerikTextArea>
                                     }
                                 </div>
                             </TabStripTab>
@@ -114,7 +129,7 @@
             </FormItems>
 
             <FormButtons>
-                <TelerikButton ButtonType="ButtonType.Submit" ThemeColor="primary" OnClick="Submit">Save</TelerikButton>
+                <TelerikButton ButtonType="ButtonType.Submit" ThemeColor="primary" OnClick="Submit" Enabled="IsValid">Save</TelerikButton>
                 <TelerikButton ButtonType="ButtonType.Button" ThemeColor="secondary" OnClick="HandleDiscard">Discard</TelerikButton>
             </FormButtons>
         </TelerikForm>

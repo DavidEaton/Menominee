@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Payables.PaymentMethods;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Microsoft.AspNetCore.Components;
 using Telerik.Blazor;
@@ -37,7 +37,7 @@ namespace Menominee.Client.Components.Settings.Pages
         private bool CanDelete { get; set; } = false;
 
         private FormMode PayMethodFormMode = FormMode.Unknown;
-        public VendorInvoicePaymentMethodToWrite PayMethod { get; set; } = null;
+        public VendorInvoicePaymentMethodRequest PayMethod { get; set; } = null;
         private long selectedId;
         public long SelectedId
         {
@@ -94,7 +94,7 @@ namespace Menominee.Client.Components.Settings.Pages
                     return;
                 }
 
-                PayMethod = new VendorInvoicePaymentMethodToWrite
+                PayMethod = new VendorInvoicePaymentMethodRequest
                 {
                     Name = result.Value.Name,
                     IsActive = result.Value.IsActive,

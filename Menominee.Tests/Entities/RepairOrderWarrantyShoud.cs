@@ -1,7 +1,7 @@
 ﻿using Bogus;
-using Menominee.Domain.Entities.RepairOrders;
 using FluentAssertions;
-using Menominee.Common.Enums;
+using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

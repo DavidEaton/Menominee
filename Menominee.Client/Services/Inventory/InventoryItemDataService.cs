@@ -1,7 +1,7 @@
 ﻿using Blazored.Toast.Services;
 using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Shared;
-using Menominee.Common.Http;
+using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.Inventory.InventoryItems;
 using System.Net.Http.Json;
 

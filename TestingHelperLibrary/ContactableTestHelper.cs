@@ -1,8 +1,8 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
-using Menominee.Domain.Entities;
+﻿using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
+using Menominee.Domain.ValueObjects;
 using TestingHelperLibrary.Fakers;
-using Address = Menominee.Common.ValueObjects.Address;
+using Address = Menominee.Domain.ValueObjects.Address;
 using Email = Menominee.Domain.Entities.Email;
 using Person = Menominee.Domain.Entities.Person;
 using Phone = Menominee.Domain.Entities.Phone;
@@ -17,7 +17,7 @@ namespace TestingHelperLibrary
             var lastName = "Doe";
             var nameOrError = PersonName.Create(lastName, firstName);
 
-            return Person.Create(nameOrError.Value, Gender.Female, "some notes").Value;
+            return Person.Create(nameOrError.Value, "some notes").Value;
         }
 
         public static Person CreatePersonWithEmails(int emailCount)

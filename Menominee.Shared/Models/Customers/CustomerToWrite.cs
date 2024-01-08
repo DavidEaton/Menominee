@@ -1,4 +1,4 @@
-﻿using Menominee.Common.Enums;
+﻿using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Persons;
 using Menominee.Shared.Models.Vehicles;
@@ -16,10 +16,15 @@ public class CustomerToWrite
     public long Id { get; set; }
     public bool IsBusiness => Business?.IsNotEmpty ?? false;
     public bool IsPerson => Person?.IsNotEmpty ?? false;
-    public EntityType EntityType { get; set; }
-    public CustomerType CustomerType { get; set; }
-    public PersonToWrite Person { get; set; }
-    public BusinessToWrite Business { get; set; }
+    public EntityType EntityType { get; set; } = EntityType.Person;
+    public CustomerType CustomerType { get; set; } = CustomerType.Retail;
+    public PersonToWrite Person { get; set; } = new();
+    public BusinessToWrite Business { get; set; } = new();
     public string Code { get; set; } = null;
     public List<VehicleToWrite> Vehicles { get; set; } = new List<VehicleToWrite>();
+
+    public string CustomerName =>
+        Business?.IsNotEmpty is true ? Business.Name :
+        Person?.IsNotEmpty is true ? Person.Name :
+        string.Empty;
 }

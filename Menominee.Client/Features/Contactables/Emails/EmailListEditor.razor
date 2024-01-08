@@ -1,0 +1,93 @@
+﻿@if (Emails is null)
+{
+    <p><em>Loading...</em></p>
+}
+
+@if (Emails is not null)
+{
+    <TelerikGrid Data="Emails"
+                 OnRowClick="@SelectRow"
+                 OnRowDoubleClick="@OnEdit"
+                 SelectionMode="GridSelectionMode.Single"
+                 Class="max-email-grid-height grid-no-scroll"
+                 Id="emailGrid"
+                 @ref="@Grid">
+        <GridColumns>
+            <GridColumn Width="70%"
+                        Title="Address"
+                        ShowColumnChooser="false"
+                        Lockable="false"
+                        ShowColumnMenu="false"
+                        Sortable="false"
+                        Filterable="false">
+                <Template>
+                    @{
+                        @if ((context as EmailToWrite).IsPrimary)
+                        {
+                            <span class="green-check pr-2">
+                                <TelerikFontIcon Icon="@FontIcon.CheckCircle" />
+                            </span>
+                        }
+                        @((context as EmailToWrite).ToString())
+                    }
+                </Template>
+            </GridColumn>
+        </GridColumns>
+        <NoDataTemplate>
+            No Emails Entered
+        </NoDataTemplate>
+    </TelerikGrid>
+
+    @if (SelectedEmail is not null && EmailFormMode == FormMode.Edit || EmailFormMode == FormMode.Add)
+    {
+        <EmailEditor Email="SelectedEmail"
+                     FormMode="EmailFormMode"
+                     OnSave="OnSaveEdit"
+                     OnCancel="OnCancelEdit" />
+    }
+
+    @if (CanAddEditDelete)
+    {
+        <EditNewDeleteIconButtons OnEdit="OnEdit"
+                                  OnNew="OnNew"
+                                  OnDelete="OnDelete"
+                                  ShowDivider="false"
+                                  CanAdd="CanAddEditDelete"
+                                  CanEdit="CanAddEditDelete"
+                                  CanDelete="CanAddEditDelete" />
+    }
+    else
+    {
+        <EditNewDeleteIconButtons OnEdit="OnEdit"
+                                  ShowDivider="false"
+                                  CanEdit="CanAddEditDelete" />
+    }
+}
+
+<style>
+
+    .max-email-grid-height {
+        max-height: 121px !important;
+    }
+
+    #emailGrid .k-grid-header {
+        background-color: #f8f9fa;
+    }
+
+    #emailGrid .k-table-thead {
+        display: none;
+    }
+    .grid-no-scroll .k-grid-content {
+        overflow-y: auto;
+    }
+
+    .grid-no-scroll .k-grid-header,
+    .grid-no-scroll .k-grid-footer {
+        padding-right: 0; /* version 2.26 and older requires !important here */
+    }
+
+    .grid-no-scroll .k-grid-header-wrap,
+    .grid-no-scroll .k-grid-footer-wrap {
+        border-right-width: 0;
+    }
+</style>

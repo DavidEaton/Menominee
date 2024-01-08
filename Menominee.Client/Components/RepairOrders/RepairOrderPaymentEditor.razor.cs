@@ -1,10 +1,8 @@
-﻿using Menominee.Shared.Models.RepairOrders;
+﻿using Menominee.Client.Shared;
+using Menominee.Domain.Enums;
+using Menominee.Shared.Models.RepairOrders;
 using Menominee.Shared.Models.RepairOrders.Payments;
-using Menominee.Client.Shared;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
 
 namespace Menominee.Client.Components.RepairOrders
 {

@@ -1,5 +1,5 @@
 ﻿using Menominee.Client.Services;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Users;
 using Microsoft.AspNetCore.Components;
 using Telerik.Blazor.Components;

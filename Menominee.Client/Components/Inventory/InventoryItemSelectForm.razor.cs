@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Inventory.InventoryItems;
 using Menominee.Shared.Models.Manufacturers;
 using Microsoft.AspNetCore.Components;

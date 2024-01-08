@@ -19,10 +19,6 @@ namespace Menominee.Client.Features.Contactables.Persons
                 .NotEmpty()
                 .SetValidator(new PersonNameRequestValidator());
 
-            RuleFor(person => person.Gender)
-                .IsInEnum()
-                .WithMessage(Contactable.RequiredMessage);
-
             RuleFor(person => person.Birthday)
                 .Must(birthday => Person.IsValidAgeOn(birthday))
                 .WithMessage(Contactable.InvalidValueMessage)
@@ -30,18 +26,16 @@ namespace Menominee.Client.Features.Contactables.Persons
 
             RuleFor(person => person.Address)
                 .SetValidator(new AddressRequestValidator())
-                .When(person => person.Address is not null);
+                .When(person => person.Address is not null && person.Address.IsNotEmpty);
 
             RuleFor(person => person.DriversLicense)
                 .SetValidator(new DriversLicenseRequestValidator())
-                .When(person => person.DriversLicense is not null);
+                .When(person => person.DriversLicense is not null && person.DriversLicense.IsNotEmpty);
 
             RuleFor(person => person.Emails)
-                .NotEmpty()
                 .SetValidator(new EmailsRequestValidator());
 
             RuleFor(person => person.Phones)
-                .NotEmpty()
                 .SetValidator(new PhonesRequestValidator());
 
             RuleFor(person => person.Notes)

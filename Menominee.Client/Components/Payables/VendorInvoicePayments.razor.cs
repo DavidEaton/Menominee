@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Components.Settings.Pages;
 using Menominee.Client.Services.Payables.PaymentMethods;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Invoices;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Microsoft.AspNetCore.Components;

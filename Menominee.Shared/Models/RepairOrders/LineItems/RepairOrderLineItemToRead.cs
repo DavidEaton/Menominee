@@ -1,10 +1,10 @@
-﻿using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
+﻿using Menominee.Domain.Enums;
+using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
 using Menominee.Shared.Models.RepairOrders.LineItems.Item;
 using Menominee.Shared.Models.RepairOrders.Purchases;
 using Menominee.Shared.Models.RepairOrders.SerialNumbers;
 using Menominee.Shared.Models.RepairOrders.Taxes;
 using Menominee.Shared.Models.RepairOrders.Warranties;
-using Menominee.Common.Enums;
 using System.Collections.Generic;
 
 namespace Menominee.Shared.Models.RepairOrders.LineItems

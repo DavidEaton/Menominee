@@ -1,7 +1,7 @@
-﻿using Menominee.Shared.Models.Addresses;
+﻿using Menominee.Domain.Enums;
+using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
-using Menominee.Common.Enums;
 using System.Collections.Generic;
 
 namespace Menominee.Shared.Models.Payables.Vendors

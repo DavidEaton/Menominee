@@ -2,7 +2,7 @@
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;
 using Menominee.Client.Shared;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Inventory.InventoryItems;
 using Menominee.Shared.Models.Manufacturers;
 using Menominee.Shared.Models.Payables.Invoices.LineItems;

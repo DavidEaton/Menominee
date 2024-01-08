@@ -1,7 +1,7 @@
 ﻿using Bogus;
-using Menominee.Common.Enums;
-using Menominee.Common.Extensions;
 using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Enums;
+using Menominee.Domain.Extensions;
 using TestingHelperLibrary.Fakers;
 
 namespace Menominee.Tests.Helpers.Fakers

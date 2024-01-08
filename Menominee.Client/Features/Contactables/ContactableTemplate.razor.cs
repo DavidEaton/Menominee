@@ -12,7 +12,7 @@ namespace Menominee.Client.Features.Contactables
         public RenderFragment<TItem> RowTemplate { get; set; }
 
         [Parameter]
-        public IEnumerable<TItem> Items { get; set; }
+        public IEnumerable<TItem> Items { get; set; } = Enumerable.Empty<TItem>();
 
         [Parameter]
         public EventCallback<TItem> OnRowClick { get; set; }

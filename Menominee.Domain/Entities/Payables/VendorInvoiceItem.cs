@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Domain.Entities.Inventory;
-using Menominee.Common.ValueObjects;
+using Menominee.Domain.ValueObjects;
 using System.Collections.Generic;
 
 namespace Menominee.Domain.Entities.Payables

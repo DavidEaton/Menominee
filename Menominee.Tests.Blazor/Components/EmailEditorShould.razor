@@ -1,0 +1,66 @@
+﻿@inherits TestContext
+
+@code {
+    [Fact]
+    public void Render_Title_correctly_Add_Email()
+    {
+        // Arrange
+        ComponentTestFixture.ComponentSetup<EmailRequestValidator, EmailToWrite>(this, FormMode.Add, out var emailRequest, out var expectedTitle);
+
+        // Act
+        var renderedComponent = ComponentTestFixture.RenderComponent<EmailEditor, EmailToWrite>(this, emailRequest, FormMode.Add);
+
+        // Assert
+        var titleElement = renderedComponent.Find("div.k-window-title");
+        expectedTitle.Should().Be(titleElement.TextContent.Trim());
+    }
+
+    [Fact]
+    public void Validation_Fails_When_Email_Is_Empty()
+    {
+        ComponentTestFixture.ComponentSetup<EmailRequestValidator, EmailToWrite>(this, FormMode.Add, out var emailRequest, out _);
+        emailRequest.Address = "";
+        var validator = new EmailRequestValidator();
+
+        var validationResult = validator.Validate(emailRequest);
+
+        validationResult.IsValid.Should().BeFalse();
+        validationResult.Errors
+            .Where(failure => failure.PropertyName == nameof(EmailToWrite.Address))
+            .Select(failure => failure.ErrorCode)
+            .Should().Contain(ValidationErrorCode.Predicate, ValidationErrorCode.NotEmpty);
+    }
+
+    [Fact]
+    public void Validation_Fails_When_Email_Is_Null()
+    {
+        ComponentTestFixture.ComponentSetup<EmailRequestValidator, EmailToWrite>(this, FormMode.Add, out var emailRequest, out _);
+        emailRequest.Address = null;
+        var validator = new EmailRequestValidator();
+
+        var validationResult = validator.Validate(emailRequest);
+
+        validationResult.IsValid.Should().BeFalse();
+        validationResult.Errors
+            .Where(failure => failure.PropertyName == nameof(EmailToWrite.Address))
+            .Select(failure => failure.ErrorCode)
+            .Should().Contain(ValidationErrorCode.Predicate, ValidationErrorCode.NotEmpty);
+    }
+
+    [Fact]
+    public void Validation_Fails_When_Email_Is_Invalid()
+    {
+        ComponentTestFixture.ComponentSetup<EmailRequestValidator, EmailToWrite>(this, FormMode.Add, out var emailRequest, out _);
+        emailRequest.Address = "5555";
+        var validator = new EmailRequestValidator();
+
+        var validationResult = validator.Validate(emailRequest);
+
+        validationResult.IsValid.Should().BeFalse();
+        validationResult.Errors
+            .Where(failure => failure.PropertyName == nameof(EmailToWrite.Address))
+            .Select(failure => failure.ErrorCode)
+            .Should().Contain(ValidationErrorCode.Predicate);
+    }
+
+}

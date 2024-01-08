@@ -2,10 +2,10 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Menominee.Api.Features.Contactables;
-using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
+using Menominee.Domain.ValueObjects;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
 using System.Linq;
@@ -81,7 +81,7 @@ namespace Menominee.Tests.Entities
             var lastName = "Doe";
             var personName = PersonName.Create(lastName, firstName).Value;
             var notes = LoremIpsum(100);
-            var contact = Person.Create(personName, Gender.Female, notes).Value;
+            var contact = Person.Create(personName, notes).Value;
 
             business.SetContact(contact);
 
@@ -432,7 +432,7 @@ namespace Menominee.Tests.Entities
             var lastName = "Doe";
             var personName = PersonName.Create(lastName, firstName).Value;
             var notes = LoremIpsum(100);
-            var contact = Person.Create(personName, Gender.Female, notes).Value;
+            var contact = Person.Create(personName, notes).Value;
 
             business.SetContact(contact);
 

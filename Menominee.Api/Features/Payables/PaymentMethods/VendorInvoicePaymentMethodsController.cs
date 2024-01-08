@@ -1,6 +1,6 @@
 ﻿using Menominee.Api.Features.Payables.Vendors;
-using Menominee.Common.Http;
 using Menominee.Domain.Entities.Payables;
+using Menominee.Shared.Models.Http;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -46,7 +46,7 @@ namespace Menominee.Api.Features.Payables.PaymentMethods
         }
 
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateAsync(VendorInvoicePaymentMethodToWrite paymentMethodToUpdate)
+        public async Task<ActionResult> UpdateAsync(VendorInvoicePaymentMethodRequest paymentMethodToUpdate)
         {
             var paymentMethodFromRepository = await repository.GetEntityAsync(paymentMethodToUpdate.Id);
             if (paymentMethodFromRepository is null)
@@ -90,7 +90,7 @@ namespace Menominee.Api.Features.Payables.PaymentMethods
         }
 
         [HttpPost]
-        public async Task<ActionResult<PostResponse>> AddAsync(VendorInvoicePaymentMethodToWrite payMethodToAdd)
+        public async Task<ActionResult<PostResponse>> AddAsync(VendorInvoicePaymentMethodRequest payMethodToAdd)
         {
             var paymentMethodNames =
                 await repository.GetPaymentMethodNamesAsync();

@@ -1,0 +1,22 @@
+﻿@inherits TestContext
+@code
+{
+    [Fact]
+    public void Render_correctly_with_value_greater_than_zero()
+    {
+        // Arrange/Act
+        var cut = Render(@<SampleComponent MessageCount="3" />);
+
+        // Assert
+        cut.MarkupMatches("<h3>Inbox</h3><h4>You currently have 3 questions.</h4>");
+    }
+
+    [Fact]
+    public void Render_correctly_with_value_equal_to_zero()
+    {
+        var cut = Render(@<SampleComponent MessageCount="0" />);
+
+        cut.MarkupMatches("<h3>Inbox</h3><h4>No questions, all good.</h4>");
+    }
+
+}

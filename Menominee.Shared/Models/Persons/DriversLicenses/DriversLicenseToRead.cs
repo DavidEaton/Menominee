@@ -1,4 +1,4 @@
-﻿using Menominee.Common.Enums;
+﻿using Menominee.Domain.Enums;
 using System;
 
 namespace Menominee.Shared.Models.Persons.DriversLicenses

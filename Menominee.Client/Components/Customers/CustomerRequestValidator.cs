@@ -2,8 +2,8 @@
 using Menominee.Client.Components.Vehicles;
 using Menominee.Client.Features.Contactables.Businesses;
 using Menominee.Client.Features.Contactables.Persons;
-using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Customers;
 
 namespace Menominee.Client.Components.Customers
@@ -15,10 +15,12 @@ namespace Menominee.Client.Components.Customers
             ClassLevelCascadeMode = CascadeMode.Continue;
 
             RuleFor(customer => customer.EntityType)
-                .IsInEnum();
+                .IsInEnum()
+                .WithMessage(Customer.UnknownEntityTypeMessage);
 
             RuleFor(customer => customer.CustomerType)
-                .IsInEnum();
+                .IsInEnum()
+                .WithMessage(Customer.UnknownCustomerTypeMessage);
 
             RuleFor(customer => customer.Person)
                 .SetValidator(new PersonRequestValidator())

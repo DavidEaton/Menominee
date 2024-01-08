@@ -1,7 +1,6 @@
-﻿using CSharpFunctionalExtensions;
-using FluentAssertions;
+﻿using FluentAssertions;
 using FluentAssertions.Extensions;
-using Menominee.Common.ValueObjects;
+using Menominee.Domain.ValueObjects;
 using System;
 using Xunit;
 

@@ -25,11 +25,11 @@ namespace Menominee.Client.Features.Contactables.Businesses
 
             var resultContact = RuleFor(business => business.Contact)
                 .SetValidator(new PersonRequestValidator())
-                .When(business => business.Contact is not null);
+                .When(business => business.Contact is not null && business.Contact.IsNotEmpty);
 
             var resultAddress = RuleFor(business => business.Address)
                 .SetValidator(new AddressRequestValidator())
-                .When(business => business.Address is not null);
+                .When(business => business.Address is not null && business.Address.IsNotEmpty);
 
             var resultEmails = RuleFor(business => business.Emails)
                 .SetValidator(new EmailsRequestValidator())

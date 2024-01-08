@@ -1,5 +1,5 @@
-﻿using Menominee.Common.ValueObjects;
-using Menominee.Domain.Entities;
+﻿using Menominee.Domain.Entities;
+using Menominee.Domain.ValueObjects;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Persons.DriversLicenses;
@@ -24,13 +24,13 @@ namespace Menominee.Shared.Models.Persons
                         LastName = person.Name.LastName,
                         MiddleName = person.Name?.MiddleName
                     },
-                    Gender = person.Gender,
                     DriversLicense = DriversLicenseHelper.ConvertToReadDto(person?.DriversLicense),
                     Address =
                         person?.Address is not null
                         ? AddressHelper.ConvertToReadDto(person?.Address)
                         : null,
                     Birthday = person?.Birthday,
+                    Notes = person?.Notes,
                     Phones = PhoneHelper.ConvertToReadDtos(person?.Phones),
                     Emails = EmailHelper.ConvertToReadDtos(person?.Emails)
                 };
@@ -44,7 +44,6 @@ namespace Menominee.Shared.Models.Persons
                 {
                     Id = person.Id,
                     Name = PersonNameHelper.ConvertToWriteDto(person?.Name),
-                    Gender = person.Gender,
                     DriversLicense = person.DriversLicense is not null
                         ? DriversLicenseHelper
                         .ConvertToWriteDto(person?.DriversLicense)
@@ -95,7 +94,6 @@ namespace Menominee.Shared.Models.Persons
 
             return Person.Create(
                 personName,
-                personDto.Gender,
                 personDto.Notes,
                 personDto.Birthday,
                 emails,
@@ -119,9 +117,8 @@ namespace Menominee.Shared.Models.Persons
                         FirstName = person.Name.FirstName
                     },
 
-                    Gender = person.Gender,
                     Birthday = person?.Birthday,
-
+                    Notes = person?.Notes,
                     Address = person.Address is not null
                 ? new()
                 {
@@ -164,29 +161,51 @@ namespace Menominee.Shared.Models.Persons
 
         public static PersonToReadInList ConvertToReadInListDto(Person person)
         {
-            return person is null
-                ? null
-                : new()
-                {
-                    AddressLine1 = person?.Address?.AddressLine1,
-                    AddressLine2 = person?.Address?.AddressLine2,
-                    Birthday = person?.Birthday,
-                    City = person?.Address?.City,
-                    Id = person.Id,
-                    Name = person.Name.LastFirstMiddle,
-                    PostalCode = person?.Address?.PostalCode,
-                    State = person?.Address?.State.ToString(),
-                    PrimaryPhone =
-                        PhoneHelper.GetPrimaryPhone(person).ToString()
-                        ?? PhoneHelper.GetOrdinalPhone(person, 0).ToString(),
-                    PrimaryPhoneType =
-                        PhoneHelper.GetPrimaryPhone(person).PhoneType.ToString()
-                        ?? PhoneHelper.GetOrdinalPhone(person, 0).PhoneType.ToString(),
-                    PrimaryEmail =
-                        EmailHelper.GetPrimaryEmail(person)
-                        ?? EmailHelper.GetOrdinalEmail(person, 0)
-                };
+            if (person == null)
+            {
+                return null;
+            }
+
+            var dto = new PersonToReadInList
+            {
+                Id = person.Id,
+                Name = person.Name.LastFirstMiddle,
+                AddressLine1 = person.Address?.AddressLine1,
+                AddressLine2 = person.Address?.AddressLine2,
+                City = person.Address?.City,
+                State = person.Address?.State.ToString(),
+                PostalCode = person.Address?.PostalCode,
+                Birthday = person.Birthday,
+                PrimaryPhone = GetPrimaryPhoneString(person),
+                PrimaryPhoneType = GetPrimaryPhoneTypeString(person),
+                PrimaryEmail = GetPrimaryEmailString(person)
+            };
+
+            return dto;
         }
+
+        private static string GetPrimaryPhoneString(Person person) =>
+            PhoneHelper.GetPrimaryPhone(person) switch
+            {
+                // If primary phone retrieval is successful and the phone is not null
+                { IsSuccess: true, Value: var phone } when phone is not null => phone.ToString(),
+
+                // Fallback to ordinal phone if primary phone retrieval is unsuccessful
+                _ => PhoneHelper.GetOrdinalPhone(person, 0)?.ToString() ?? string.Empty
+            };
+
+        private static string GetPrimaryPhoneTypeString(Person person) =>
+            PhoneHelper.GetPrimaryPhone(person) is { IsSuccess: true, Value: var phone } && phone is not null
+                ? phone.PhoneType.ToString()
+                : PhoneHelper.GetOrdinalPhone(person, 0) is { } ordinalPhone
+                    ? ordinalPhone.PhoneType.ToString()
+                    : string.Empty;
+
+        private static string GetPrimaryEmailString(Person person)
+        {
+            return EmailHelper.GetPrimaryEmail(person) ?? EmailHelper.GetOrdinalEmail(person, 0);
+        }
+
 
         internal static PersonToWrite ConvertToWriteDto(PersonToRead person)
         {
@@ -199,7 +218,7 @@ namespace Menominee.Shared.Models.Persons
                     DriversLicense = DriversLicenseHelper.ConvertReadToWriteDto(person?.DriversLicense),
                     Birthday = person?.Birthday,
                     Name = PersonNameHelper.ConvertReadToWriteDto(person?.Name),
-
+                    Notes = person?.Notes,
                     Phones = (List<PhoneToWrite>)person.Phones.Select(phone => new PhoneToWrite()
                     {
                         Number = phone.Number,
@@ -225,7 +244,7 @@ namespace Menominee.Shared.Models.Persons
                     DriversLicense = DriversLicenseHelper.ConvertWriteToReadDto(person?.DriversLicense),
                     Birthday = person?.Birthday,
                     Name = PersonNameHelper.ConvertWriteToReadDto(person?.Name),
-
+                    Notes = person?.Notes,
                     Phones = (List<PhoneToRead>)person.Phones.Select(phone => new PhoneToRead()
                     {
                         Number = phone.Number,

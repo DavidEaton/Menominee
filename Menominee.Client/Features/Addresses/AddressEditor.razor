@@ -1,0 +1,74 @@
+﻿@if (HasAddress())
+{
+    <AddressInput Address="@Address"
+                  Enabled="true"
+                  FormMode="@FormMode"
+                  OnChange="@AddressChanged" />
+}
+
+@if (!HasAddress() && FormMode == FormMode.View)
+{
+    <div class="no-content-message">
+        No Address Entered
+    </div>
+}
+
+<EditNewDeleteIconButtons OnDelete="@RemoveAddress"
+                          OnNew="@AddAddress"
+                          ShowDivider="false"
+                          CanAdd="@(!HasAddress())"
+                          CanDelete="@HasAddress()" />
+
+@code {
+    [Parameter] public AddressToWrite? Address { get; set; }
+
+    [Parameter] public EventCallback OnChange { get; set; }
+
+    [Parameter] public EventCallback OnDelete { get; set; }
+
+    [CascadingParameter] public DialogFactory? Dialogs { get; set; }
+
+    public FormMode FormMode { get; set; } = FormMode.View;
+
+    private bool HasAddress() => Address is not null && (Address.IsNotEmpty);
+
+    public void AddressChanged()
+    {
+        OnChange.InvokeAsync();
+    }
+
+    private void AddAddress()
+    {
+        Address ??= new AddressToWrite();
+        Address.City = "Menominee"; // TODO: Set City to the most commonly occurring city in all customer addresses
+        Address.State = State.MI; // TODO: Set State to the most commonly occurring state in all customer addresses
+        Address.PostalCode = "49858";// TODO: Set PostalCode to the most commonly occurring postal code in all customer addresses
+        FormMode = FormMode.Add;
+    }
+
+    public void EditAddress()
+    {
+        FormMode = FormMode.Edit;
+    }
+
+    private async Task RemoveAddress()
+    {
+        var confirm = await Dialogs?.ConfirmAsync($"Are you sure you want to remove this Address?", "Remove Address");
+
+        if (confirm)
+        {
+            await OnDelete.InvokeAsync();
+        }
+    }
+}
+
+<style>
+    .no-content-message {
+        padding: 1em;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        text-align: center;
+        color: #6c757d;
+    }
+</style>

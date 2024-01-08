@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Domain.Entities;
-using Menominee.Common.ValueObjects;
+using Menominee.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Linq;
 

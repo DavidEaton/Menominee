@@ -1,10 +1,7 @@
-﻿using Menominee.Shared.Models.Customers;
-using Menominee.Client.Services;
+﻿using Menominee.Client.Services;
+using Menominee.Shared.Models.Customers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Customers

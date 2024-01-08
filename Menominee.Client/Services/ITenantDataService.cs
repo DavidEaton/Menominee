@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Entities;
+using Menominee.Domain.Entities;
 
 namespace Menominee.Client.Services
 {

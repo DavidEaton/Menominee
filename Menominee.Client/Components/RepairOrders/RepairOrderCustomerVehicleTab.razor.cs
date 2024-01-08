@@ -1,6 +1,6 @@
 ﻿using Menominee.Client.Services.Customers;
 using Menominee.Client.Services.Vehicles;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.RepairOrders;
 using Menominee.Shared.Models.Vehicles;
@@ -36,6 +36,7 @@ public partial class RepairOrderCustomerVehicleTab
     private void AddCustomer()
     {
         EditCustomerFormMode = FormMode.Add;
+        BoundRepairOrderToEdit.Customer = new();
     }
 
     private void EditCustomer()
@@ -63,21 +64,11 @@ public partial class RepairOrderCustomerVehicleTab
                 return;
             }
 
-            customer.Id = result.Value.Id;
+            //customer.Id = result.Value.Id;
         }
 
-        /*RepairOrderToEdit.Customer = CustomerHelper. customer
-
-        new()
-        {
-            Id = customer.Id,
-            Code = customer.Code,
-            CustomerType = customer.CustomerType,
-            Address = customer.Person.Address,
-        };*/
-
-        await RepairOrderToEditChanged.InvokeAsync(RepairOrderToEdit);
         EditCustomerFormMode = FormMode.Unknown;
+        await RepairOrderToEditChanged.InvokeAsync(RepairOrderToEdit);
     }
 
     private void LookupCustomer(CustomerLookupMode lookup) => CustomerLookupMode = lookup;

@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Domain.Entities.Payables;
 using Menominee.Domain.Entities.Taxes;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.Payables.Invoices;
 using Menominee.Shared.Models.Payables.Invoices.LineItems;
 using Menominee.Shared.Models.Payables.Invoices.LineItems.Items;
@@ -8,7 +9,6 @@ using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Shared.Models.Payables.Invoices.Taxes;
 using Menominee.Shared.Models.Payables.Vendors;
 using Menominee.Shared.Models.Taxes;
-using Menominee.Common.Enums;
 using TestingHelperLibrary.Fakers;
 
 namespace TestingHelperLibrary.Payables

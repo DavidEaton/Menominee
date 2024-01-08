@@ -4,6 +4,7 @@ using Menominee.Api.Features.Contactables.Businesses;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Contactable;
+using Menominee.TestingHelperLibrary;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
@@ -60,7 +61,7 @@ namespace Menominee.Tests.Validators.Domain
         public void Not_Validate_With_Invalid_Address()
         {
             var businessRequest = TestDataFactory.CreateBusinessRequest();
-            businessRequest.Address = new AddressToWrite { AddressLine1 = string.Empty, City = string.Empty };
+            businessRequest.Address = new AddressToWrite { AddressLine1 = "1234 Five", City = string.Empty };
 
             var result = validator.Validate(businessRequest);
 

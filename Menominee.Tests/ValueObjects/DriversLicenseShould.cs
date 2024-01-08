@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
+using Menominee.Domain.Enums;
+using Menominee.Domain.ValueObjects;
 using System;
 using Xunit;
 

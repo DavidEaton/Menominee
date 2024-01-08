@@ -1,4 +1,4 @@
-﻿using Menominee.Common.Enums;
+﻿using Menominee.Domain.Enums;
 
 namespace Menominee.Shared.Models.RepairOrders.Warranties
 {

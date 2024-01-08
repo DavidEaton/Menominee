@@ -1,8 +1,8 @@
 ﻿using Blazored.Toast.Services;
 using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Shared;
-using Menominee.Common.Http;
 using Menominee.Shared.Models.CreditCards;
+using Menominee.Shared.Models.Http;
 using System.Net.Http.Json;
 
 namespace Menominee.Client.Services.CreditCards

@@ -5,9 +5,9 @@ using Menominee.Api.Features.Contactables.Addresses;
 using Menominee.Api.Features.Contactables.Emails;
 using Menominee.Api.Features.Contactables.Persons;
 using Menominee.Api.Features.Contactables.Phones;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities;
+using Menominee.Domain.ValueObjects;
 using Menominee.Shared.Models.Businesses;
 using System;
 
@@ -32,7 +32,7 @@ namespace Menominee.Api.Features.Contactables.Businesses
 
             RuleFor(business => business.Address)
                 .SetValidator(new AddressRequestValidator())
-                .When(business => business.Address is not null);
+                .When(business => business.Address is not null && business.Address.IsNotEmpty);
 
             RuleFor(business => business.Emails)
                 .SetValidator(new EmailsRequestValidator(context))

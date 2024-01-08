@@ -1,4 +1,4 @@
-﻿using Menominee.Common.Enums;
+﻿using Menominee.Domain.Enums;
 using Menominee.Domain.Interfaces;
 
 namespace Menominee.Shared.Models.Contactable

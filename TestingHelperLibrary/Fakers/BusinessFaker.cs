@@ -1,6 +1,6 @@
 ﻿using Bogus;
-using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
+using Menominee.Domain.ValueObjects;
 using Business = Menominee.Domain.Entities.Business;
 using Person = Menominee.Domain.Entities.Person;
 

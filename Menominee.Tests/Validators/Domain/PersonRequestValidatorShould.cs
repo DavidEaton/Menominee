@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using Menominee.Api.Data;
 using Menominee.Api.Features.Contactables.Persons;
-using Menominee.Common.Enums;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Persons;
 using Menominee.Shared.Models.Persons.DriversLicenses;
+using Menominee.TestingHelperLibrary;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System;
@@ -39,7 +39,6 @@ namespace Menominee.Tests.Validators.Domain
             var person = new PersonToWrite
             {
                 Name = new PersonNameToWrite { FirstName = "", LastName = "Doe" },
-                Gender = Gender.Male,
                 Birthday = new DateTime(1980, 1, 1),
                 Notes = "Some notes"
             };
@@ -55,7 +54,6 @@ namespace Menominee.Tests.Validators.Domain
             var person = new PersonToWrite
             {
                 Name = new PersonNameToWrite { FirstName = "John", LastName = "" },
-                Gender = Gender.Male,
                 Birthday = new DateTime(1980, 1, 1),
                 Notes = "Some notes"
             };
@@ -82,7 +80,6 @@ namespace Menominee.Tests.Validators.Domain
             var person = new PersonToWrite
             {
                 Name = new PersonNameToWrite { FirstName = "John", LastName = "Doe" },
-                Gender = Gender.Male,
                 Birthday = null,
                 Notes = "Some notes"
             };
@@ -115,10 +112,21 @@ namespace Menominee.Tests.Validators.Domain
         }
 
         [Fact]
-        public void Not_Validate_With_Invalid_Address()
+        public void Validate_With_Empty_Address()
         {
             var personRequest = TestDataFactory.CreatePersonRequest();
             personRequest.Address = new AddressToWrite { AddressLine1 = string.Empty, City = string.Empty };
+
+            var result = validator.Validate(personRequest);
+
+            result.IsValid.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Not_Validate_With_Invalid_Address()
+        {
+            var personRequest = TestDataFactory.CreatePersonRequest();
+            personRequest.Address = new AddressToWrite { AddressLine1 = "1234 Five", City = string.Empty };
 
             var result = validator.Validate(personRequest);
 
@@ -137,10 +145,21 @@ namespace Menominee.Tests.Validators.Domain
         }
 
         [Fact]
+        public void Validate_With_Empty_DriversLicense()
+        {
+            var personRequest = TestDataFactory.CreatePersonRequest();
+            personRequest.DriversLicense = new DriversLicenseToWrite();
+
+            var result = validator.Validate(personRequest);
+
+            result.IsValid.Should().BeTrue();
+        }
+
+        [Fact]
         public void Not_Validate_With_Invalid_DriversLicense()
         {
             var personRequest = TestDataFactory.CreatePersonRequest();
-            personRequest.DriversLicense = new DriversLicenseToWrite { Number = string.Empty };
+            personRequest.DriversLicense = new DriversLicenseToWrite { Number = "H78876" };
 
             var result = validator.Validate(personRequest);
 
@@ -158,7 +177,6 @@ namespace Menominee.Tests.Validators.Domain
                     Expiry = DateTime.Now.AddDays(-1)
                 },
                 Name = new PersonNameToWrite { FirstName = "John", LastName = "Doe" },
-                Gender = Gender.Male,
                 Notes = "Some notes"
             };
 

@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.RepairOrders;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 
 namespace TestingHelperLibrary.Fakers
 {

@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Menominee.Domain.Entities.RepairOrders;
+using Menominee.TestingHelperLibrary.Fakers;
 
 namespace TestingHelperLibrary.Fakers
 {

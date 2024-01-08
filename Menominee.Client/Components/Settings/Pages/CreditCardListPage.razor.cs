@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.CreditCards;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared.Models.CreditCards;
 using Microsoft.AspNetCore.Components;
 using Telerik.Blazor.Components;

@@ -1,4 +1,4 @@
-﻿using Menominee.Common;
+﻿using Menominee.Domain.BaseClasses;
 using System.Collections.Generic;
 
 namespace Menominee.Tests.Integration.Data

@@ -1,7 +1,6 @@
-﻿using Menominee.Api.Features.Contactables;
-using Menominee.Api.Features.Contactables.Persons;
-using Menominee.Common.Http;
+﻿using Menominee.Api.Features.Contactables.Persons;
 using Menominee.Shared.Models.Businesses;
+using Menominee.Shared.Models.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;

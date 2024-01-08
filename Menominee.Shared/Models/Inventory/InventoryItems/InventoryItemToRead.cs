@@ -1,4 +1,5 @@
-﻿using Menominee.Shared.Models.Inventory.InventoryItems.Inspection;
+﻿using Menominee.Domain.Enums;
+using Menominee.Shared.Models.Inventory.InventoryItems.Inspection;
 using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
 using Menominee.Shared.Models.Inventory.InventoryItems.Package;
 using Menominee.Shared.Models.Inventory.InventoryItems.Part;
@@ -6,7 +7,6 @@ using Menominee.Shared.Models.Inventory.InventoryItems.Tire;
 using Menominee.Shared.Models.Inventory.InventoryItems.Warranty;
 using Menominee.Shared.Models.Manufacturers;
 using Menominee.Shared.Models.ProductCodes;
-using Menominee.Common.Enums;
 
 namespace Menominee.Shared.Models.Inventory.InventoryItems
 {

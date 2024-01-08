@@ -1,5 +1,5 @@
 ﻿using Menominee.Client.Services;
-using Menominee.Common.Entities;
+using Menominee.Domain.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 

@@ -1,5 +1,5 @@
 ﻿using Menominee.Api.Common;
-using Menominee.Common.Enums;
+using Menominee.Domain.Enums;
 using Menominee.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;

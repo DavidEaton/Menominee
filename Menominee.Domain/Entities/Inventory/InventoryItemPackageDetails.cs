@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.ValueObjects;
+using Menominee.Domain.ValueObjects;
 using System.Collections.Generic;
 
 namespace Menominee.Domain.Entities.Inventory

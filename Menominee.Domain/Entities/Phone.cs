@@ -1,11 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
+using Menominee.Domain.Enums;
 using Menominee.Domain.Interfaces;
-using Menominee.Common.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Entity = Menominee.Common.Entity;
+using Entity = Menominee.Domain.BaseClasses.Entity;
 
 namespace Menominee.Domain.Entities
 {

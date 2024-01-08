@@ -1,10 +1,10 @@
 ﻿using Bogus;
 using CSharpFunctionalExtensions;
 using FluentAssertions;
-using Menominee.Common.Enums;
-using Menominee.Common.Extensions;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.Taxes;
+using Menominee.Domain.Enums;
+using Menominee.Domain.Extensions;
 using Menominee.Shared.Models.Inventory.InventoryItems;
 using Menominee.Shared.Models.Inventory.InventoryItems.Inspection;
 using Menominee.Shared.Models.Inventory.InventoryItems.Package;

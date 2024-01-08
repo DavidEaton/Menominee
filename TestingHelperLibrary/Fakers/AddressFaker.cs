@@ -1,6 +1,6 @@
 ﻿using Bogus;
-using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
+using Menominee.Domain.Enums;
+using Menominee.Domain.ValueObjects;
 
 namespace TestingHelperLibrary.Fakers
 {
@@ -13,13 +13,12 @@ namespace TestingHelperLibrary.Fakers
                 var streetAddress = faker.Address.StreetAddress();
                 var city = faker.Address.City();
                 var state = faker.PickRandom<State>();
-                var zipCode = faker.Address.ZipCode();
 
                 var result = Address.Create(
                     streetAddress,
                     city,
                     state,
-                    zipCode);
+                    "55555");
 
                 return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
             });

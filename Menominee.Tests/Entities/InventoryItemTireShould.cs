@@ -1,6 +1,6 @@
-﻿using Menominee.Domain.Entities.Inventory;
-using FluentAssertions;
-using Menominee.Common.Enums;
+﻿using FluentAssertions;
+using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Enums;
 using System.Collections.Generic;
 using Xunit;
 

@@ -73,7 +73,7 @@
         <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
             @if (CustomerSelected)
             {
-                <RepairOrderCustomerVehicleTab @bind-RepairOrderToEdit="BoundRepairOrderToEdit" />
+                <RepairOrderCustomerVehicleTab RepairOrderToEdit="RepairOrderToEdit" />
             }
 
             @if (FleetSelected)
@@ -93,22 +93,19 @@
 
             @if (PurchasesSelected)
             {
-                <RepairOrderPurchasesTab 
-                    @bind-RepairOrderToEdit="BoundRepairOrderToEdit"
+                <RepairOrderPurchasesTab @bind-RepairOrderToEdit="RepairOrderToEdit"
                     Updated="UpdatePurchasesMissingCount"/>
             }
 
             @if (WarrantiesSelected)
             {
-                <RepairOrderWarrantiesTab 
-                    @bind-RepairOrderToEdit="BoundRepairOrderToEdit"
+                <RepairOrderWarrantiesTab @bind-RepairOrderToEdit="RepairOrderToEdit"
                     Updated="UpdateWarrantiesMissingCount"/>
             }
 
             @if (SerialNumbersSelected)
             {
-                <RepairOrderSerialNumbersTab 
-                    @bind-RepairOrderToEdit="BoundRepairOrderToEdit"
+                <RepairOrderSerialNumbersTab @bind-RepairOrderToEdit="RepairOrderToEdit"
                     Updated="UpdateSerialNumbersMissingCount" />
             }
 
