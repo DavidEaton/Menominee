@@ -43,16 +43,12 @@ stages:
         - task: PublishBuildArtifacts@1
           displayName: 'Publish Build Artifacts'
           
-        # - task: DotNetCoreCLI@2
-        #   displayName: 'Install EntityFrameworkCore'
-        #   inputs:
-        #     command: custom
-        #     custom: tool
-        #     arguments: 'install --global dotnet-ef --version 8.0.1'
-
-        # Replaced with a script task to ensure global installation
-        - script: dotnet tool install --global dotnet-ef --version 8.0.1
-          displayName: 'Install EntityFrameworkCore Tools'
+        - task: DotNetCoreCLI@2
+          displayName: 'Install EntityFrameworkCore'
+          inputs:
+            command: custom
+            custom: tool
+            arguments: 'install --global dotnet-ef'
 
         - task: DotNetCoreCLI@2
           displayName: 'API Create EF Migration Script'
