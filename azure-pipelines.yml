@@ -50,6 +50,10 @@ stages:
             custom: tool
             arguments: 'install --global dotnet-ef --version 8.0.1'
 
+        # Replaced with a script task to ensure global installation
+        - script: dotnet tool install --global dotnet-ef --version 8.0.1
+          displayName: 'Install EntityFrameworkCore Tools'
+
         - task: DotNetCoreCLI@2
           displayName: 'API Create EF Migration Script'
           inputs:
