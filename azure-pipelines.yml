@@ -46,8 +46,7 @@ stages:
         - task: DotNetCoreCLI@2
           displayName: 'Install EntityFrameworkCore'
           inputs:
-            command: custom
-            custom: tool
+            command: dotnet-ef
             arguments: 'install --global dotnet-ef'
 
         - task: DotNetCoreCLI@2
