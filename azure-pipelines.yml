@@ -46,8 +46,9 @@ stages:
         - task: DotNetCoreCLI@2
           displayName: 'Install EntityFrameworkCore'
           inputs:
-            command: dotnet-ef
-            arguments: 'install --global dotnet-ef'
+            command: custom
+            custom: tool
+            arguments: 'install --global dotnet-ef --version 8.0.1'
 
         - task: DotNetCoreCLI@2
           displayName: 'API Create EF Migration Script'
