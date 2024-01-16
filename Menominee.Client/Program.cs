@@ -89,7 +89,10 @@ var uriBuilderConfig = builder.Configuration.GetSection("UriBuilderConfiguration
 var scheme = uriBuilderConfig["Scheme"];
 var host = uriBuilderConfig["Host"];
 var port = uriBuilderConfig["Port"];
-var baseAddress = new Uri($"{scheme}://{host}:{port}/");
+
+var baseAddress = port is not null
+                  ? new Uri($"{scheme}://{host}:{port}/")
+                  : new Uri($"{scheme}://{host}/");
 
 builder.Services.AddHttpClient("Menominee.ServerAPI", client =>
     client.BaseAddress = baseAddress).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
