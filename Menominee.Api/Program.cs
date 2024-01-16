@@ -203,12 +203,15 @@ try
 
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy("SpecificOrigins",
-        builder =>
+        options.AddPolicy("SpecificOrigins", corsBuilder =>
         {
-            builder.WithOrigins("https://localhost:44307")
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
+            var allowedOrigins = builder.Configuration.GetSection("Clients:AllowedOrigins").Get<string[]>();
+            if (allowedOrigins is not null && allowedOrigins.Length > 0)
+            {
+                corsBuilder.WithOrigins(allowedOrigins)
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+            }
         });
     });
 
