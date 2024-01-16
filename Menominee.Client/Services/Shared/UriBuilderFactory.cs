@@ -16,7 +16,7 @@ namespace Menominee.Client.Services.Shared
             {
                 Scheme = config.Scheme,
                 Host = config.Host,
-                Port = config.Port,
+                Port = config.Port ?? 0,
                 Path = path
             };
         }
