@@ -206,11 +206,14 @@ try
         options.AddPolicy("SpecificOrigins", corsBuilder =>
         {
             var allowedOrigins = builder.Configuration.GetSection("Clients:AllowedOrigins").Get<string[]>();
+
             if (allowedOrigins is not null && allowedOrigins.Length > 0)
             {
                 corsBuilder.WithOrigins(allowedOrigins)
                            .AllowAnyHeader()
                            .AllowAnyMethod();
+
+                Log.Information("CORS origins applied to the policy.");
             }
         });
     });
