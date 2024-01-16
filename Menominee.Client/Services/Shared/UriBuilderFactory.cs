@@ -12,11 +12,12 @@ namespace Menominee.Client.Services.Shared
 
         public UriBuilder CreateBaseUriBuilder(string path)
         {
+            var host = config.Host.TrimEnd('/'); // Ensure no trailing slash
             return new UriBuilder
             {
                 Scheme = config.Scheme,
-                Host = config.Host,
-                Port = config.Port ?? 0,
+                Host = host,
+                Port = config.Port ?? -1, // Set to -1 if null, which omits the port
                 Path = path
             };
         }
