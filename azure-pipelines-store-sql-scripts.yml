@@ -17,14 +17,6 @@ steps:
       itemPattern: '**/*.sql'
       downloadPath: '$(System.ArtifactsDirectory)'
   - task: AzureFileCopy@5
-    displayName: 'Store IDP SQL in Azure Storage'
-    inputs:
-      SourcePath: 'D:\a\1\a\drop\idp-migrations.sql'
-      azureSubscription: MenomineeDev
-      Destination: 'AzureBlob'
-      storage: 'menominee'
-      ContainerName: 'data'
-  - task: AzureFileCopy@5
     displayName: 'Store API SQL in Azure Storage'
     inputs:
       SourcePath: 'D:\a\1\a\drop\api-migrations.sql'
