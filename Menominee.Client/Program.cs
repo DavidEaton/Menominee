@@ -40,7 +40,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Serilog;
-using Serilog.Core;
 using Serilog.Events;
 using Syncfusion.Blazor;
 using Syncfusion.Licensing;
@@ -56,27 +55,33 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 #region Logging
 
-if (builder.HostEnvironment.IsDevelopment())
-{
-    // Log to the browser console
-    Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.Debug()
-        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-        .Enrich.FromLogContext()
-        .WriteTo.BrowserConsole()
-        .CreateLogger();
-}
-else
-{
-    // Log to the server
-    var levelSwitch = new LoggingLevelSwitch();
-    Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.ControlledBy(levelSwitch)
-        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-        .Enrich.WithProperty("InstanceId", Guid.NewGuid().ToString("n"))
-        .WriteTo.BrowserHttp(endpointUrl: $"{builder.HostEnvironment.BaseAddress}ingest", controlLevelSwitch: levelSwitch)
-        .CreateLogger();
-}
+//if (builder.HostEnvironment.IsDevelopment())
+//{
+//    // Log to the browser console
+//    Log.Logger = new LoggerConfiguration()
+//        .MinimumLevel.Debug()
+//        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+//        .Enrich.FromLogContext()
+//        .WriteTo.BrowserConsole()
+//        .CreateLogger();
+//}
+//else
+//{
+//    // TODO: Log to the server
+//    var levelSwitch = new LoggingLevelSwitch();
+//    Log.Logger = new LoggerConfiguration()
+//        .MinimumLevel.ControlledBy(levelSwitch)
+//        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+//        .Enrich.WithProperty("InstanceId", Guid.NewGuid().ToString("n"))
+//        .WriteTo.BrowserHttp(endpointUrl: $"{builder.HostEnvironment.BaseAddress}ingest", controlLevelSwitch: levelSwitch)
+//        .CreateLogger();
+//}
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .WriteTo.BrowserConsole()
+    .CreateLogger();
 
 builder.Services.AddLogging(builder => builder.AddSerilog(dispose: true));
 
