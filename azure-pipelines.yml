@@ -70,18 +70,13 @@ stages:
           inputs:
             PathtoPublish: '$(build.artifactStagingDirectory)\db-scripts'
             
-      - task: VSTest@2
-        inputs:
-          platform: 'Any CPU'
-          configuration: 'Release'
 
-  
-# - task: DotNetCoreCLI@2
-#   displayName: 'Client Build'
-#   inputs:
-#     command: 'test'
-#     projects: './Menominee.Tests.csproj'
-#     arguments: '--configuration Release --collect "Code coverage" --logger trx --results-directory $(Build.ArtifactStagingDirectory)'
+- task: DotNetCoreCLI@2
+  displayName: 'Client Build'
+  inputs:
+    command: 'test'
+    projects: './Menominee.Tests.csproj'
+    arguments: '--configuration Release --collect "Code coverage" --logger trx --results-directory $(Build.ArtifactStagingDirectory)'
 
 # - task: VSTest@2
 #   inputs:
