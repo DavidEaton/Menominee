@@ -6,16 +6,6 @@
 		<UserSecretsId>596afd5f-e7c7-4c5b-b2e8-e71352278284</UserSecretsId>
 	</PropertyGroup>
 
-	<!--Uncomment two ItemGroups below to publish:-->
-	<!--<ItemGroup>
-		<Content Remove="appsettings.Development.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="appsettings.Development.json">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>-->
 	<ItemGroup>
 		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.5" />
