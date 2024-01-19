@@ -44,6 +44,13 @@ stages:
           displayName: 'Publish Build Artifacts'
           
         - task: DotNetCoreCLI@2
+          displayName: 'Running dotnet test'
+          inputs:
+            command: 'test'
+            projects: |
+              **/*Tests.csproj
+
+        - task: DotNetCoreCLI@2
           displayName: 'Install EntityFrameworkCore'
           inputs:
             command: custom
@@ -69,13 +76,6 @@ stages:
           displayName: 'Publish EF Scripts Artifact'
           inputs:
             PathtoPublish: '$(build.artifactStagingDirectory)\db-scripts'
-
-        - task: DotNetCoreCLI@2
-          displayName: 'Running dotnet test'
-          inputs:
-            command: 'test'
-            projects: |
-              **/*Tests.csproj
 
   - stage: StopAPIApplications
     displayName: 'Stop API Application'
