@@ -69,32 +69,12 @@ stages:
           displayName: 'Publish EF Scripts Artifact'
           inputs:
             PathtoPublish: '$(build.artifactStagingDirectory)\db-scripts'
-            
 
-- task: DotNetCoreCLI@2
-  displayName: 'Client Build'
-  inputs:
-    command: 'test'
-    projects: './Menominee.Tests.csproj'
-    arguments: '--configuration Release --collect "Code coverage" --logger trx --results-directory $(Build.ArtifactStagingDirectory)'
-
-# - task: VSTest@2
-#   inputs:
-#     platform: '$(buildPlatform)'
-#     configuration: '$(buildConfiguration)'
-#     testSelector: 'testAssemblies'
-#     testAssemblyVer2: |
-#       **\*test*.dll
-#       !**\*TestAdapter.dll
-#       !**\obj\**
-#     searchFolder: '$(System.DefaultWorkingDirectory)'
-#     codeCoverageEnabled: true
-#     runSettingsFile: '$(System.DefaultWorkingDirectory)/coverage.runsettings'
-#     runInParallel: true
-#     testRunTitle: 'Test Run'
-#     publishRunAttachments: true
-
-
+# Unit tests disabled until refactored - leaving off as we do this PRE pull request            
+#       - task: VSTest@2
+#         inputs:
+#           platform: 'Any CPU'
+#           configuration: 'Release'
 
   - stage: StopAPIApplications
     displayName: 'Stop API Application'
