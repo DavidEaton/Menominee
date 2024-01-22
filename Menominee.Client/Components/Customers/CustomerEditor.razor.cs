@@ -147,7 +147,7 @@ namespace Menominee.Client.Components.Customers
 
         private void DeletePersonAddress()
         {
-            Customer.Person.Address = null;
+            Customer.Person.Address = new();
         }
 
         private void DeleteBusinessAddress()
@@ -168,25 +168,18 @@ namespace Menominee.Client.Components.Customers
 
         private void CustomerTypeChanged()
         {
-            switch (Customer.CustomerType)
-            {
-                case CustomerType.Retail:
-                case CustomerType.Employee:
-                    Customer.EntityType = EntityType.Person;
-                    break;
-                case CustomerType.Business:
-                case CustomerType.Fleet:
-                case CustomerType.BillingCenter:
-                case CustomerType.BillingCenterPrepaid:
-                    Customer.EntityType = EntityType.Business;
-                    break;
-                default:
-                    Customer.EntityType = EntityType.Person;
-                    break;
-            }
+            // Determine the target entity type based on the customer type.
+            EntityType targetType = (Customer.CustomerType == CustomerType.Retail || Customer.CustomerType == CustomerType.Employee)
+                                    ? EntityType.Person : EntityType.Business;
 
-            EntityTypeChanged();
+            // Only change the entity type if it's different from the current one.
+            if (Customer.EntityType != targetType)
+            {
+                Customer.EntityType = targetType;
+                EntityTypeChanged();
+            }
         }
+
 
         private void EntityTypeChanged()
         {
@@ -194,31 +187,39 @@ namespace Menominee.Client.Components.Customers
             {
                 if (Customer.Business is null)
                 {
-                    Customer.Business = new()
+                    Customer.Business = new BusinessToWrite
                     {
-                        Address = new()
+                        // Preserving the name if it already exists.
+                        Name = Customer.Business?.Name ?? new(),
                     };
                 }
 
-                Customer.Person = null;
+                // Clear the Person object only if it's not the current entity type.
+                if (Customer.CustomerType is not CustomerType.Employee && Customer.CustomerType is not CustomerType.Retail)
+                {
+                    Customer.Person = null;
+                }
             }
-
-            if (Customer.EntityType == EntityType.Person)
+            else if (Customer.EntityType == EntityType.Person)
             {
-                var name = new PersonNameToWrite();
-
                 if (Customer.Person is null)
                 {
-                    Customer.Person = new()
+                    Customer.Person = new PersonToWrite
                     {
-                        Address = new()
+                        // Preserving the name if it already exists.
+                        Name = Customer.Person?.Name ?? new(),
                     };
                 }
 
-                Customer.Person.Name = name;
-                Customer.Business = null;
+                // Clear the Business object only if it's not the current entity type.
+                if (Customer.CustomerType is not CustomerType.Business && Customer.CustomerType is not CustomerType.Fleet
+                    && Customer.CustomerType is not CustomerType.BillingCenter && Customer.CustomerType is not CustomerType.BillingCenterPrepaid)
+                {
+                    Customer.Business = null;
+                }
             }
         }
+
 
         private void TabChangedHandler(int newIndex)
         {

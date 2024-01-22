@@ -16,6 +16,10 @@
         {
             <button class="btn m-icon-button m-delete-btn" @onclick="OnDelete" disabled="@(CanDelete ? false : true)"><i class="fas fa-trash"></i></button>
         }
+        @if (ShowCancel)
+        {
+            <button class="btn m-icon-button m-cancel-btn" @onclick="OnCancel" disabled="@(CanCancel ? false : true)"><i class="fas fa-undo"></i></button>
+        }
     </div>
 </div>
 

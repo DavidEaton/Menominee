@@ -52,30 +52,45 @@ namespace Menominee.Data.Generators
 
         private static Random MakeRandomAssignments(int CountOfPaymentMethodsToCreate, Faker faker, List<Vendor> vendors, List<VendorInvoicePaymentMethod> paymentMethods, List<DefaultPaymentMethod> defaultPaymentMethods)
         {
-            // Randomly assign to some Vendors: DefaultPaymentMethod
-            Random random = new();
-            foreach (var vendor in vendors)
-                if (faker.Random.Bool())
-                {
-                    random = new Random();
-                    vendor.SetDefaultPaymentMethod(defaultPaymentMethods[faker.Random.Int(0, defaultPaymentMethods.Count - 1)]);
-                }
+            // Use a single instance of Random for better performance and randomness.
+            Random random = new Random();
 
-            // Randomly assign to some VendorInvoicePaymentMethods: Vendor reconcilingVendor
-            foreach (var paymentMethod in paymentMethods)
+            // Randomly assign to some Vendors: DefaultPaymentMethod
+            foreach (var vendor in vendors)
             {
-                random = new();
-                paymentMethod.SetReconcilingVendor(vendors[random.Next(0, CountOfPaymentMethodsToCreate - 1)]);
+                if (faker.Random.Bool() && defaultPaymentMethods.Count > 0)
+                {
+                    var randomPaymentMethodIndex = random.Next(defaultPaymentMethods.Count);
+                    vendor.SetDefaultPaymentMethod(defaultPaymentMethods[randomPaymentMethodIndex]);
+                }
             }
 
-            // Assign IsPrimary to first Phone in Vendor.Phones collection
-            foreach (var vendor in vendors)
-                vendor.Phones[0].SetIsPrimary(true);
+            // Randomly assign to some VendorInvoicePaymentMethods: Vendor reconcilingVendor
+            if (vendors.Count > 0) // Ensure there is at least one vendor.
+            {
+                foreach (var paymentMethod in paymentMethods)
+                {
+                    var randomVendorIndex = random.Next(vendors.Count); // Use vendors.Count instead.
+                    paymentMethod.SetReconcilingVendor(vendors[randomVendorIndex]);
+                }
+            }
 
-            // Assign IsPrimary to first Email in Vendor.Emails collection
+            // Check if vendors have any Phones or Emails before assigning IsPrimary.
             foreach (var vendor in vendors)
-                vendor.Emails[0].SetIsPrimary(true);
+            {
+                if (vendor.Phones.Count > 0)
+                {
+                    vendor.Phones[0].SetIsPrimary(true);
+                }
+
+                if (vendor.Emails.Count > 0)
+                {
+                    vendor.Emails[0].SetIsPrimary(true);
+                }
+            }
+
             return random;
         }
+
     }
 }

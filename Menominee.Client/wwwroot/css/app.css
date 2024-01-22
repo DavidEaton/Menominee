@@ -2,6 +2,7 @@
     --add-btn-bg-color: #21ba45;
     --edit-btn-bg-color: #fbbd08;
     --delete-btn-bg-color: #db2828;
+    --cancel-btn-bg-color: #4a90e2;
     --btn-bg-disabled-color: lightgray;
     --btn-color: white;
     --btn-bg-color: #6c757d;
@@ -327,6 +328,11 @@ app {
 
 .m-delete-btn {
     background-color: var(--delete-btn-bg-color);
+    color: white;
+}
+
+.m-cancel-btn {
+    background-color: var(--cancel-btn-bg-color);
     color: white;
 }
 

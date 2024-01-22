@@ -1,23 +1,86 @@
-﻿@if (HasAddress())
-{
-    <AddressInput Address="@Address"
-                  Enabled="true"
-                  FormMode="@FormMode"
-                  OnChange="@AddressChanged" />
-}
-
-@if (!HasAddress() && FormMode == FormMode.View)
-{
-    <div class="no-content-message">
-        No Address Entered
+﻿<form id="addressEditor">
+    <div class="row">
+        <label for="address" class="k-label">Street 1</label>
+        <TelerikTextBox @bind-Value="@Address.AddressLine1"
+                        Id="address"
+                        Width="100%"
+                        AutoComplete="off"
+                        Placeholder="Enter Street 1"
+                        OnBlur="@AddressChanged" />
+        <TelerikValidationMessage For="@(() => Address.AddressLine1)" />
     </div>
-}
+
+    <div class="row">
+        <label for="addressLine2" class="k-label">Street 2</label>
+        <TelerikTextBox @bind-Value="@Address.AddressLine2"
+                        Id="addressLine2"
+                        Width="100%"
+                        AutoComplete="off"
+                        Placeholder="Enter Street 2"
+                        OnBlur="@AddressChanged" />
+        <TelerikValidationMessage For="@(() => Address.AddressLine2)" />
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-md-9 col-lg-6 p-0">
+            <label for="postalCode" class="k-label">ZIP/Postal Code</label>
+            <TelerikTextBox @bind-Value="@Address.PostalCode"
+                            Id="postalCode"
+                            AutoComplete="off"
+                            Placeholder="Enter Zip/Postal Code"
+                            OnBlur="@AddressChanged" />
+            <TelerikValidationMessage For="@(() => Address.PostalCode)" />
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="city" class="k-label">City</label>
+        <TelerikTextBox @bind-Value="@Address.City"
+                        Id="city"
+                        Width="100%"
+                        AutoComplete="off"
+                        Placeholder="Enter City"
+                        OnBlur="@AddressChanged" />
+        <TelerikValidationMessage For="@(() => Address.City)" />
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-md-9 col-lg-6 p-0">
+            <label for="stateProv">State/Province</label>
+            <TelerikDropDownList @bind-Value="@Address.State"
+                                 Data="@StateProvinceEnumData"
+                                 TextField="DisplayText"
+                                 ValueField="Value"
+                                 Id="stateProv"
+                                 OnBlur="@AddressChanged">
+                <ItemTemplate>
+                    @context.FullDisplayText
+                </ItemTemplate>
+                <DropDownListSettings>
+                    <DropDownListPopupSettings Width="20rem" />
+                </DropDownListSettings>
+            </TelerikDropDownList>
+            <TelerikValidationMessage For="@(() => Address.State)" />
+        </div>
+    </div>
+</form>
+
 
 <EditNewDeleteIconButtons OnDelete="@RemoveAddress"
-                          OnNew="@AddAddress"
-                          ShowDivider="false"
-                          CanAdd="@(!HasAddress())"
-                          CanDelete="@HasAddress()" />
+                          CanDelete="@HasAddress()"
+                          CanCancel="@(Address.IsNotEmpty && HasChanges())"
+                          OnCancel="@ResetAddress" />
+
+<style>
+    .row {
+        margin: 0 0 .5rem 0;
+    }
+
+    #addressEditor .row:last-of-type {
+        margin: 0;
+    }
+
+</style>
 
 @code {
     [Parameter] public AddressToWrite? Address { get; set; }
@@ -30,7 +93,14 @@
 
     public FormMode FormMode { get; set; } = FormMode.View;
 
+    private AddressToWrite addressOriginal;
+
     private bool HasAddress() => Address is not null && (Address.IsNotEmpty);
+    private bool HasChanges() => Address is not null && (Address.AddressLine1 != addressOriginal?.AddressLine1 ||
+                                                        Address.City != addressOriginal?.City ||
+                                                        Address.State != addressOriginal?.State ||
+                                                        Address.PostalCode != addressOriginal?.PostalCode ||
+                                                        Address.AddressLine2 != addressOriginal?.AddressLine2);
 
     public void AddressChanged()
     {
@@ -40,9 +110,6 @@
     private void AddAddress()
     {
         Address ??= new AddressToWrite();
-        Address.City = "Menominee"; // TODO: Set City to the most commonly occurring city in all customer addresses
-        Address.State = State.MI; // TODO: Set State to the most commonly occurring state in all customer addresses
-        Address.PostalCode = "49858";// TODO: Set PostalCode to the most commonly occurring postal code in all customer addresses
         FormMode = FormMode.Add;
     }
 
@@ -60,15 +127,43 @@
             await OnDelete.InvokeAsync();
         }
     }
-}
-
-<style>
-    .no-content-message {
-        padding: 1em;
-        background-color: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 0.25rem;
-        text-align: center;
-        color: #6c757d;
+    protected override void OnInitialized()
+    {
+        foreach (State item in Enum.GetValues(typeof(State)))
+        {
+            StateProvinceEnumData.Add(new StateProvinceEnumModel
+                {
+                    DisplayText = item.ToString(),
+                    FullDisplayText = item.ToString() + " - " + EnumExtensions.GetDisplayName(item),
+                    Value = item
+                });
+        }
+        StateProvinceEnumData = StateProvinceEnumData.OrderBy(state => state.DisplayText).ToList();
     }
-</style>
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            addressOriginal = new AddressToWrite
+                {
+                    AddressLine1 = Address.AddressLine1,
+                    City = Address.City,
+                    State = Address.State,
+                    PostalCode = Address.PostalCode,
+                    AddressLine2 = Address.AddressLine2,
+                };
+        }
+    }
+
+    public void ResetAddress()
+    {
+        Address.AddressLine1 = addressOriginal.AddressLine1;
+        Address.City = addressOriginal.City;
+        Address.State = addressOriginal.State;
+        Address.PostalCode = addressOriginal.PostalCode;
+        Address.AddressLine2 = addressOriginal.AddressLine2;
+    }
+
+    List<StateProvinceEnumModel> StateProvinceEnumData { get; set; } = new List<StateProvinceEnumModel>();
+}

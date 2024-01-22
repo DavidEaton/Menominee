@@ -7,10 +7,12 @@ namespace Menominee.Client.Components.Shared
         private EventCallback onEdit;
         private EventCallback onNew;
         private EventCallback onDelete;
+        private EventCallback onCancel;
 
         private bool ShowEdit { get; set; } = false;
         private bool ShowNew { get; set; } = false;
         private bool ShowDelete { get; set; } = false;
+        private bool ShowCancel { get; set; } = false;
 
         [Parameter]
         public bool CanEdit { get; set; } = true;
@@ -18,6 +20,8 @@ namespace Menominee.Client.Components.Shared
         public bool CanAdd { get; set; } = true;
         [Parameter]
         public bool CanDelete { get; set; } = true;
+        [Parameter]
+        public bool CanCancel { get; set; } = true;
 
 
         [Parameter]
@@ -50,6 +54,17 @@ namespace Menominee.Client.Components.Shared
             {
                 onDelete = value;
                 ShowDelete = true;
+            }
+        }
+
+        [Parameter]
+        public EventCallback OnCancel
+        {
+            get => onCancel;
+            set
+            {
+                onCancel = value;
+                ShowCancel = true;
             }
         }
 
