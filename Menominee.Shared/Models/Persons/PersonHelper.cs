@@ -60,8 +60,10 @@ namespace Menominee.Shared.Models.Persons
 
         public static Person ConvertWriteDtoToEntity(PersonToWrite personDto)
         {
-            if (personDto is null)
+            if (personDto is null || personDto.IsEmpty)
+            {
                 return null;
+            }
 
             Address address = null;
             DriversLicense driversLicense = null;

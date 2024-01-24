@@ -27,6 +27,9 @@ namespace Menominee.Client.Components.RepairOrders
         [Parameter]
         public EventCallback<CustomerLookupMode> OnLookup { get; set; }
 
+        [Parameter]
+        public EventCallback OnCustomerLookup { get; set; }
+
         private bool CanEdit => RepairOrderToEdit.Customer is not null && RepairOrderToEdit.Customer.Id > 0;
 
         private async Task AddCustomer()
@@ -39,9 +42,14 @@ namespace Menominee.Client.Components.RepairOrders
             await OnEdit.InvokeAsync();
         }
 
-        private async Task LookupCustomer(CustomerLookupMode lookupMode)
+        private async Task LookupCustomer()
         {
-            await OnLookup.InvokeAsync(lookupMode);
+            await OnCustomerLookup.InvokeAsync();
+        }
+
+        private async Task Lookup()
+        {
+            Console.WriteLine("Lookup invoked from RepairOrderCustomer!");
         }
     }
 }

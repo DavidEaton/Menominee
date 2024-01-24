@@ -1,0 +1,29 @@
+﻿@if (CustomersList is null)
+{
+    <img src="/assets/loader-blue-purple.gif" />
+}
+
+@if (CustomersList.Count == 0)
+{
+    <p>There are no Customer records.</p>
+}
+
+@if (CustomersList is not null)
+{
+    <TelerikGrid Data="CustomersList"
+                 OnRowDoubleClick="@OnRowDoubleClickHandler"
+                 OnRowClick="@OnRowClickHandler"
+                 FilterMode="GridFilterMode.FilterRow"
+                 Reorderable="true">
+        <GridColumns>
+            <GridColumn Field="EntityType" Title="Class"></GridColumn>
+            <GridColumn Field="Name" Title="Name"></GridColumn>
+            <GridColumn Field="CustomerType" Title="Type"></GridColumn>
+            <GridColumn Field="AddressFull" Title="Address"></GridColumn>
+            <GridColumn Field="PrimaryPhone" Title="Primary Phone"></GridColumn>
+            <GridColumn Field="PrimaryEmail" Title="Primary Email"></GridColumn>
+        </GridColumns>
+    </TelerikGrid>
+
+    <button class="btn btn-primary" @onclick="@SelectCustomer">Ok</button>
+}

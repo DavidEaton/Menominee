@@ -12,7 +12,7 @@
             @if (FleetVisible)
             {
                 <ButtonGroupToggleButton @bind-Selected="FleetSelected"
-                                     Class="@(FleetSelected ? "m-button-selected" : "m-button-not-selected")">
+                                         Class="@(FleetSelected ? "m-button-selected" : "m-button-not-selected")">
                     Fleet
                 </ButtonGroupToggleButton>
             }
@@ -73,7 +73,8 @@
         <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
             @if (CustomerSelected)
             {
-                <RepairOrderCustomerVehicleTab RepairOrderToEdit="RepairOrderToEdit" />
+                <RepairOrderCustomerVehicleTab RepairOrderToEdit="RepairOrderToEdit"
+                                               OnCustomerLookup="CustomerLookup" />
             }
 
             @if (FleetSelected)
@@ -88,25 +89,25 @@
             @if (InspectionsSelected)
             {
                 <RepairOrderInspectionTab CurrentInspections="CurrentInspections"
-                                            PreviousInspections="PreviousInspections" />
+                                          PreviousInspections="PreviousInspections" />
             }
 
             @if (PurchasesSelected)
             {
                 <RepairOrderPurchasesTab @bind-RepairOrderToEdit="RepairOrderToEdit"
-                    Updated="UpdatePurchasesMissingCount"/>
+                                         Updated="UpdatePurchasesMissingCount" />
             }
 
             @if (WarrantiesSelected)
             {
                 <RepairOrderWarrantiesTab @bind-RepairOrderToEdit="RepairOrderToEdit"
-                    Updated="UpdateWarrantiesMissingCount"/>
+                                          Updated="UpdateWarrantiesMissingCount" />
             }
 
             @if (SerialNumbersSelected)
             {
                 <RepairOrderSerialNumbersTab @bind-RepairOrderToEdit="RepairOrderToEdit"
-                    Updated="UpdateSerialNumbersMissingCount" />
+                                             Updated="UpdateSerialNumbersMissingCount" />
             }
 
             @if (PaymentSelected)
@@ -116,14 +117,17 @@
 
         </div>
         <div class="col-12 col-md-3 col-lg-2"
-                id="totalsCol">
-            <RepairOrderTotals
-                RepairOrder="@RepairOrderToEdit"
-                OnDiscard="OnDiscard"
-                OnSave="Save" />
+             id="totalsCol">
+            <RepairOrderTotals RepairOrder="@RepairOrderToEdit"
+                               OnDiscard="OnDiscard"
+                               OnSave="Save" />
         </div>
     </div>
 </div>
+
+<CustomerLookupSelectDialog DialogVisible="@CustomerLookupDialogVisible"
+                            OnSelected="@SelectCustomerAsync" />
+
 
 <style>
     .k-button-group button.k-button.m-button-selected {

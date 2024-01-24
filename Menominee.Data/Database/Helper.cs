@@ -12,7 +12,7 @@ namespace Menominee.Data.Database
 {
     internal static class Helper
     {
-        internal const string ConnectionString = @"Server=localhost;Database=Menominee-stage;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+        internal const string ConnectionString = @"Server=localhost;Database=Menominee;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
 
         internal static int savedVendors = 0;
         internal static int savedVendorInvoices = 0;

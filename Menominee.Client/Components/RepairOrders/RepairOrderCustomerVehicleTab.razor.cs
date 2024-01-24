@@ -21,6 +21,9 @@ public partial class RepairOrderCustomerVehicleTab
     [Parameter]
     public EventCallback<RepairOrderToWrite> RepairOrderToEditChanged { get; set; }
 
+    [Parameter]
+    public EventCallback OnCustomerLookup { get; set; }
+
     private RepairOrderToWrite BoundRepairOrderToEdit
     {
         get => RepairOrderToEdit;
@@ -71,7 +74,11 @@ public partial class RepairOrderCustomerVehicleTab
         await RepairOrderToEditChanged.InvokeAsync(RepairOrderToEdit);
     }
 
-    private void LookupCustomer(CustomerLookupMode lookup) => CustomerLookupMode = lookup;
+    private void LookupCustomer()
+    {
+        OnCustomerLookup.InvokeAsync();
+        Console.WriteLine("LookupCustomer invoked from RepairOrderCustomerVehicleTab!");
+    }
 
     private void DiscardCustomer()
     {

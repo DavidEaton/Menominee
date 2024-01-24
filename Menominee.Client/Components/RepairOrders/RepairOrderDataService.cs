@@ -25,8 +25,10 @@ namespace Menominee.Client.Components.RepairOrders
 
         public async Task<Result<PostResponse>> AddAsync(RepairOrderToWrite fromCaller)
         {
-            if (fromCaller.Customer is null || fromCaller.Vehicle is null)
-                return Result.Failure<PostResponse>("Customer and Vehicle are required");
+            if (fromCaller.Customer is null)
+            {
+                return Result.Failure<PostResponse>("Customer is required");
+            }
 
             var entityType = "Repair Order";
             try
@@ -37,10 +39,14 @@ namespace Menominee.Client.Components.RepairOrders
                     Logger);
 
                 if (result.IsSuccess)
+                {
                     toastService.ShowSuccess($"{entityType} added successfully", "Saved");
+                }
 
                 if (result.IsFailure)
+                {
                     toastService.ShowError($"{fromCaller.RepairOrderNumber} failed to update", "Save Failed");
+                }
 
                 return result;
             }

@@ -18,7 +18,7 @@ This is found in the Menominee.Api project as entity framework migrations
 3. Optionally run `dotnet restore` for the API Project
 4. Run a database update with Entity Framework migrations from the solution root with the command line: `dotnet ef database update -p Menominee.Api/Menominee.Api.csproj
    --context Menominee.Api.Data.ApplicationDbContext`
-5. Check your server for the new database named Menominee-stage
+5. Check your server for the new database named Menominee
 
 ### Tenant Database
 This is in a separate solution

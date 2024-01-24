@@ -1,4 +1,7 @@
-﻿using Menominee.Shared.Models.RepairOrders;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Client.Services.Customers;
+using Menominee.Shared.Models.Customers;
+using Menominee.Shared.Models.RepairOrders;
 using Menominee.Shared.Models.RepairOrders.Purchases;
 using Microsoft.AspNetCore.Components;
 
@@ -8,6 +11,12 @@ public partial class RepairOrderForm
 {
     [Inject]
     private IRepairOrderDataService DataService { get; set; }
+
+    [Inject]
+    private ICustomerDataService CustomerDataService { get; set; }
+
+    [Inject]
+    public ILogger<RepairOrderForm> Logger { get; set; }
 
     [Parameter]
     public RepairOrderToWrite RepairOrderToEdit { get; set; }
@@ -50,6 +59,8 @@ public partial class RepairOrderForm
     List<Inspection> PreviousInspections { get; set; }
     List<PurchaseListItem> PurchaseList { get; set; } = new();
 
+    private CustomerToRead customer = new();
+    private bool CustomerLookupDialogVisible { get; set; } = false;
     private int PurchasesMissingCount { get; set; } = 0;
     private int WarrantiesMissingCount { get; set; } = 0;
     private int SerialNumbersMissingCount { get; set; } = 0;
@@ -179,6 +190,24 @@ public partial class RepairOrderForm
         PurchasesMissingCount = RepairOrderHelper.PurchaseRequiredMissingCount(RepairOrderToEdit.Services);
     }
 
+    private async Task SelectCustomerAsync(CustomerToReadInList customerToFetch)
+    {
+        await CustomerDataService.GetAsync(customerToFetch.Id)
+                .Match(
+                    success => customer = success,
+                    failure => Logger.LogError(failure)
+                );
+
+        RepairOrderToEdit.Customer = CustomerHelper.ConvertToWriteDto(customer);
+        CustomerLookupDialogVisible = false;
+    }
+
+    private void CustomerLookup()
+    {
+        CustomerLookupDialogVisible = true;
+        Console.WriteLine("LookupCustomer invoked from RepairOrderForm!");
+    }
+
     private void UpdateSerialNumbersMissingCount(int count)
     {
         SerialNumbersMissingCount = count;
@@ -200,30 +229,41 @@ public partial class RepairOrderForm
         RemoveIncompleteWarranties();
         RemoveIncompletePurchases();
 
-        if (Valid())
+        if (!Valid())
         {
-            if (RepairOrderToEdit.Id == 0)
-            {
-                var result = await DataService.AddAsync(RepairOrderToEdit);
-                if (result.IsFailure)
-                {
-                    // TODO: Alert user of failure
-                }
-            }
+            // TODO: Implement failure notification
+            return;
+        }
 
-            if (RepairOrderToEdit.Id != 0)
-            {
-                var result = await DataService.UpdateAsync(RepairOrderToEdit);
-                if (result.IsFailure)
-                {
-                    // TODO: Alert user of failure
-                }
-            }
+        var result = RepairOrderToEdit.Id == 0
+            ? await AddRepairOrder()
+            : await UpdateRepairOrder();
 
-            await OnSave.InvokeAsync();
+        await HandleResult(result);
+        await OnSave.InvokeAsync();
+
+    }
+    private async Task HandleResult(Result result)
+    {
+        if (result.IsSuccess)
+        {
+            // TODO: Implement success notification
+        }
+        else if (result.IsFailure)
+        {
+            // TODO: Implement failure notification
         }
     }
 
+    private async Task<Result> AddRepairOrder()
+    {
+        return await DataService.AddAsync(RepairOrderToEdit);
+    }
+
+    private async Task<Result> UpdateRepairOrder()
+    {
+        return await DataService.UpdateAsync(RepairOrderToEdit);
+    }
     private void RemoveIncompletePurchases()
     {
         foreach (var service in RepairOrderToEdit?.Services)

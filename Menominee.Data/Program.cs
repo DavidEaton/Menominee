@@ -36,6 +36,7 @@ namespace Menominee.Data
                 VendorInvoiceGenerator.GenerateData();
                 InventoryItemGenerator.GenerateData();
                 RepairOrderGenerator.GenerateData();
+                CustomerGenerator.GenerateData(25);
 
                 Console.WriteLine(complete);
                 Console.ReadLine();

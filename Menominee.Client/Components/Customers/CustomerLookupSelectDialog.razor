@@ -1,0 +1,13 @@
+﻿<TelerikWindow Visible="DialogVisible"
+               Modal="true"
+               Width="90%"
+               Class="popupWindowClass">
+    <WindowTitle>
+        Lookup Customer
+    </WindowTitle>
+    <WindowContent>
+        <CustomersListGrid CustomersList="Customers"
+                           CustomerSeleted="@CustomerSeleted">
+        </CustomersListGrid>
+    </WindowContent>
+</TelerikWindow>

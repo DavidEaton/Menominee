@@ -9,6 +9,7 @@ using Menominee.Api.Features.SaleCodes;
 using Menominee.Api.Features.Vehicles;
 using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Domain.Interfaces;
 using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.Http;
@@ -325,10 +326,12 @@ namespace Menominee.Api.Features.RepairOrders
         [HttpPost]
         public async Task<ActionResult<PostResponse>> AddAsync(RepairOrderToWrite repairOrderToAdd)
         {
-            var (customer, vehicle) = await HandleCustomerAndVehicleAsync(repairOrderToAdd);
-            //var saleCodeIds = repairOrderToAdd.Services.Select(service => service.SaleCode.Id).ToList();
-            //var saleCodes = await saleCodeRepository.GetSaleCodeEntitiesAsync(saleCodeIds, all: true);
+            var customer = await HandleCustomerAsync(repairOrderToAdd?.Customer);
+            var vehicle = await HandleVehicleAsync(repairOrderToAdd?.Vehicle);
+            // var saleCodeIds = repairOrderToAdd.Services.Select(service => service.SaleCode.Id).ToList();
+            // var saleCodes = await saleCodeRepository.GetSaleCodeEntitiesAsync(saleCodeIds, all: true);
             var lastInvoiceNumberOrSeed = repository.GetLastInvoiceNumberOrSeed();
+
 
             var repairOrder = RepairOrder.Create(
                 customer: customer,
@@ -347,62 +350,110 @@ namespace Menominee.Api.Features.RepairOrders
             return Created(new Uri($"api/RepairOrders/{repairOrder.Id}", UriKind.Relative), new { repairOrder.Id });
         }
 
-        private async Task<(Customer?, Vehicle?)> HandleCustomerAndVehicleAsync(RepairOrderToWrite repairOrderToAdd)
+        private async Task<Customer> HandleCustomerAsync(CustomerToWrite customer)
         {
-            if (repairOrderToAdd.Customer.Id is not 0)
+            if (customer is null)
             {
-                return (null, null);
+                return null;
             }
 
-            var businessTask = HandleBusinessAsync(repairOrderToAdd.Customer);
-            var personTask = HandlePersonAsync(repairOrderToAdd.Customer);
-            var vehicleTask = HandleVehicleAsync(repairOrderToAdd.Vehicle);
+            if (customer.Id is not 0)
+            {
+                return await customerRepository.GetEntityAsync(customer.Id);
+            }
 
-            await Task.WhenAll(businessTask, personTask, vehicleTask);
+            ICustomerEntity? customerEntity = null;
 
-            var customer = repairOrderToAdd.Customer.IsBusiness
-                ? Customer.Create(await businessTask, repairOrderToAdd.Customer.CustomerType, repairOrderToAdd.Customer.Code).Value
-                : Customer.Create(await personTask, repairOrderToAdd.Customer.CustomerType, repairOrderToAdd.Customer.Code).Value;
+            if (customer.IsBusiness)
+            {
+                customerEntity = await HandleBusinessAsync(customer);
+            }
+            else if (customer.IsPerson)
+            {
+                customerEntity = await HandlePersonAsync(customer);
+            }
 
-            customerRepository.Add(customer);
+            if (customerEntity is null)
+            {
+                throw new InvalidOperationException("No valid customer entity was created.");
+            }
+
+            var createdCustomer = Customer.Create(customerEntity, customer.CustomerType, customer.Code).Value;
+
+            customerRepository.Add(createdCustomer);
             await customerRepository.SaveChangesAsync();
 
-            return (customer, await vehicleTask);
+            return createdCustomer;
         }
 
-        private Task<Business?> HandleBusinessAsync(CustomerToWrite customerToWrite)
+        private async Task<Vehicle> HandleVehicleAsync(VehicleToWrite vehicleToWrite)
         {
-            if (!customerToWrite.IsBusiness || customerToWrite.Business.Id is not 0) return Task.FromResult<Business?>(null);
+            if (vehicleToWrite is null)
+            {
+                return null;
+            }
 
+            if (vehicleToWrite.Id is not 0)
+            {
+                return await vehicleRepository.GetEntityAsync(vehicleToWrite.Id);
+            }
+            else
+            {
+                var newVehicle = Vehicle
+                    .Create(
+                        vehicleToWrite.VIN,
+                        vehicleToWrite.Year,
+                        vehicleToWrite.Make,
+                        vehicleToWrite.Model,
+                        vehicleToWrite.Plate,
+                        vehicleToWrite.PlateStateProvince,
+                        vehicleToWrite.UnitNumber,
+                        vehicleToWrite.Color,
+                        vehicleToWrite.Active,
+                        vehicleToWrite.NonTraditionalVehicle).Value;
+
+                vehicleRepository.Add(newVehicle);
+                await vehicleRepository.SaveChangesAsync();
+                return newVehicle;
+            }
+        }
+
+
+        private async Task<Business?> HandleBusinessAsync(CustomerToWrite customerToWrite)
+        {
             var business = BusinessHelper.ConvertWriteDtoToEntity(customerToWrite.Business);
-            businessRepository.Add(business);
-            return businessRepository.SaveChangesAsync().ContinueWith(t => business);
+
+            if (customerToWrite.Business.Id is 0)
+            {
+                businessRepository.Add(business);
+                await businessRepository.SaveChangesAsync();
+            }
+
+            return business;
         }
 
-        private Task<Person?> HandlePersonAsync(CustomerToWrite customerToWrite)
+        private async Task<Person?> HandlePersonAsync(CustomerToWrite customerToWrite)
         {
-            if (!customerToWrite.IsPerson || customerToWrite.Person.Id is not 0) return Task.FromResult<Person?>(null);
-
             var person = PersonHelper.ConvertWriteDtoToEntity(customerToWrite.Person);
-            personRepository.Add(person);
-            return personRepository.SaveChangesAsync().ContinueWith(t => person);
+
+            if (customerToWrite.Person.Id is 0)
+            {
+                personRepository.Add(person);
+                await personRepository.SaveChangesAsync();
+            }
+
+            return person;
         }
 
-        private Task<Vehicle?> HandleVehicleAsync(VehicleToWrite vehicleToWrite)
-        {
-            if (vehicleToWrite.Id != 0) return Task.FromResult<Vehicle?>(null);
-
-            var vehicle = VehicleHelper.ConvertWriteDtoToEntity(vehicleToWrite);
-            vehicleRepository.Add(vehicle);
-            return vehicleRepository.SaveChangesAsync().ContinueWith(t => vehicle);
-        }
 
         [HttpDelete("{id:long}")]
         public async Task<ActionResult> DeleteAsync(long id)
         {
             var repairOrder = await repository.GetEntityAsync(id);
             if (repairOrder is null)
+            {
                 return NotFound($"Could not find Repair Order in the database to delete with id of {id}.");
+            }
 
             repository.Delete(repairOrder);
             await repository.SaveChangesAsync();

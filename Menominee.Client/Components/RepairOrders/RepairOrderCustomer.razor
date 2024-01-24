@@ -5,7 +5,7 @@
             <div class="input-group">
                 <input type="text" class="form-control" value="@RepairOrderToEdit?.Customer?.CustomerName" disabled id="custName">
                 <div class="input-group-append">
-                    <button class="btn btn-secondary" type="button"><i class="fas fa-search"></i></button>
+                    <button class="btn btn-secondary" type="button"><i class="fas fa-search" onclick="@(async () => LookupCustomer())"></i></button>
                 </div>
             </div>
         </div>

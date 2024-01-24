@@ -22,18 +22,18 @@ namespace Menominee.Shared.Models.Businesses
             BusinessName businessName;
 
             businessName = BusinessName.Create(business.Name.Name).Value;
-            if (business?.Address is not null)
+            if (business?.Address is not null && business.Address.IsNotEmpty)
             {
-                var result = Address.Create(
+                var address = Address.Create(
                     business.Address.AddressLine1,
                     business.Address.City,
                     business.Address.State,
                     business.Address.PostalCode,
                     business.Address.AddressLine2);
 
-                if (result.IsSuccess)
+                if (address.IsSuccess)
                 {
-                    businessAddress = result.Value;
+                    businessAddress = address.Value;
                 }
             }
 
@@ -53,12 +53,28 @@ namespace Menominee.Shared.Models.Businesses
                 }
             }
 
-            return Business.Create(businessName,
+            var contact = PersonHelper.ConvertWriteDtoToEntity(business?.Contact);
+
+            var result = Business.Create(businessName,
                                     business.Notes,
-                                    PersonHelper.ConvertWriteDtoToEntity(business?.Contact),
+                                    contact,
                                     businessAddress,
                                     emails,
-                                    phones).Value;
+                                    phones);
+            if (result.IsSuccess)
+            {
+                return result.Value;
+            }
+            else
+
+            if (result.IsFailure)
+            {
+                var errorMessage = result.Error;
+
+                throw new System.Exception(result.Error);
+            }
+
+            return null;
         }
 
         public static BusinessToWrite CovertReadToWriteDto(BusinessToRead business)
