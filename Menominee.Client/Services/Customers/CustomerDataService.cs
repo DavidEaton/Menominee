@@ -45,6 +45,7 @@ namespace Menominee.Client.Services.Customers
 
             try
             {
+                Console.WriteLine($"GetAllAsync() requesting: {httpClient.BaseAddress}{UriSegment}/list");
                 var result = await httpClient.GetFromJsonAsync<IReadOnlyList<CustomerToReadInList>>($"{UriSegment}/list");
                 return result is not null
                     ? Result.Success(result)

@@ -9,40 +9,48 @@ variables:
   - group: StageDeploy
 
 stages:
-  - stage: Build
-    displayName: 'Build & Test Solution'
-    jobs:
-      - job: BuildAndTest
-        displayName: 'Build & Test Application'
-        steps:
-        - task: NuGetAuthenticate@0
-          displayName: 'Telerik Nuget Authentication'
-          inputs:
-            nuGetServiceConnections: 'Telerik Nuget'
-        - task: NuGetToolInstaller@1
-          displayName: 'Install NuGet Tool'
-        - task: NuGetCommand@2
-          displayName: 'Install NuGet Packages'
-          inputs:
-            restoreSolution: '**/*.sln'
-            feedsToUse: 'config'
-            nugetConfigPath: 'nuget.config'
-            externalFeedCredentials: 'Telerik Nuget'
-      
-        - task: VSBuild@1
-          displayName: 'VS Build'
-          inputs:
-            solution: '**/*.sln'
-            msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(Build.ArtifactStagingDirectory)\\"'
-            platform: 'Any CPU'
-            configuration: 'Release'
-            
-        - task: PublishBuildArtifacts@1
-          displayName: 'Publish Build Artifacts'
+- stage: Build
+  displayName: 'Build & Test'
+  jobs:
+  - job: BuildAndTest
+    displayName: 'Build & Test'
 
-        - task: DotNetCoreCLI@2
-          displayName: 'Running dotnet test'
-          inputs:
-            command: 'test'
-            projects: |
-              **/*Tests.csproj
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET SDK 6.0.x'
+      inputs:
+        version: '6.0.x'
+
+    - task: NuGetAuthenticate@1
+      displayName: 'Telerik Nuget Authentication'
+      inputs:
+        nuGetServiceConnections: 'TelerikWithNugetKey'
+
+    - task: NuGetToolInstaller@1
+      displayName: 'Install NuGet Tool'
+
+    - task: NuGetCommand@2
+      displayName: 'Install NuGet Packages'
+      inputs:
+        restoreSolution: '**/*.sln'
+        feedsToUse: 'config'
+        nugetConfigPath: 'nuget.config'
+        externalFeedCredentials: 'TelerikWithNugetKey'
+  
+    - task: VSBuild@1
+      displayName: 'VS Build'
+      inputs:
+        solution: '**/*.sln'
+        msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(Build.ArtifactStagingDirectory)\\"'
+        platform: 'Any CPU'
+        configuration: $(BuildConfiguration)
+        
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Build Artifacts'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Running dotnet test'
+      inputs:
+        command: 'test'
+        projects: |
+          **/*Tests.csproj

@@ -9,17 +9,18 @@ namespace Menominee.Api
     public static class MSGraphConfiguration
     {
         //Called in Startup - services.ConfigureGraphComponent(configuration)
-        public static IServiceCollection ConfigureMSGraphComponent(this IServiceCollection services, IConfiguration configuration) {
+        public static IServiceCollection ConfigureMSGraphComponent(this IServiceCollection services, IConfiguration configuration)
+        {
             //Look at appsettings.Development.json | https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-2.1
-        
-            GraphConfiguration graphConfig = configuration.GetSection("MSGraphConfig").Get<GraphConfiguration>();
+
+            var graphConfig = configuration.GetSection("MSGraphConfig").Get<GraphConfiguration>();
 
             // Initialize the client credential auth provider
             var scopes = new[] { "https://graph.microsoft.com/.default" };
             var clientSecretCredential = new ClientSecretCredential(graphConfig.TenantId, graphConfig.AppId, graphConfig.ClientSecret);
 
             //you can use a single client instance for the lifetime of the application
-            services.AddSingleton<GraphServiceClient>(sp => new GraphServiceClient(clientSecretCredential, scopes));
+            services.AddSingleton(provider => new GraphServiceClient(clientSecretCredential, scopes));
 
             return services;
         }

@@ -1,179 +1,141 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
 - master
+- MEN-1061-staging-slot-points-to-incorrect-api-url
 
 pool:
   vmImage: 'windows-latest'
 
 variables:
-  - group: StageDeploy
+  - group: StageDeploy # defined in DevOps Library
+  
+  - name: azureSubscription
+    value: 'MenomineeDev'
+
+  - name: buildConfiguration
+    value: 'Release'
+
+  - name: dotnetSdkVersion
+    value: '6.0.x'
+
+  - name: entityFrameworkVersion
+    value: '6.0.*'
+
+  - name: resourceGroup
+    value: 'menominee'
+
+  - name: slot
+    value: 'staging'
+
+  - name: apiAppName
+    value: 'menominee-api'
+
+  - name: clientAppName
+    value: 'menominee'
+
+  - name: artifactNameClient
+    value: 'MenomineeClient'
+
+  - name: artifactNameApi
+    value: 'MenomineeApi'
+
+  - name: artifactPath
+    value: 'deploy-packages'
 
 stages:
+
   - stage: Build
     displayName: 'Build & Test Solution'
     jobs:
-      - job: BuildAndTest
-        displayName: 'Build & Test Application'
-        steps:
-        - task: NuGetAuthenticate@1
-          displayName: 'Telerik Nuget Authentication'
+    - job: BuildAndTest
+      displayName: 'Build and Test Application'
+      steps:
+        - checkout: self
+        
+        # Setup .NET SDK
+        - task: UseDotNet@2
+          displayName: 'Setup .NET SDK'
           inputs:
-            nuGetServiceConnections: 'Telerik Nuget'
-        - task: NuGetToolInstaller@1
-          displayName: 'Install NuGet Tool'
-        - task: NuGetCommand@2
-          displayName: 'Install NuGet Packages'
-          inputs:
-            restoreSolution: '**/*.sln'
-            feedsToUse: 'config'
-            nugetConfigPath: 'nuget.config'
-            externalFeedCredentials: 'Telerik Nuget'
-      
-        - task: VSBuild@1
-          displayName: 'VS Build'
-          inputs:
-            solution: '**/*.sln'
-            msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(Build.ArtifactStagingDirectory)\\"'
-            platform: 'Any CPU'
-            configuration: 'Release'
-        - task: PublishBuildArtifacts@1
-          displayName: 'Publish Build Artifacts'
-          
-        - task: DotNetCoreCLI@2
-          displayName: 'Running dotnet test'
-          inputs:
-            command: 'test'
-            projects: |
-              **/*Tests.csproj
+            version: $(dotnetSdkVersion)
+            packageType: sdk
+    
+        # Restore Telerik and other NuGet packages for all projects
+        - template: telerik-nuget-restore-tasks.yml
 
-        - task: DotNetCoreCLI@2
-          displayName: 'Install EntityFrameworkCore'
-          inputs:
-            command: custom
-            custom: tool
-            arguments: 'install --global dotnet-ef --version 6.0.26'
+        # Build projects
+        - template: build-task.yml
+          parameters:
+            buildConfiguration: '$(buildConfiguration)'
 
-        - task: DotNetCoreCLI@2
-          displayName: 'API Create EF Migration Script'
-          inputs:
-            command: custom
-            custom: ef
-            arguments: 'migrations script --context ApplicationDbContext --idempotent --project Menominee.Api\Menominee.Api.csproj -o api-migrations.sql -- $(ApiConnectionString)'
+        # Run tests
+        - template: tests-task.yml
+          parameters:
+            buildConfiguration: '$(buildConfiguration)'
 
-        - task: CopyFiles@2
-          displayName: 'Copy EF Scripts to Staging Directory'
-          inputs:
-            Contents: |
-              **\*-migrations.sql
-            TargetFolder: '$(build.artifactStagingDirectory)\db-scripts'
-            flattenFolders: true
+        # Publish projects
+        - template: publish-task.yml
+          parameters:
+            buildConfiguration: '$(buildConfiguration)'
+            artifactNameClient: '$(artifactNameClient)'
+            artifactNameApi: '$(artifactNameApi)'
 
-        - task: PublishBuildArtifacts@1
-          displayName: 'Publish EF Scripts Artifact'
-          inputs:
-            PathtoPublish: '$(build.artifactStagingDirectory)\db-scripts'
+    #     # # Create EF Migration Script
+    #     # - template: database-migrations-task.yml
+    #     #   parameters:
+    #     #     apiConnectionString: '$(ApiConnectionString)'
 
-  - stage: StopAPIApplications
-    displayName: 'Stop API Application'
-    dependsOn: Build
-    jobs:
-      - job: 'Stopping'
-        steps:
-          - task: AzureAppServiceManage@0
-            displayName: 'Stopping API'
-            inputs:
-              azureSubscription: MenomineeDev
-              Action: 'Stop Azure App Service'
-              WebAppName: 'menominee-api'
-              SpecifySlotOrASE: true
-              ResourceGroupName: 'menominee'
-              Slot: 'stage'
-              
-  - stage: DeployAPI
-    displayName: 'Deploy API Application'
-    dependsOn: StopAPIApplications
-    jobs:
-      - deployment: DeployStockTracAPI
-        displayName: Deploy StockTrac API
-        environment: Staging
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-              - download: current
-                artifact: drop
-              - task: AzureRmWebAppDeployment@4
-                inputs:
-                  ConnectionType: 'AzureRM'
-                  azureSubscription: MenomineeDev
-                  appType: 'webApp'
-                  WebAppName: '$(WebAppNameApi)'
-                  deployToSlotOrASE: true
-                  slotName: '$(Slot)'
-                  ResourceGroupName: '$(ResourceGroup)' 
-                  packageForLinux: '$(Pipeline.Workspace)/drop/Menominee.Api.zip'
+
+    # Deploy API to Azure Web App
+    - job: DeployAPI
+      displayName: 'Deploy API'
+      dependsOn: BuildAndTest
+      condition: succeeded()
+      steps:
+        - download: current
+          artifact: '$(artifactNameApi)'
+        - task: AzureWebApp@1
+          displayName: 'Deploy API to Azure Web App'
+          inputs:
+            azureSubscription: $(azureSubscription)
+            appType: 'webApp'
+            appName: $(apiAppName)
+            deployToSlotOrASE: true
+            slotName: '$(slot)'
+            package: '$(Pipeline.Workspace)/$(artifactNameApi)/**/*.zip'
+
+    # # Deploy Client to Azure Web App
+    # - job: DeployClient
+    #   displayName: 'Deploy Client Application'
+    #   dependsOn: BuildAndTest
+    #   condition: succeeded()
+    #   steps:
+    #     - download: current
+    #       artifact: '$(artifactNameClient)'
+    #     - task: AzureWebApp@1
+    #       displayName: 'Deploy Client to Azure Web App'
+    #       inputs:
+    #         azureSubscription: $(azureSubscription)
+    #         appType: 'webApp'
+    #         appName: $(clientAppName)
+    #         deployToSlotOrASE: true
+    #         slotName: '$(slot)'
+    #         package: '$(Pipeline.Workspace)/$(artifactNameClient)/**/*.zip'
                   
-  - stage: DeployClient
-    displayName: 'Deploy Client Application'
-    dependsOn: Build
-    jobs:
-      - deployment: DeployStockTracClient
-        displayName: Deploy StockTrac Client
-        environment: Staging
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-              - download: current
-                artifact: drop
-              - task: AzureRmWebAppDeployment@4
-                inputs:
-                  ConnectionType: 'AzureRM'
-                  azureSubscription: MenomineeDev
-                  appType: 'webApp'
-                  WebAppName: '$(WebAppNameClient)'
-                  deployToSlotOrASE: true
-                  slotName: '$(Slot)'
-                  ResourceGroupName: '$(ResourceGroup)' 
-                  packageForLinux: '$(Pipeline.Workspace)/drop/Menominee.Client.zip'
-                  
-#   https://stackoverflow.com/questions/59761685/ef-migrations-with-azure-pipeline-tasks
-  - stage: ApiDatabaseMigrations
-    displayName: 'Deploy API Database Migrations'
-    dependsOn: StopAPIApplications
-    jobs:
-      - job:
-        steps:
-          - download: current
-            artifact: drop
-          - task: SqlAzureDacpacDeployment@1
-            displayName: Execute API EF Migrations
-            inputs:
-              azureSubscription: MenomineeDev
-              ServerName: '$(SqlServerName)'
-              DatabaseName: '$(ApiDatabaseName)'
-              SqlUsername: '$(SqlUsername)'
-              SqlPassword: '$(SqlPassword)'
-              deployType: SqlTask
-              SqlFile: '$(Pipeline.Workspace)\**\api-migrations.sql'
-              
-  - stage: StartAPIApplication
-    displayName: 'Start API Application'
-    dependsOn:
-      - ApiDatabaseMigrations
-    jobs:
-      - job: 'Starting'
-        steps:
-          - task: AzureAppServiceManage@0
-            displayName: 'Starting API'
-            inputs:
-              azureSubscription: MenomineeDev
-              Action: 'Start Azure App Service'
-              WebAppName: 'menominee-api'
-              SpecifySlotOrASE: true
-              ResourceGroupName: 'menominee'
-              Slot: 'stage'
+  #  # Deploy Database Migrations
+  #  # https://stackoverflow.com/questions/59761685/ef-migrations-with-azure-pipeline-tasks
+  # - stage: DeployApiDatabaseMigrations
+  #   displayName: 'Deploy API Database Migrations'
+  #   jobs:
+  #     - job:
+  #       steps:
+  #         - download: current
+  #           artifact: '$(artifactPath)'
+  #         - task: SqlAzureDacpacDeployment@1
+  #           displayName: Execute API EF Migrations
+  #           inputs:
+  #             azureSubscription: $(azureSubscription)
+  #             ServerName: '$(SqlServerName)'
+  #             DatabaseName: '$(ApiDatabaseName)'
+  #             SqlUsername: '$(SqlUsername)'
+  #             SqlPassword: '$(SqlPassword)'
+  #             deployType: SqlTask
+  #             SqlFile: '$(Pipeline.Workspace)/$(artifactPath)\api-migrations.sql'

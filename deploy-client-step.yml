@@ -1,0 +1,35 @@
+parameters:
+  - name: webAppName
+    default: 'menominee'
+
+  - name: slot
+    default: 'stage'
+
+  - name: resourceGroup
+    default: 'menominee'
+
+  - name: artifactPath
+    default: 'deploy-packages'
+
+jobs:
+  - deployment: DeployClient
+    displayName: Deploy Client
+    environment: Staging
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: '${{ parameters.artifactPath }}'
+
+          - task: AzureRmWebAppDeployment@4
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: MenomineeDev
+              RemoveAdditionalFilesFlag: true
+              appType: 'webApp'
+              WebAppName: '${{ parameters.webAppName }}'
+              deployToSlotOrASE: true
+              SlotName: '${{ parameters.slot }}'
+              ResourceGroupName: '${{ parameters.resourceGroup }}' 
+              packageForLinux: '$(Pipeline.Workspace)/${{ parameters.artifactPath }}/Menominee.Client.zip'

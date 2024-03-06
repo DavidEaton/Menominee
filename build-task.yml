@@ -1,0 +1,16 @@
+parameters:
+  - name: buildConfiguration
+    default: 'Release'
+
+steps:
+  # Build solution including specific projects to avoid unnecessary builds
+  - task: DotNetCoreCLI@2
+    displayName: 'Build  - ${{ parameters.buildConfiguration }}'
+    inputs:
+      command: 'build'
+      projects: |
+        **/Menominee.Api.csproj
+        **/Menominee.Client.csproj
+        **/Menominee.Domain.csproj
+        **/Menominee.Shared.csproj
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-restore'

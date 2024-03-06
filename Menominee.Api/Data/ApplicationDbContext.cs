@@ -205,7 +205,7 @@ namespace Menominee.Api.Data
             catch (Exception ex)
             {
                 Logger.LogError($"Exception message from GetTenantName(): {ex.Message}");
-                return "menominee-stage";
+                return "menominee-staging";
             }
 
             return tenantName;

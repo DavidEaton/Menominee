@@ -1,0 +1,38 @@
+parameters:
+
+- name: entityFrameworkVersion
+  default: '6.0.*'
+
+- name: apiConnectionString
+  default: ''
+
+steps:
+
+- task: DotNetCoreCLI@2
+  displayName: 'Install EntityFrameworkCore'
+  inputs:
+    command: custom
+    custom: tool
+    arguments: 'install --global dotnet-ef --version ${{ parameters.entityFrameworkVersion }} --verbosity quiet'
+
+- task: DotNetCoreCLI@2
+  displayName: 'API Create EF Migration Script'
+  inputs:
+    command: custom
+    custom: ef
+    arguments: 'migrations script --context ApplicationDbContext --idempotent --project Menominee.Api\Menominee.Api.csproj -o $(Build.ArtifactStagingDirectory)\api-migrations.sql -- ${{ parameters.apiConnectionString }}'
+
+- task: CopyFiles@2
+  displayName: 'Copy EF Scripts to Staging Directory'
+  inputs:
+    Contents: |
+      **\*-migrations.sql
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    flattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish EF Scripts Artifact'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/api-migrations.sql'
+    ArtifactName: 'deploy-packages'
+    publishLocation: 'Container'

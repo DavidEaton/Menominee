@@ -1,0 +1,22 @@
+steps:
+- task: NuGetAuthenticate@1
+  displayName: 'Telerik Nuget Authentication'
+  inputs:
+    nuGetServiceConnections: 'TelerikWithNugetKey'
+
+- task: NuGetToolInstaller@1
+  displayName: 'Install NuGet Tool'
+
+- task: NuGetCommand@2
+  displayName: 'Install NuGet Packages'
+  inputs:
+    restoreSolution: '**/*.sln'
+    feedsToUse: 'config'
+    nugetConfigPath: 'nuget.config'
+    externalFeedCredentials: 'TelerikWithNugetKey'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore project dependencies'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'

@@ -39,33 +39,45 @@ using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Logging;
 using Serilog;
 using Serilog.Events;
-using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
 using System.IO;
 using Telerik.Reporting.Cache.File;
 using Telerik.Reporting.Services;
 
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-    .MinimumLevel.Override("System", LogEventLevel.Warning)
-    .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
-    .Enrich.FromLogContext()
-    .WriteTo.File(new JsonFormatter(), @"menominee-api-log-.json", rollingInterval: RollingInterval.Day)
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
-    .CreateLogger();
-
 try
 {
     var builder = WebApplication.CreateBuilder(args);
     var services = builder.Services;
 
+    var storageConnection = builder.Configuration["app-log-storage-connection"];
+    var storageContainerName = builder.Environment.EnvironmentName switch
+    {
+        "Staging" => "api-logs-staging",
+        "Development" => "api-logs-dev",
+        _ => "api-logs"
+    };
+
+    Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.Debug()
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+        .MinimumLevel.Override("System", LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+        .Enrich.FromLogContext()
+        .WriteTo.AzureBlobStorage(
+        connectionString: storageConnection,
+        storageContainerName: storageContainerName,
+        storageFileName: "menominee-api-log-{yyyy}-{MM}-{dd}.txt",
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message:lj}{NewLine}{Exception}")
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
+    .CreateLogger();
+
     IdentityModelEventSource.ShowPII = builder.Environment.IsDevelopment();
 
     if (builder.Environment.IsProduction() || builder.Environment.IsStaging())
     {
+        // Our (Microsoft) recommendation is to use a vault per application per environment (Development, Pre-Production, and Production).
         builder.Configuration.AddAzureKeyVault(
             new Uri($"https://{builder.Configuration["VaultName"]}.vault.azure.net/"),
             new DefaultAzureCredential());
@@ -73,7 +85,6 @@ try
 
     builder.Host.UseSerilog();
 
-    // Add services to the container.
     services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
 
@@ -85,40 +96,7 @@ try
     services.AddControllersWithViews();
     services.AddRazorPages();
 
-    services.AddAuthorization(authorizationOptions =>
-    {
-        authorizationOptions.AddPolicy(
-            Policies.IsAdmin,
-            Policies.AdminPolicy());
-
-        authorizationOptions.AddPolicy(
-            Policies.IsAuthenticated,
-            Policies.RequireAuthenticatedUserPolicy());
-
-        authorizationOptions.AddPolicy(
-            Policies.CanManageHumanResources,
-            Policies.CanManageHumanResourcesPolicy());
-
-        authorizationOptions.AddPolicy(
-            Policies.CanManageUsers,
-            Policies.CanManageUsersPolicy());
-
-        authorizationOptions.AddPolicy(
-            Policies.IsFree,
-            Policies.FreeUserPolicy());
-
-        authorizationOptions.AddPolicy(
-            Policies.IsOwner,
-            Policies.OwnerPolicy());
-
-        authorizationOptions.AddPolicy(
-            Policies.IsPaid,
-            Policies.PaidUserPolicy());
-
-        authorizationOptions.AddPolicy(
-            Policies.IsTechnician,
-            Policies.TechnicianUserPolicy());
-    });
+    AddAuthorization(services);
 
     services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -159,16 +137,20 @@ try
     }
 
     if (builder.Environment.IsDevelopment() || builder.Environment.IsEnvironment("Testing"))
+    {
         AddControllersWithOptions(services, isProduction: false);
+    }
 
     var reportsPath = Path.Combine(builder.Environment.ContentRootPath, "Reports");
 
     if (builder.Environment.IsEnvironment("Testing"))
+    {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration[$"DatabaseSettings:IntegrationTestsConnectionString"])
             .EnableSensitiveDataLogging()
             .UseLoggerFactory(LoggerFactory.Create(builder => { builder.AddConsole(); }))
             .LogTo(Console.WriteLine, LogLevel.Information));
+    }
 
     if (builder.Environment.IsDevelopment())
     {
@@ -201,7 +183,7 @@ try
             });
     }
 
-    builder.Services.AddCors(options =>
+    services.AddCors(options =>
     {
         options.AddPolicy("SpecificOrigins", corsBuilder =>
         {
@@ -255,7 +237,7 @@ try
         .AddRedirectToHttps();
     app.UseRewriter(options);
 
-    if (builder.Environment.IsProduction())
+    if (builder.Environment.IsProduction() || builder.Environment.IsStaging())
     {
         app.UseExceptionHandler(appBuilder =>
         {
@@ -295,6 +277,43 @@ finally
     Log.CloseAndFlush();
 }
 
+static void AddAuthorization(IServiceCollection services)
+{
+    services.AddAuthorization(authorizationOptions =>
+    {
+        authorizationOptions.AddPolicy(
+            Policies.IsAdmin,
+            Policies.AdminPolicy());
+
+        authorizationOptions.AddPolicy(
+            Policies.IsAuthenticated,
+            Policies.RequireAuthenticatedUserPolicy());
+
+        authorizationOptions.AddPolicy(
+            Policies.CanManageHumanResources,
+            Policies.CanManageHumanResourcesPolicy());
+
+        authorizationOptions.AddPolicy(
+            Policies.CanManageUsers,
+            Policies.CanManageUsersPolicy());
+
+        authorizationOptions.AddPolicy(
+            Policies.IsFree,
+            Policies.FreeUserPolicy());
+
+        authorizationOptions.AddPolicy(
+            Policies.IsOwner,
+            Policies.OwnerPolicy());
+
+        authorizationOptions.AddPolicy(
+            Policies.IsPaid,
+            Policies.PaidUserPolicy());
+
+        authorizationOptions.AddPolicy(
+            Policies.IsTechnician,
+            Policies.TechnicianUserPolicy());
+    });
+}
 static void AddControllersWithOptions(IServiceCollection services, bool isProduction, AuthorizationPolicy requireAuthenticatedUserPolicy = null)
 {
     services.AddControllers(mvcOptions =>
@@ -318,3 +337,4 @@ static void AddControllersWithOptions(IServiceCollection services, bool isProduc
     services.AddValidatorsFromAssemblyContaining<BusinessRequestValidator>();
 }
 public partial class Program { }
+

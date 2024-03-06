@@ -41,12 +41,9 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
 using Syncfusion.Blazor;
 using Syncfusion.Licensing;
-
-// For more information about Syncfusion license key, see https://help.syncfusion.com/common/essential-studio/licensing/license-key.
-SyncfusionLicenseProvider.RegisterLicense(
-    "NTg1MzU1QDMxMzkyZTM0MmUzMGVFZWRZcnBURWU0L3NnaE1qdzlJT1h3NEx2N3ZOSmJ1RWx3aXh5SGlrVnc9");
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -54,13 +51,21 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 ConfigureLogging(builder);
 
-var baseAddress = ConfigureUriBuilder(builder);
+// For more information about Syncfusion license key, see https://help.syncfusion.com/common/essential-studio/licensing/license-key.
+SyncfusionLicenseProvider.RegisterLicense(
+    "NTg1MzU1QDMxMzkyZTM0MmUzMGVFZWRZcnBURWU0L3NnaE1qdzlJT1h3NEx2N3ZOSmJ1RWx3aXh5SGlrVnc9");
+
+var apiBaseUrl = ConfigureUriBuilder(builder);
+
+Console.WriteLine($"Program.cs apiBaseAddress: {apiBaseUrl}");
 
 builder.Services.AddHttpClient("Menominee.ServerAPI", client =>
-    client.BaseAddress = baseAddress).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+    client.BaseAddress = apiBaseUrl)
+    .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 builder.Services.AddScoped(serviceProvider =>
-    serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("Menominee.ServerAPI"));
+    serviceProvider.GetRequiredService<IHttpClientFactory>()
+    .CreateClient("Menominee.ServerAPI"));
 
 AddMsalAuthentication(builder);
 
@@ -75,7 +80,7 @@ builder.Services.AddScoped<IRepairOrderDataService, RepairOrderDataService>();
 
 AddAuthorizationPolicies(builder);
 
-AddHttpClients(builder, baseAddress);
+AddHttpClients(builder, apiBaseUrl);
 
 AddValidators(builder);
 
@@ -83,36 +88,41 @@ await builder.Build().RunAsync();
 
 static void ConfigureLogging(WebAssemblyHostBuilder builder)
 {
-    Log.Logger = new LoggerConfiguration()
+    // Use default Console Logger if no storage connection is provided
+    var loggerConfiguration = new LoggerConfiguration()
         .MinimumLevel.Debug()
-        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+        .MinimumLevel.Override("System", LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
         .Enrich.FromLogContext()
-        .WriteTo.BrowserConsole()
-        .CreateLogger();
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code);
 
-    builder.Services.AddLogging(builder => builder.AddSerilog(dispose: true));
+    var storageConnection = builder.Configuration["app-log-storage-connection"];
+    if (!string.IsNullOrWhiteSpace(storageConnection))
+    {
+        var storageContainerName = builder.HostEnvironment.Environment switch
+        {
+            "Staging" => "client-logs-staging",
+            "Development" => "client-logs-dev",
+            _ => "client-logs"
+        };
 
-    //if (builder.HostEnvironment.IsDevelopment())
-    //{
-    //    // Log to the browser console
-    //    Log.Logger = new LoggerConfiguration()
-    //        .MinimumLevel.Debug()
-    //        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-    //        .Enrich.FromLogContext()
-    //        .WriteTo.BrowserConsole()
-    //        .CreateLogger();
-    //}
-    //else
-    //{
-    //    // TODO: Log to the server
-    //    var levelSwitch = new LoggingLevelSwitch();
-    //    Log.Logger = new LoggerConfiguration()
-    //        .MinimumLevel.ControlledBy(levelSwitch)
-    //        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-    //        .Enrich.WithProperty("InstanceId", Guid.NewGuid().ToString("n"))
-    //        .WriteTo.BrowserHttp(endpointUrl: $"{builder.HostEnvironment.BaseAddress}ingest", controlLevelSwitch: levelSwitch)
-    //        .CreateLogger();
-    //}
+        // Only configure Azure Blob Storage logging if a connection string is available
+        loggerConfiguration.WriteTo.AzureBlobStorage(
+            connectionString: storageConnection,
+            storageContainerName: storageContainerName,
+            storageFileName: "menominee-client-log-{yyyy}-{MM}-{dd}.txt",
+            outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message:lj}{NewLine}{Exception}");
+    }
+    else
+    {
+        Console.WriteLine("Warning: Azure Blob Storage connection string is not configured. Logs will not be sent to Azure Blob Storage.");
+    }
+
+    Log.Logger = loggerConfiguration.CreateLogger();
+
+    builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 }
 
 static void AddHttpClients(WebAssemblyHostBuilder builder, Uri baseAddress)
@@ -204,10 +214,9 @@ static Uri ConfigureUriBuilder(WebAssemblyHostBuilder builder)
     var host = uriBuilderConfig["Host"];
     var port = uriBuilderConfig["Port"];
 
-    var baseAddress = port is not null
+    return port is not null
                       ? new Uri($"{scheme}://{host}:{port}/")
                       : new Uri($"{scheme}://{host}/");
-    return baseAddress;
 }
 
 static void AddAuthorizationPolicies(WebAssemblyHostBuilder builder)

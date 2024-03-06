@@ -9,14 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		azure-pipelines-pr-build-test.yml = azure-pipelines-pr-build-test.yml
 		azure-pipelines-store-sql-scripts.yml = azure-pipelines-store-sql-scripts.yml
 		azure-pipelines.yml = azure-pipelines.yml
-		CodeStandards.md = CodeStandards.md
-		ConfigurationSettingDocumentation.md = ConfigurationSettingDocumentation.md
-		DevelopmentSetup.md = DevelopmentSetup.md
-		ImplementationChecklist.md = ImplementationChecklist.md
 		ADCustomPolicy\PasswordReset.xml = ADCustomPolicy\PasswordReset.xml
 		ADCustomPolicy\ProfileEdit.xml = ADCustomPolicy\ProfileEdit.xml
-		ReadMe.md = ReadMe.md
-		ADCustomPolicy\readme.md = ADCustomPolicy\readme.md
 		ADCustomPolicy\SignUpOrSignin.xml = ADCustomPolicy\SignUpOrSignin.xml
 		ADCustomPolicy\TrustFrameworkBase.xml = ADCustomPolicy\TrustFrameworkBase.xml
 		ADCustomPolicy\TrustFrameworkExtensions.xml = ADCustomPolicy\TrustFrameworkExtensions.xml
@@ -42,6 +36,28 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Client", "Menominee.Client\Menominee.Client.csproj", "{3A6AF8D5-21D4-49A3-B3DB-1B829C2BB133}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Tests.Blazor", "Menominee.Tests.Blazor\Menominee.Tests.Blazor.csproj", "{AF6D7034-35D6-4CA5-A826-FA549E39368E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{F9FC823A-381C-4C24-BFB2-1D7091406770}"
+	ProjectSection(SolutionItems) = preProject
+		CodeStandards.md = CodeStandards.md
+		ConfigurationSettingDocumentation.md = ConfigurationSettingDocumentation.md
+		DevelopmentSetup.md = DevelopmentSetup.md
+		git-hub-flow.png = git-hub-flow.png
+		ImplementationChecklist.md = ImplementationChecklist.md
+		ReadMe.md = ReadMe.md
+		ADCustomPolicy\readme.md = ADCustomPolicy\readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{ED14287E-5B9F-4582-9E90-8F6515129561}"
+	ProjectSection(SolutionItems) = preProject
+		build-task.yml = build-task.yml
+		database-migrations-task.yml = database-migrations-task.yml
+		deploy-api-step.yml = deploy-api-step.yml
+		deploy-client-step.yml = deploy-client-step.yml
+		publish-task.yml = publish-task.yml
+		telerik-nuget-restore-tasks.yml = telerik-nuget-restore-tasks.yml
+		tests-task.yml = tests-task.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +108,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F9FC823A-381C-4C24-BFB2-1D7091406770} = {71AA1B17-85C6-4BD6-A656-D0D05F3BF051}
+		{ED14287E-5B9F-4582-9E90-8F6515129561} = {71AA1B17-85C6-4BD6-A656-D0D05F3BF051}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {645DCBDD-74CB-49E1-8FD9-EDF9F1A97E36}
