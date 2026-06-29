@@ -1,55 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<UserSecretsId>596afd5f-e7c7-4c5b-b2e8-e71352278284</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.5" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<InternalVisibleTo Include="Menominee.Tests.Integration" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="FluentValidation" Version="11.8.0" />
-		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.16" />
-		<PackageReference Include="Microsoft.Graph" Version="4.7.0" />
-		<PackageReference Include="Microsoft.Identity.Web" Version="2.9.0" />
-		<PackageReference Include="Microsoft.Identity.Web.UI" Version="1.16.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.16" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.12" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.12" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.12">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" Version="170.18.0" />
-		<PackageReference Include="Serilog" Version="2.12.0" />
-		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
-		<PackageReference Include="Serilog.AspNetCore.Ingestion" Version="1.0.0-dev-00032" />
-		<PackageReference Include="Serilog.Sinks.AzureBlobStorage" Version="2.1.2" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
-		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-		<PackageReference Include="System.Text.Json" Version="8.0.2" />
-		<PackageReference Include="Telerik.Reporting.Services.AspNetCore" Version="17.0.23.315" />
-		<PackageReference Include="Telerik.ReportViewer.Blazor" Version="17.0.23.315" />
-		<PackageReference Include="Telerik.WebReportDesigner.Services" Version="17.0.23.315" />
-
-	</ItemGroup>
-
-	<ItemGroup>
+		<PackageReference Include="Azure.Core" Version="1.59.0" />
+		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.5.1" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.9" />
+		<PackageReference Include="Microsoft.Graph" Version="6.2.0" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="4.11.0" />
+		<PackageReference Include="Serilog" Version="4.3.1" />
+		<PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+		<PackageReference Include="Serilog.Sinks.AzureBlobStorage" Version="4.0.5" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+		<PackageReference Include="System.Text.Json" Version="10.0.9" />
+		<PackageReference Include="Telerik.Reporting.Services.AspNetCore" Version="18.2.24.924" />
+		<PackageReference Include="Telerik.ReportViewer.Blazor" Version="18.2.24.924" />
+		<PackageReference Include="Telerik.WebReportDesigner.Services" Version="18.2.24.924" />
+		<PackageReference Include="FluentValidation" Version="12.1.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
 		<ProjectReference Include="..\Menominee.Shared\Menominee.Shared.csproj" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Features\Inventory\InventoryItems\MaintenanceItems\" />
+		<Folder Include="Features\Inventory\InventoryItems\MaintenanceItems\" />
+		<InternalVisibleTo Include="Menominee.Tests.Integration" />
 	</ItemGroup>
 
 </Project>
