@@ -68,3 +68,23 @@ Note: If there are multiple PRs with EF changes be careful of merge conflicts --
 Note: When merging a task into a target branch we prefer to use the squash method - this takes all the content from the task work and flattens it into one commit on the target branch.
 
 When merging a feature or environment branch into another feature, environment, or main branch we use the rebase and fast forward method to maintain the history of the tasks that made up the feature. This is particularly helpful when using environment branches that progress from one another such as dev > stage > pre-production > production. A solid release pipeline can resolve the need to use environment branches.
+
+## Local .NET SDK bootstrap
+
+This repository pins the .NET SDK in `global.json`. The preferred fix for automated execution environments is to preinstall the matching .NET 10 SDK in the base image, then verify it with:
+
+```bash
+dotnet --info
+```
+
+If the image cannot be rebuilt immediately and outbound access to Microsoft download hosts is available, run:
+
+```bash
+./eng/ensure-dotnet-sdk.sh
+export DOTNET_ROOT="$PWD/.dotnet"
+export PATH="$PWD/.dotnet:$PATH"
+dotnet --info
+```
+
+The script installs the SDK version from `global.json` into `.dotnet/` by default, or into `DOTNET_INSTALL_DIR` when that environment variable is set. The script still requires network access to download Microsoft's official `dotnet-install.sh`; if an execution container's proxy returns HTTP 403 for `https://dot.net`, resolve that at the environment layer by either baking the SDK into the container image or allow-listing `https://dot.net` and the Microsoft .NET build/download hosts used by the installer.
+
