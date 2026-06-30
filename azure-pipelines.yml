@@ -1,5 +1,5 @@
 trigger:
-- master
+- main
 - MEN-1061-staging-slot-points-to-incorrect-api-url
 
 pool:
