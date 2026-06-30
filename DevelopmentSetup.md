@@ -1,10 +1,11 @@
-﻿# Development Environment Setup
+# Development Environment Setup
 
 - [HOME](ReadMe.md)
 
-## Prerequsites:
+## Prerequisites:
 - Access to BitBucket Projects: (TenantManager, Menominee)
 - Telerik license setup
+- .NET 10 SDK. Verify with `dotnet --info` before restoring, building, or running tests.
 - `localhost` SQL Server Developer instance
 - Developer Admin account in Azure AD B2C
 ## Databases
@@ -15,7 +16,7 @@ This is found in the Menominee.Api project as entity framework migrations
 1. Start with the Menominee solution
 
 2. Add the [Telerik Nuget Source](https://docs.telerik.com/blazor-ui/installation/nuget)
-3. Optionally run `dotnet restore` for the API Project
+3. Run `dotnet restore` for the API Project
 4. Run a database update with Entity Framework migrations from the solution root with the command line: `dotnet ef database update -p Menominee.Api/Menominee.Api.csproj
    --context Menominee.Api.Data.ApplicationDbContext`
 5. Check your server for the new database named Menominee

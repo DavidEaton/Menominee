@@ -15,10 +15,10 @@ variables:
     value: 'Release'
 
   - name: dotnetSdkVersion
-    value: '6.0.x'
+    value: '10.0.x'
 
   - name: entityFrameworkVersion
-    value: '6.0.*'
+    value: '10.0.*'
 
   - name: resourceGroup
     value: 'menominee'
