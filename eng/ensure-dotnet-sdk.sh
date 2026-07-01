@@ -31,8 +31,16 @@ if ! curl -fsSL "${DOTNET_INSTALL_SCRIPT_URL:-https://dot.net/v1/dotnet-install.
     cat >&2 <<ERR
 Unable to download dotnet-install.sh. Check network/proxy access to https://dot.net,
 or set DOTNET_INSTALL_SCRIPT_URL to a reachable mirror of the official install script.
+
+No SDK was installed. Because DOTNET_ENSURE_STRICT is not set to 1, this helper
+will exit successfully so blocked local/agent containers can continue with
+documentation-only or non-.NET tasks. Set DOTNET_ENSURE_STRICT=1 in build/test
+workflows that require the SDK so this condition fails fast.
 ERR
-    exit 1
+    if [ "${DOTNET_ENSURE_STRICT:-0}" = "1" ]; then
+        exit 1
+    fi
+    exit 0
 fi
 
 bash "$install_script" --version "$sdk_version" --install-dir "$install_dir" --no-path

@@ -104,5 +104,11 @@ The script installs the SDK version from `global.json` into `.dotnet/` by defaul
 
 2. Allow-list the SDK bootstrap/download endpoints used by the installer, then run `./eng/ensure-dotnet-sdk.sh` inside the container. At minimum, the proxy must allow `https://dot.net`, `https://builds.dotnet.microsoft.com`, and `https://download.visualstudio.microsoft.com`.
 
-After either option, `dotnet --info` should succeed before running repository build or test commands.
+After either option, `dotnet --info` should succeed before running repository build or test commands. For build/test workflows that require .NET, run the helper in strict mode so blocked downloads fail fast:
+
+```bash
+DOTNET_ENSURE_STRICT=1 ./eng/ensure-dotnet-sdk.sh
+```
+
+Without `DOTNET_ENSURE_STRICT=1`, the helper prints the proxy/download error and exits successfully when it cannot download the installer, which keeps documentation-only or non-.NET agent tasks from failing solely because the container image lacks the SDK.
 
