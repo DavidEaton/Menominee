@@ -86,5 +86,23 @@ export PATH="$PWD/.dotnet:$PATH"
 dotnet --info
 ```
 
-The script installs the SDK version from `global.json` into `.dotnet/` by default, or into `DOTNET_INSTALL_DIR` when that environment variable is set. The script still requires network access to download Microsoft's official `dotnet-install.sh`; if an execution container's proxy returns HTTP 403 for `https://dot.net`, resolve that at the environment layer by either baking the SDK into the container image or allow-listing `https://dot.net` and the Microsoft .NET build/download hosts used by the installer.
+The script installs the SDK version from `global.json` into `.dotnet/` by default, or into `DOTNET_INSTALL_DIR` when that environment variable is set. The script still requires network access to download Microsoft's official `dotnet-install.sh`; if an execution container's proxy returns HTTP 403 for `https://dot.net`, this repository cannot self-heal that network policy from inside the blocked container. Resolve it before the agent starts by doing one of the following:
+
+1. Bake the SDK into the execution image and put `dotnet` on `PATH`:
+
+   ```Dockerfile
+   FROM ubuntu:24.04
+   RUN apt-get update \
+       && apt-get install -y --no-install-recommends ca-certificates curl \
+       && curl -fsSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh \
+       && bash /tmp/dotnet-install.sh --version 10.0.100 --install-dir /usr/local/dotnet \
+       && ln -s /usr/local/dotnet/dotnet /usr/local/bin/dotnet \
+       && dotnet --info
+   ENV DOTNET_ROOT=/usr/local/dotnet
+   ENV PATH=/usr/local/dotnet:$PATH
+   ```
+
+2. Allow-list the SDK bootstrap/download endpoints used by the installer, then run `./eng/ensure-dotnet-sdk.sh` inside the container. At minimum, the proxy must allow `https://dot.net`, `https://builds.dotnet.microsoft.com`, and `https://download.visualstudio.microsoft.com`.
+
+After either option, `dotnet --info` should succeed before running repository build or test commands.
 
